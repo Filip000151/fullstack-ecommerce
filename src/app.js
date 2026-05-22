@@ -6,7 +6,7 @@ const app = express();
 
 const connectDB = require('./db/connect');
 
-//routes
+const authRouter = require('./routes/auth');
 
 const cookieParser = require('cookie-parser');
 const errorHandlerMiddleware = require('./middleware/errorHandler');
@@ -20,6 +20,7 @@ app.use(cookieParser());
 app.get('/', (req, res) => {
     res.json({message: 'Hello World'});
 });
+app.use('/api/auth', authRouter);
 
 app.use(express.static('../public'));
 app.use(errorHandlerMiddleware);

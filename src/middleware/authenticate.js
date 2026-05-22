@@ -11,7 +11,11 @@ const authenticate = async (req, res, next) => {
 
     try {
         const payload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
-        req.userId = payload.userId;
+        req.user = {
+            userId: payload.userId,
+            role: payload.role,
+            name: payload.name
+        };
         next();
     } catch (error) {
         next(error);
