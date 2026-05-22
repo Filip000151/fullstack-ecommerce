@@ -7,6 +7,8 @@ const app = express();
 const connectDB = require('./db/connect');
 
 const authRouter = require('./routes/auth');
+const productsRouter = require('./routes/products');
+const categoryRouter = require('./routes/categories');
 
 const cookieParser = require('cookie-parser');
 const errorHandlerMiddleware = require('./middleware/errorHandler');
@@ -17,10 +19,9 @@ const authMiddleware = require('./middleware/authenticate');
 app.use(express.json());
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
-    res.json({message: 'Hello World'});
-});
 app.use('/api/auth', authRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/category', categoryRouter);
 
 app.use(express.static('../public'));
 app.use(errorHandlerMiddleware);
