@@ -6,11 +6,6 @@ const OrderSchema = mongoose.Schema({
         ref: 'User',
         required: [true, 'Order must belong to a user.']
     },
-    shippingId: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Shipping',
-        required: [true, 'Order must have a shipping option.']
-    },
     totalPrice: {
         type: Number
     }

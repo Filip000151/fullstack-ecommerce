@@ -11,6 +11,11 @@ const OrderDetailsSchema = mongoose.Schema({
         ref: 'Product',
         required: [true, 'Product must belong to an order.']
     },
+    shippingId: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Shipping',
+        required: [true, 'Product must have a shipping option.']
+    },
     quantity: {
         type: Number,
         default: 1

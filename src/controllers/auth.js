@@ -7,16 +7,22 @@ const register = async (req, res) => {
     if(password !== confirmPassword){
         throw new BadRequestError('Passwords do not match.');
     }
+
     const user = await User.create({
         name,
         email,
         password,
         role
     });
+
     return res.status(StatusCodes.OK).json({
         success: true,
         msg: 'User registered.',
-        user
+        user: {
+            name: user.name,
+            email: user.email,
+            role: user.role
+        }
     });
 };
 
