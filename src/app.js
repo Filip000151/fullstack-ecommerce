@@ -9,6 +9,9 @@ const connectDB = require('./db/connect');
 const authRouter = require('./routes/auth');
 const productsRouter = require('./routes/products');
 const categoryRouter = require('./routes/categories');
+const orderRouter = require('./routes/orders');
+const cartRouter = require('./routes/cart');
+const shippingRouter = require('./routes/shipping');
 
 const cookieParser = require('cookie-parser');
 const errorHandlerMiddleware = require('./middleware/errorHandler');
@@ -22,6 +25,9 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/category', categoryRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/shipping', shippingRouter);
 
 app.use(express.static('../public'));
 app.use(errorHandlerMiddleware);

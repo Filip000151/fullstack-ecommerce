@@ -4,7 +4,8 @@ const CartDetailsSchema = mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Must belong to a user.']
+        required: [true, 'Must belong to a user.'],
+        index: true
     },
     productId: {
         type: mongoose.Types.ObjectId,
@@ -20,6 +21,10 @@ const CartDetailsSchema = mongoose.Schema({
         type: Number,
         default: 1
     }
+}, {
+    timestamps: true
 });
+
+CartDetailsSchema.index({userId: 1, productId: 1}, {unique: true});
 
 module.exports = mongoose.model('CartDetails', CartDetailsSchema);

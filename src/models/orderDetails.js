@@ -18,11 +18,18 @@ const OrderDetailsSchema = mongoose.Schema({
     },
     quantity: {
         type: Number,
+        required: true,
+        min: 1,
         default: 1
     },
-    price: {
-        type: Number,
-        required: [true, 'Product must have price.']
+    productSnapshot: {
+        name: String,
+        price: Number
+    },
+    shippingSnapshot: {
+        name: String,
+        deliveryDays: String,
+        price: Number
     }
 });
 
