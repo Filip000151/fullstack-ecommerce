@@ -24,12 +24,12 @@ const OrderDetailsSchema = mongoose.Schema({
     },
     productSnapshot: {
         name: String,
-        price: Number
+        priceCents: Number
     },
     shippingSnapshot: {
         name: String,
         deliveryDays: String,
-        price: Number
+        priceCents: Number
     }
 });
 

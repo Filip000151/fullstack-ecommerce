@@ -6,12 +6,12 @@ const cartDetails = require('../models/cartDetails');
 
 class CartService{
     async addToCart(userId, productId, shippingId, quantity = 1){
-        const product = Product.findById(productId);
+        const product = Product.findOne({_id: productId, isDeleted: false});
         if(!product){
             throw new NotFoundError(`Product with id ${productId} not found`);
         }
 
-        const shipping = await Shipping.findById(shippingId);
+        const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
         if(!shipping){
             throw new NotFoundError(`Shipping option with id ${shippingId} not found`);
         }
@@ -81,31 +81,28 @@ class CartService{
         let shippingTotal = 0;
 
         const items = cartItems.map(item => {
-            const productPrice = item.productId.price;
-            const itemTotal = productPrice = item.quantity;
+            const productPrice = item.productId.priceCents;
+            const itemTotal = productPrice * item.quantity;
             subtotal += itemTotal;
-            shippingTotal += item.shippingId.price;
+            shippingTotal += item.shippingId.priceCents;
 
             return {
-                id: item._id,
-                productId: item.productId._id,
                 productName: item.productId.name,
                 productPrice: productPrice,
                 quantity: item.quantity,
                 itemTotal: itemTotal,
                 shipping: {
-                    id: item.shippingId._id,
                     name: item.shippingId.name,
                     deliveryDays: item.shippingId.deliveryDays,
-                    cost: item.shippingId.price
+                    cost: item.shippingId.priceCents
                 }
             };
         });
 
         return {
             items,
-            subtotal,
-            shippingTotal,
+            subtotal: subtotal,
+            shippingTotal: shippingTotal,
             total: subtotal + shippingTotal,
             itemCount: cartItems.length
         };

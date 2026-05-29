@@ -16,12 +16,7 @@ const register = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'User registered.',
-        user: {
-            name: user.name,
-            email: user.email,
-            role: user.role
-        }
+        msg: 'User registered.'
     });
 };
 
@@ -40,12 +35,7 @@ const adminRegister = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'User registered.',
-        user: {
-            name: user.name,
-            email: user.email,
-            role: user.role
-        }
+        msg: 'User registered.'
     });
 }
 
@@ -76,13 +66,7 @@ const login = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: `User ${user.name} is logged in.`,
-        user: {
-            userId: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role
-        }
+        msg: `User ${user.name} is logged in.`
     });
 
 };

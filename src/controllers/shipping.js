@@ -3,7 +3,7 @@ const {StatusCodes} = require('http-status-codes');
 const {NotFoundError} = require('../errors');
 
 const getAllShippingOptions = async (req, res) => {
-    const shippingOptions = await Shipping.find({});
+    const shippingOptions = await Shipping.find({isDeleted: false});
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -22,8 +22,7 @@ const createShippingOption = async (req, res) => {
 
     return res.status(StatusCodes.CREATED).json({
         success: true,
-        msg: 'Shipping option created successfully',
-        shippingOption
+        msg: 'Shipping option created successfully'
     });
 };
 
@@ -31,9 +30,9 @@ const updateShippingOption = async (req, res) => {
     const {id} = req.params;
 
     const shippingOption = await Shipping.findOneAndUpdate(
-        {_id: id},
+        {_id: id, isDeleted: false},
         req.body,
-        {runValidators: true, new: true}
+        {runValidators: true}
     );
 
     if(!shippingOption){
@@ -42,24 +41,23 @@ const updateShippingOption = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Shipping option successfully updated',
-        shippingOption
+        msg: 'Shipping option successfully updated'
     });
 };
 
 const deleteShippingOption = async (req, res) => {
     const {id} = req.params;
 
-    const shippingOption = await Shipping.findOneAndDelete({_id: id});
-
+    const shippingOption = await Shipping.findOne({_id: id});
     if(!shippingOption){
         throw new NotFoundError(`Shipping option with id ${id} not found`);
     }
 
+    await shippingOption.softDelete();
+
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Shipping option deleted successfully',
-        shippingOption
+        msg: 'Shipping option deleted successfully'
     });
 };
 

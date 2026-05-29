@@ -6,12 +6,7 @@ const OrderSchema = mongoose.Schema({
         ref: 'User',
         required: [true, 'Must be logged in to create an order']
     },
-    orderNumber: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    totalPrice: {
+    totalPriceCents: {
         type: Number,
         required: true,
         min: 0
@@ -27,13 +22,6 @@ const OrderSchema = mongoose.Schema({
     }
 },{
     timestamps: true
-});
-
-OrderSchema.pre('save', async function() {
-    if(this.isNew){
-        const count = await mongoose.model('Order').countDocuments();
-        this.orderNumber = `ORD-${Date.now()}-${count + 1}`;
-    }
 });
 
 module.exports = mongoose.model('Order', OrderSchema);

@@ -7,12 +7,12 @@ const {getAllShippingOptions,
     updateShippingOption,
     deleteShippingOption} = require('../controllers/shipping');
 
-router.use(authenticate);
-router.use(authorize('admin'));
-
 router.route('/')
     .get(getAllShippingOptions)
-    .post(createShippingOption);
+    .post(authenticate, authorize('admin'), createShippingOption);
+
+router.use(authenticate);
+router.use(authorize('admin'));
 
 router.route('/:id')
     .patch(updateShippingOption)

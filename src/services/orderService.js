@@ -5,6 +5,7 @@ const Product = require('../models/product');
 const {StatusCodes} = require('http-status-codes');
 const mongoose = require('mongoose');
 const {NotFoundError} = require('../errors');
+const order = require('../models/order');
 
 class OrderService {
     async createOrder(userId, items){
@@ -12,23 +13,23 @@ class OrderService {
         session.startTransaction();
 
         try {
-            let totalPrice = 0;
+            let totalPriceCents = 0;
             const orderDetails = [];
 
             for(const item of items){
-                const product = await Product.findById(item.productId).session(session);
+                const product = await Product.findOne({_id: item.productId, isDeleted: false}).session(session);
                 if(!product){
                     throw new NotFoundError(`No product found with id ${item.productId}`);
                 }
 
-                const shipping = await Shipping.findById(item.shippingId).session(session);
+                const shipping = await Shipping.findOne({_id: item.shippingId, isDeleted: false}).session(session);
 
                 if(!shipping){
                     throw new NotFoundError(`No shipping option found with id ${item.shippingId}`);
                 }
 
-                const itemTotal = product.price * item.quantity + shipping.price;
-                totalPrice += itemTotal;
+                const itemTotalCents = product.priceCents * item.quantity + shipping.priceCents;
+                totalPriceCents += itemTotalCents;
 
                 orderDetails.push({
                     productId: product._id,
@@ -36,19 +37,19 @@ class OrderService {
                     quantity: item.quantity,
                     productSnapshot: {
                         name: product.name,
-                        price: product.price
+                        priceCents: product.priceCents
                     },
                     shippingSnapshot: {
                         name: shipping.name,
                         deliveryDays: shipping.deliveryDays,
-                        price: shipping.price
+                        priceCents: shipping.priceCents
                     }
                 });
             }
 
             const order = new Order({
                 userId,
-                totalPrice,
+                totalPriceCents,
                 status: 'pending'
             });
 
@@ -63,7 +64,7 @@ class OrderService {
 
             await session.commitTransaction();
 
-            return this.getOrderWithDetails(order._id);
+            return true;
         } catch (error) {
             await session.abortTransaction();
             throw error;
@@ -83,17 +84,73 @@ class OrderService {
             .populate('productId', 'name price')
             .populate('shippingId', 'name deliveryDays price');
 
+        const orderDetailsFormatted = [];
+        orderDetails.forEach(item => {
+            orderDetailsFormatted.push({
+                productSnapshot: {
+                    name: item.productSnapshot.name,
+                    priceCents: item.productSnapshot.priceCents
+                },
+                shippingSnapshot: {
+                    name: item.shippingSnapshot.name,
+                    deliveryDays: item.shippingSnapshot.deliveryDays,
+                    priceCents: item.shippingSnapshot.priceCents
+                },
+                quantity: item.quantity
+            });
+        });
+
         return {
-            ...order.toObject(),
-            items: orderDetails,
-            itemCount: orderDetails.length
+            user: {
+                name: order.userId.name,
+                email: order.userId.email,
+                id: order.userId._id
+            },
+            totalPriceCents: order.totalPriceCents,
+            status: order.status,
+            orderDate: order.orderDate,
+            items: orderDetailsFormatted,
+            itemCount: orderDetailsFormatted.length
         };
     }
 
-    async getUserOrders(userId){
-        const orders = await Order.find({userId})
+    async getOrders(userId, role){
+        if(role !== 'admin'){
+            const orders = await Order.find({userId})
             .sort({createdAt: -1});
         
+            const ordersFormatted = orders.map(item => {
+                return {
+                    _id: item._id,
+                    totalPriceCents: item.totalPriceCents,
+                    status: item.status,
+                    orderDate: item.orderDate
+                };
+            })
+
+            return ordersFormatted;
+        }
+        else{
+            const orders = await Order.find()
+                .sort({createdAt: -1});
+
+            const ordersFormatted = orders.map(item => {
+                return {
+                    _id: item._id,
+                    totalPriceCents: item.totalPriceCents,
+                    status: item.status,
+                    orderDate: item.orderDate
+                };
+            })
+
+            return ordersFormatted;
+        }
+    }
+
+    async getAllOrders(){
+        const orders = await Order.find()
+            .sort({createdAt: -1});
+
         const ordersWithDetails = await Promise.all(
             orders.map(order => this.getOrderWithDetails(order._id))
         );

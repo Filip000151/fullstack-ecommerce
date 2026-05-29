@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Free Shipping",
+        "deliveryDays": 7,
+        "priceCents": 0
+    },
+    {
+        "name": "Paid Shipping",
+        "deliveryDays": 3,
+        "priceCents": 499
+    },
+    {
+        "name": "Fast Shipping",
+        "deliveryDays": 1,
+        "priceCents": 899
+    }
+]

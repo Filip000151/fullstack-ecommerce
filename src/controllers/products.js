@@ -3,7 +3,7 @@ const {StatusCodes} = require('http-status-codes');
 const {NotFoundError} = require('../errors');
 
 const getAllProducts = async (req, res) => {
-    const products = await Product.find().populate({
+    const products = await Product.find({isDeleted: false}).populate({
         path: 'categoryId',
         select: 'name description',
         model: 'Category'
@@ -24,7 +24,7 @@ const getAllProducts = async (req, res) => {
 
 const getProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const product = await Product.findOne({_id: productId}).populate({
+    const product = await Product.findOne({_id: productId, isDeleted: false}).populate({
         path: 'categoryId',
         select: 'name description',
         model: 'Category'
@@ -59,8 +59,7 @@ const createProduct = async (req, res) => {
 
     return res.status(StatusCodes.CREATED).json({
         success: true,
-        msg: 'Product created',
-        product: newProduct
+        msg: 'Product created'
     });
 };
 
@@ -72,9 +71,8 @@ const updateProduct = async (req, res) => {
         price,
         categoryId
     }
-    const product = await Product.findOneAndUpdate({_id: productId}, fields, {
-        runValidators: true,
-        returnDocument: 'after'
+    const product = await Product.findOneAndUpdate({_id: productId, isDeleted: false}, fields, {
+        runValidators: true
     });
 
     if(!product){
@@ -83,23 +81,22 @@ const updateProduct = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product updated',
-        product
+        msg: 'Product updated'
     });
 };
 
 const deleteProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const product = await Product.findOneAndDelete({_id: productId});
-
+    const product = await Product.findOne({_id: productId});
     if(!product){
         throw new NotFoundError(`No product found with id: ${productId}`);
     }
 
+    await product.softDelete();
+
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product deleted',
-        product
+        msg: 'Product deleted'
     });
 }
 

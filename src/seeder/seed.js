@@ -1,0 +1,42 @@
+require('dotenv').config();
+
+const jsonProducts = require('./products.json');
+const jsonCategories = require('./categories.json');
+const jsonShipping = require('./shipping.json');
+
+const Product = require('../models/product');
+const Category = require('../models/category');
+const Shipping = require('../models/shipping');
+
+const connectDB = require('../db/connect');
+
+
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGO_URI);
+
+        await Category.deleteMany();
+        await Product.deleteMany();
+        await Shipping.deleteMany();
+
+        await Category.create(jsonCategories);
+    
+        const categories = await Category.find({});
+
+        jsonProducts[0].categoryId = categories[0]._id;
+        jsonProducts[1].categoryId = categories[1]._id;
+
+        await Product.create(jsonProducts);
+
+        await Shipping.create(jsonShipping);
+
+        console.log('Seeding successfull!');
+        
+        process.exit(1);
+    } catch (error) {
+        console.log(error);
+        process.exit(0);
+    }
+}
+
+start();

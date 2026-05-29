@@ -68,8 +68,7 @@ const createCategory = async (req, res) => {
     });
     return res.status(StatusCodes.CREATED).json({
         success: true,
-        msg: 'Category created',
-        category: newCategory
+        msg: 'Category created'
     });
 };
 
@@ -77,8 +76,7 @@ const updateCategory = async (req, res) => {
     const {id: categoryId} = req.params;
 
     const category = await Category.findOneAndUpdate({_id: categoryId}, req.body, {
-        runValidators: true,
-        returnDocument: 'after'
+        runValidators: true
     });
 
     if(!category){
@@ -87,8 +85,7 @@ const updateCategory = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Category updated',
-        category
+        msg: 'Category updated'
     });
 };
 
@@ -102,8 +99,7 @@ const deleteCategory = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Category deleted',
-        category
+        msg: 'Category deleted'
     });
 }
 

@@ -33,9 +33,7 @@ const addToCart = async (req, res) => {
 
     res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product added to cart',
-        cart,
-        addedItem: cartItem
+        msg: 'Product added to cart'
     });
 };
 
@@ -50,12 +48,9 @@ const updateCartItem = async (req, res) => {
 
     const cartItem = await cartService.updateQuantity(userId, productId, quantity);
 
-    const cart = await cartService.getCart(userId);
-
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: quantity === 0 ? 'Product removed from cart' : 'Cart updated',
-        cart
+        msg: quantity === 0 ? 'Product removed from cart' : 'Cart updated'
     });
 };
 
@@ -69,8 +64,7 @@ const removeFromCart = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product removed from cart',
-        cart
+        msg: 'Product removed from cart'
     });
 };
 
@@ -81,14 +75,7 @@ const clearCart = async (req, res) => {
 
     res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Cart cleared',
-        cart: {
-            items: [],
-            subtotal: 0,
-            shippingTotal: 0,
-            total: 0,
-            itemCount: 0
-        }
+        msg: 'Cart cleared'
     });
 };
 
