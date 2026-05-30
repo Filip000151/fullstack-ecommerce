@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
 const {getAllShippingOptions,
     createShippingOption,
@@ -9,13 +8,12 @@ const {getAllShippingOptions,
 
 router.route('/')
     .get(getAllShippingOptions)
-    .post(authenticate, authorize('admin'), createShippingOption);
+    .post(authorize('admin'), createShippingOption);
 
-router.use(authenticate);
 router.use(authorize('admin'));
-
 router.route('/:id')
     .patch(updateShippingOption)
     .delete(deleteShippingOption);
 
+    
 module.exports = router;

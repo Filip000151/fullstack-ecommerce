@@ -23,6 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRouter);
+
+app.use(authMiddleware);
 app.use('/api/products', productsRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/orders', orderRouter);

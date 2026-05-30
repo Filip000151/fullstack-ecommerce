@@ -5,9 +5,12 @@ const authorize = require('../middleware/authorize');
 const {register, adminRegister, login, logout, getLoggedUser} = require('../controllers/auth');
 
 router.route('/register').post(register);
-router.route('/admin-register').post(authenticate, authorize('admin'), adminRegister);
 router.route('/login').post(login);
-router.route('/logout').post(authenticate, logout);
-router.route('/').get(authenticate, getLoggedUser);
+
+router.use(authenticate);
+router.route('/').get(authorize(), getLoggedUser);
+router.route('/logout').post(authorize(), logout);
+router.route('/admin-register').post(authorize('admin'), adminRegister);
+
 
 module.exports = router;

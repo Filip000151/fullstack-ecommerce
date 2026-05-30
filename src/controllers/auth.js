@@ -61,7 +61,7 @@ const login = async (req, res) => {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
-        maxAge: 15 * 60 * 1000
+        maxAge: 2 * 60 * 60 * 1000
     });
 
     return res.status(StatusCodes.OK).json({

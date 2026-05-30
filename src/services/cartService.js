@@ -1,121 +1,74 @@
-const CartDetails = require('../models/cartDetails');
+const Cart = require('../models/cart');
 const Product = require('../models/product');
 const Shipping = require('../models/shipping');
 const {NotFoundError} = require('../errors');
-const cartDetails = require('../models/cartDetails');
 
 class CartService{
+    async getCart(userId){
+        let cart = await Cart.findOne({userId})
+            .populate('items.productId', 'name priceCents')
+            .populate('items.shippingId', 'name price deliveryDays');
+
+        if(!cart){
+            cart = await Cart.create({userId, items: []});
+        }
+
+        return cart;
+    }
     async addToCart(userId, productId, shippingId, quantity = 1){
-        const product = Product.findOne({_id: productId, isDeleted: false});
-        if(!product){
-            throw new NotFoundError(`Product with id ${productId} not found`);
-        }
+        const cart = await Cart.findOne({userId, 'items.productId': productId});
 
-        const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
-        if(!shipping){
-            throw new NotFoundError(`Shipping option with id ${shippingId} not found`);
-        }
-
-        let cartItem = await CartDetails.findOne({userId, productId});
-
-        if(cartItem){
-            cartItem.quantity += quantity;
-            cartItem.shippingId = shippingId;
-            await cartItem.save();
+        if(cart){
+            return await Cart.findOneAndUpdate(
+                {userId, 'items.productId': productId},
+                {
+                    $inc: {'items.$.quantity': quantity},
+                    $set: {'items.$.shippingId': shippingId}
+                },
+                {returnDocuemnt: 'after', runValidators: true}
+            );
         }
         else{
-            cartItem = await CartDetails.create({
-                userId,
-                productId,
-                shippingId,
-                quantity
-            });
+            return await Cart.findOneAndUpdate(
+                {userId},
+                {
+                    $push: {items: {productId, shippingId, quantity}},
+                    $inc: {totalItems: 1}
+                },
+                {upsert: true, new: true}
+            );
         }
-        return cartItem;
     }
 
     async updateQuantity(userId, productId, quantity){
         if(quantity < 1){
-            return this.removeFromCart(userId, productId);
+            return await this.removeFromCart(userId, productId);
         }
 
-        const cartItem = await CartDetails.findOneAndUpdate(
-            {userId, productId},
-            {quantity},
-            {new: true, runValidators: true}
+        return await Cart.findOneAndUpdate(
+            {userId, 'items.productId': productId},
+            {$set: {'items.$.quantity': quantity}},
+            {returnDocument: 'after'}
         );
-
-        if(!cartItem){
-            throw new NotFoundError('Product not found in cart');
-        }
-
-        return cartItem;
     }
 
     async removeFromCart(userId, productId){
-        const result = await CartDetails.findOneAndDelete({userId, productId});
-
-        if(!result){
-            throw new NotFoundError('Product not found in cart');
-        }
-
-        return result;
-    }
-
-    async getCart(userId){
-        const cartItems = await CartDetails.find({userId})
-            .populate('productId', 'name price')
-            .populate('shippingId', 'name deliveryDays price');
-
-        if(!cartItems || cartItems.length === 0){
-            return {
-                items: [],
-                subtotal: 0,
-                shippingTotal: 0,
-                total: 0,
-                itemCount: 0
-            };
-        }
-
-        let subtotal = 0;
-        let shippingTotal = 0;
-
-        const items = cartItems.map(item => {
-            const productPrice = item.productId.priceCents;
-            const itemTotal = productPrice * item.quantity;
-            subtotal += itemTotal;
-            shippingTotal += item.shippingId.priceCents;
-
-            return {
-                productName: item.productId.name,
-                productPrice: productPrice,
-                quantity: item.quantity,
-                itemTotal: itemTotal,
-                shipping: {
-                    name: item.shippingId.name,
-                    deliveryDays: item.shippingId.deliveryDays,
-                    cost: item.shippingId.priceCents
-                }
-            };
-        });
-
-        return {
-            items,
-            subtotal: subtotal,
-            shippingTotal: shippingTotal,
-            total: subtotal + shippingTotal,
-            itemCount: cartItems.length
-        };
+        return await Cart.findOneAndUpdate(
+            {userId},
+            {
+                $pull: {items: {productId}},
+                $inc: {totalItems: -1}
+            },
+            {returnDocument: 'after'}
+        );
     }
 
     async clearCart(userId){
-        const result = await CartDetails.deleteMany({userId});
-        return result;
-    }
-
-    async getCartCount(userId){
-        const count = await CartDetails.countDocuments({userId});
-        return count;
+        return await Cart.findOneAndUpdate(
+            {userId},
+            {items: [], totalItems: 0},
+            {returnDocument: 'after'}
+        );
     }
 }
 

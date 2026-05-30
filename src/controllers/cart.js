@@ -17,7 +17,7 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
     const {userId} = req.user;
-    const {productId, shippingId, quantity = 1} = req.body;
+    const {productId, shippingId, quantity} = req.body;
 
     if(!productId){
         throw new BadRequestError('Product id is required');
@@ -27,9 +27,7 @@ const addToCart = async (req, res) => {
         throw new BadRequestError('Shipping id is required');
     }
 
-    const cartItem = await cartService.addToCart(userId, productId, shippingId, quantity);
-
-    const cart = await cartService.getCart(userId);
+    await cartService.addToCart(userId, productId, shippingId, quantity);
 
     res.status(StatusCodes.OK).json({
         success: true,
@@ -46,11 +44,11 @@ const updateCartItem = async (req, res) => {
         throw new BadRequestError('Valid quantity is required');
     }
 
-    const cartItem = await cartService.updateQuantity(userId, productId, quantity);
+    await cartService.updateQuantity(userId, productId, quantity);
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: quantity === 0 ? 'Product removed from cart' : 'Cart updated'
+        msg: 'Cart updated'
     });
 };
 
@@ -59,8 +57,6 @@ const removeFromCart = async (req, res) => {
     const {id: productId} = req.params;
 
     await cartService.removeFromCart(userId, productId);
-
-    const cart = await cartService.getCart(userId);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -79,22 +75,10 @@ const clearCart = async (req, res) => {
     });
 };
 
-const getCartCount = async (req, res) => {
-    const {userId} = req.user;
-
-    const count = await cartService.getCartCount(userId);
-
-    return res.status(StatusCodes.OK).json({
-        success: true,
-        count
-    });
-};
-
 module.exports = {
     getCart,
     addToCart,
     updateCartItem,
     removeFromCart,
-    clearCart,
-    getCartCount
+    clearCart
 };

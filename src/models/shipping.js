@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const CartDetails = require('./cartDetails');
-const OrderDetails = require('./orderDetails');
+const Cart = require('./cart');
 const {BadRequestError} = require('../errors');
 
 const ShippingSchema = mongoose.Schema({
@@ -16,10 +15,6 @@ const ShippingSchema = mongoose.Schema({
     priceCents: {
         type: Number,
         required: [true, 'Shipping option must have a price.']
-    },
-    isActive: {
-        type: Boolean,
-        default: true
     },
     isDeleted: {
         type: Boolean,
@@ -38,25 +33,26 @@ ShippingSchema.methods.softDelete = async function(){
         throw new BadRequestError('Shipping option already deleted.');
     }
 
-    const shippingInOrder = await OrderDetails.findOne({shippingId: this._id});
-    const shippingInCart = await CartDetails.findOne({shippingId: this._id});
-
     const session = await mongoose.startSession();
     session.startTransaction();
-    try {
-        if(shippingInCart)
-            await CartDetails.deleteMany({shippingId: this._id});
 
-        if(shippingInOrder){
-            this.isDeleted = true,
-            this.deletedAt = Date.now();
-            await this.save();
-        }
-        else
-            await this.deleteOne();
+    try {
+        const carts = await Cart.updateMany(
+            {'items.shippingId': this._id},
+            {
+                $pull: {items: {shippingId: this._id}},
+                $inc: {totalItems: -1}
+            },
+            {session}
+        );
+
+        this.isDeleted = true;
+        this.deletedAt = Date.now();
+        await this.save({session});
 
         await session.commitTransaction();
-        return this;
+
+        return true;
     } catch (error) {
         await session.abortTransaction();
         throw error;

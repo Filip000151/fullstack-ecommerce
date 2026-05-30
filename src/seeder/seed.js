@@ -7,6 +7,7 @@ const jsonShipping = require('./shipping.json');
 const Product = require('../models/product');
 const Category = require('../models/category');
 const Shipping = require('../models/shipping');
+const User = require('../models/user');
 
 const connectDB = require('../db/connect');
 
@@ -18,6 +19,14 @@ const start = async () => {
         await Category.deleteMany();
         await Product.deleteMany();
         await Shipping.deleteMany();
+        await User.deleteMany();
+
+        const adminUser = await User.create({
+            name: 'admin',
+            email: 'admin@gmail.com',
+            password: 'secret',
+            role: 'admin'
+        });
 
         await Category.create(jsonCategories);
     
@@ -26,7 +35,14 @@ const start = async () => {
         jsonProducts[0].categoryId = categories[0]._id;
         jsonProducts[1].categoryId = categories[1]._id;
 
-        await Product.create(jsonProducts);
+        const products = jsonProducts.map(product => {
+            return {
+                ...product,
+                createdBy: adminUser._id
+            };
+        });
+
+        await Product.create(products);
 
         await Shipping.create(jsonShipping);
 

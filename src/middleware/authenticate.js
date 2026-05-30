@@ -2,11 +2,15 @@ const {UnauthorizedError} = require('../errors');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const authenticate = async (req, res, next) => {
+const authenticate = (req, res, next) => {
     const accessToken = req.cookies?.accessToken;
 
     if(!accessToken){
-        throw new UnauthorizedError('User not logged in.');
+        req.user = {
+            role: 'guest',
+            isGuest: true
+        };
+        return next();
     }
 
     try {
@@ -14,10 +18,14 @@ const authenticate = async (req, res, next) => {
         req.user = {
             userId: payload.userId,
             role: payload.role,
-            name: payload.name
+            name: payload.name,
+            isGuest: false
         };
         next();
     } catch (error) {
+        if(error.name === 'TokenExpiredError'){
+            throw new UnauthorizedError('Token expired. Please log in.', 'TOKEN_EXPIRED');
+        }
         throw error;
     }
 };

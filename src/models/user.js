@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Cart = require('./cart');
+const orderService = require('../services/orderService');
 
 const UserSchema = mongoose.Schema({
     name: {
@@ -37,6 +39,9 @@ const UserSchema = mongoose.Schema({
 UserSchema.pre('save', async function(){
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+
+    await Cart.create({userId: this._id, items: []});
+    await orderService.linkGuestOrdersToUser(this.email, this._id);
 });
 
 UserSchema.methods.createAccessToken = function(){

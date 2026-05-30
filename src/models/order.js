@@ -4,7 +4,21 @@ const OrderSchema = mongoose.Schema({
     userId: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Must be logged in to create an order']
+        default: null
+    },
+    guestEmail: {
+        type: String,
+        required: function(){
+            return !this.userId;
+        },
+        match: [
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            'Please provide correct email.'
+        ]
+    },
+    deliveryAddress: {
+        type: String,
+        required: [true, 'Address is mandatory.']
     },
     totalPriceCents: {
         type: Number,
@@ -16,10 +30,27 @@ const OrderSchema = mongoose.Schema({
         enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
         default: 'pending'
     },
-    orderDate: {
-        type: Date,
-        default: Date.now
-    }
+    items: [{
+        productSnapshot: {
+            name: String,
+            priceCents: Number
+        },
+        shippingSnapshot: {
+            name: String,
+            deliveryDays: String,
+            priceCents: Number
+        },
+        quantity: {
+            type: Number,
+            required: true,
+            min: 1,
+            default: 1
+        },
+        deliveryDate: {
+            type: Date,
+            required: true
+        }
+    }]
 },{
     timestamps: true
 });

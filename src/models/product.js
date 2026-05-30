@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const CartDetails = require('./cartDetails');
-const OrderDetails = require('./orderDetails');
+const Cart = require('./cart');
 const {BadRequestError} = require('../errors');
+const cart = require('./cart');
 
 const ProductSchema = mongoose.Schema({
     name: {
@@ -37,25 +37,26 @@ ProductSchema.methods.softDelete = async function(){
         throw new BadRequestError('Product already deleted.');
     }
 
-    const productInOrder = await OrderDetails.findOne({productId: this._id});
-    const productInCart = await CartDetails.findOne({productId: this._id});
-
     const session = await mongoose.startSession();
     session.startTransaction();
+
     try {
-        if(productInCart)
-            await CartDetails.deleteMany({productId: this._id});
-        
-        if(productInOrder){
-            this.isDeleted = true,
-            this.deletedAt = Date.now();
-            await this.save();
-        }
-        else
-            await this.deleteOne();
+        const carts = await Cart.updateMany(
+            {'items.productId': this._id},
+            {
+                $pull: {items: {productId: this._id}},
+                $inc: {totalItems: -1}
+            },
+            {session}
+        );
+
+        this.isDeleted = true;
+        this.deletedAt = Date.now();
+        await this.save({session});
 
         await session.commitTransaction();
-        return this;
+
+        return true;
     } catch (error) {
         await session.abortTransaction();
         throw error;

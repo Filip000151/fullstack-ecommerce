@@ -11,7 +11,7 @@ const getAllProducts = async (req, res) => {
     const formatted = products.map(product => ({
         id: product._id,
         name: product.name,
-        price: product.price,
+        priceCents: product.priceCents,
         category: product.categoryId
     }));
 
@@ -37,7 +37,7 @@ const getProduct = async (req, res) => {
     const formatted = {
         id: product._id,
         name: product.name,
-        price: product.price,
+        priceCents: product.priceCents,
         category: product.categoryId
     };
 
@@ -48,10 +48,10 @@ const getProduct = async (req, res) => {
 }
 
 const createProduct = async (req, res) => {
-    const {name, price, categoryId} = req.body;
+    const {name, priceCents, categoryId} = req.body;
     const fields = {
         name,
-        price,
+        priceCents,
         categoryId,
         createdBy: req.user.userId
     };
@@ -65,14 +65,15 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const {name, price, categoryId} = req.body;
+    const {name, priceCents, categoryId} = req.body;
     const fields = {
         name,
-        price,
+        priceCents,
         categoryId
     }
     const product = await Product.findOneAndUpdate({_id: productId, isDeleted: false}, fields, {
-        runValidators: true
+        runValidators: true,
+        returnDocument: 'after'
     });
 
     if(!product){

@@ -76,7 +76,8 @@ const updateCategory = async (req, res) => {
     const {id: categoryId} = req.params;
 
     const category = await Category.findOneAndUpdate({_id: categoryId}, req.body, {
-        runValidators: true
+        runValidators: true,
+        returnDocument: 'after'
     });
 
     if(!category){

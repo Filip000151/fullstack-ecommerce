@@ -6,7 +6,14 @@ const {StatusCodes} = require('http-status-codes');
 const getOrders = async (req, res) => {
     const {userId, role} = req.user;
 
-    const orders = await orderService.getOrders(userId, role);
+    let orders;
+
+    if(role === 'admin'){
+        orders = await orderService.getAllOrders();
+    }
+    else{
+        orders = await orderService.getUserOrders(userId);
+    }
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -17,16 +24,12 @@ const getOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
     const {id} = req.params;
-    const {userId, role} = req.user;
+    const {userId} = req.user;
 
-    const order = await orderService.getOrderWithDetails(id);
+    const order = await orderService.getOrder(id, userId);
 
     if(!order){
         throw new BadRequestError('Order not found');
-    }
-
-    if(order.user.id.toString() !== userId && role !== 'admin'){
-        throw new ForbiddenError('You can only view your own orders');
     }
 
     return res.status(StatusCodes.OK).json({
@@ -36,14 +39,19 @@ const getOrder = async (req, res) => {
 };
 
 const createOrder = async (req, res) => {
-    const {userId} = req.user;
-    const {items} = req.body;
+    const {userId, isGuest} = req.user;
+    const {guestEmail, deliveryAddress, items} = req.body;
 
-    if(!items || items.length === 0){
-        throw new BadRequestError('Order must contain at least one item.');
+    let order;
+
+    if(isGuest){
+        if(!items || items.length === 0){
+            throw new BadRequestError('Cart is empty.');
+        }
+        order = await orderService.createGuestOrder(guestEmail, deliveryAddress, items);
     }
-
-    const order = await orderService.createOrder(userId, items);
+    else
+        order = await orderService.createOrderFromCart(userId, deliveryAddress);
 
     res.status(StatusCodes.CREATED).json({
         success: true,
@@ -55,11 +63,7 @@ const updateOrderStatus = async (req, res) => {
     const {id} = req.params;
     const {status} = req.body;
 
-    const order = await Order.findByIdAndUpdate(
-        id,
-        {status},
-        {runValidators: true}
-    );
+    const order = await orderService.updateOrderStatus(id, status);
 
     if(!order){
         throw new NotFoundError('Order not found');
@@ -71,9 +75,22 @@ const updateOrderStatus = async (req, res) => {
     });
 };
 
+const cancelOrder = async (req, res) => {
+    const {id} = req.params;
+    const {userId, role} = req.user;
+
+    const order = await orderService.cancelOrder(id, userId, role);
+
+    return res.status(StatusCodes.OK).json({
+        success: true,
+        msg: 'Order canceled'
+    });
+};
+
 module.exports = {
     getOrders,
     getOrder,
     createOrder,
-    updateOrderStatus
+    updateOrderStatus,
+    cancelOrder
 };

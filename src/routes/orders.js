@@ -1,17 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
-const {getOrders, getOrder, createOrder, updateOrderStatus} = require('../controllers/orders');
-
-router.use(authenticate);
+const {getOrders, getOrder, createOrder, updateOrderStatus, cancelOrder} = require('../controllers/orders');
 
 router.route('/')
-    .get(getOrders)
+    .get(authorize(), getOrders)
     .post(createOrder);
 
 router.route('/:id')
-    .get(getOrder)
-    .patch(authorize('admin'), updateOrderStatus);
+    .get(authorize(), getOrder)
+    .patch(authorize('admin'), updateOrderStatus)
+    .delete(authorize(), cancelOrder);
 
+    
 module.exports = router;
