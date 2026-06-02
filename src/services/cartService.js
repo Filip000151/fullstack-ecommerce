@@ -6,7 +6,7 @@ const {NotFoundError} = require('../errors');
 class CartService{
     async getCart(userId){
         let cart = await Cart.findOne({userId})
-            .populate('items.productId', 'name priceCents')
+            .populate('items.productId', 'name priceCents images coverImage')
             .populate('items.shippingId', 'name price deliveryDays');
 
         if(!cart){

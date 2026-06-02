@@ -33,7 +33,9 @@ class OrderService {
                 deliveryDate,
                 productSnapshot: {
                     name: product.name,
-                    priceCents: product.priceCents
+                    priceCents: product.priceCents,
+                    images: product.images,
+                    coverImage: product.coverImage
                 },
                 shippingSnapshot: {
                     name: shipping.name,
@@ -78,7 +80,9 @@ class OrderService {
             items.push({
                 productSnapshot: {
                     name: product.name,
-                    priceCents: product.priceCents
+                    priceCents: product.priceCents,
+                    coverImage: product.coverImage,
+                    images: product.images
                 },
                 shippingSnapshot: {
                     name: shipping.name,

@@ -33,7 +33,11 @@ const OrderSchema = mongoose.Schema({
     items: [{
         productSnapshot: {
             name: String,
-            priceCents: Number
+            priceCents: Number,
+            coverImage: String,
+            images: [{
+                type: String
+            }]
         },
         shippingSnapshot: {
             name: String,

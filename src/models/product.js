@@ -1,17 +1,24 @@
 const mongoose = require('mongoose');
 const Cart = require('./cart');
 const {BadRequestError} = require('../errors');
-const cart = require('./cart');
 
 const ProductSchema = mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Product must have a name.']
+        required: [true, 'Product must have a name.'],
+        unique: [true, 'Product with that name already exists.']
     },
     priceCents: {
         type: Number,
         required: [true, 'Product must have a price.']
     },
+    coverImage: {
+        type: String,
+        required: [true, 'Product must have a cover image.']
+    },
+    images: [{
+        type: String
+    }],
     categoryId: {
         type: mongoose.Types.ObjectId,
         ref: 'Category'

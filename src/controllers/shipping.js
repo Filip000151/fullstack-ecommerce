@@ -12,7 +12,7 @@ const getAllShippingOptions = async (req, res) => {
             deliveryDays: option.deliveryDays,
             priceCents: option.priceCents
         };
-    })
+    });
 
     return res.status(StatusCodes.OK).json({
         success: true,

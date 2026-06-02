@@ -1,10 +1,20 @@
 [
     {
         "name": "Lenovo Laptop",
-        "priceCents": 100000
+        "priceCents": 100000,
+        "coverImage": "images/seeded/coverImage-lenovo_laptop.avif",
+        "images": [
+            "images/seeded/images-lenovo_laptop_1.avif",
+            "images/seeded/images-lenovo_laptop_2.webp"
+        ]
     },
     {
         "name": "Logitech Mouse",
-        "priceCents": 4999
+        "priceCents": 4999,
+        "coverImage": "images/seeded/coverImage-logitech_mouse.webp",
+        "images": [
+            "images/seeded/images-logitech_mouse_1.jpg",
+            "images/seeded/images-logitech_mouse_2.webp"
+        ]
     }
 ]

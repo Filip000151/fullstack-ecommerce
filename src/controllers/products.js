@@ -1,62 +1,37 @@
 const Product = require('../models/product');
 const {StatusCodes} = require('http-status-codes');
-const {NotFoundError} = require('../errors');
+const {NotFoundError, BadRequestError} = require('../errors');
+const fs = require('fs');
+const productService = require('../services/productService');
 
 const getAllProducts = async (req, res) => {
-    const products = await Product.find({isDeleted: false}).populate({
-        path: 'categoryId',
-        select: 'name description',
-        model: 'Category'
-    });
-    const formatted = products.map(product => ({
-        id: product._id,
-        name: product.name,
-        priceCents: product.priceCents,
-        category: product.categoryId
-    }));
+    const products = await productService.getAllProducts();
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        nbHits: formatted.length,
-        products: formatted
+        nbHits: products.length,
+        products
     });
 };
 
 const getProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const product = await Product.findOne({_id: productId, isDeleted: false}).populate({
-        path: 'categoryId',
-        select: 'name description',
-        model: 'Category'
-    });
-
-    if(!product){
-        throw new NotFoundError(`No product found with id: ${productId}`);
-    }
-
-    const formatted = {
-        id: product._id,
-        name: product.name,
-        priceCents: product.priceCents,
-        category: product.categoryId
-    };
+    
+    const product = await productService.getProduct(productId);
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        product: formatted
+        product
     });
 }
 
 const createProduct = async (req, res) => {
     const {name, priceCents, categoryId} = req.body;
-    const fields = {
-        name,
-        priceCents,
-        categoryId,
-        createdBy: req.user.userId
-    };
-    const newProduct = await Product.create(fields);
+    const files = req.files;
+    const {userId} = req.user;
 
+    const newProduct = await productService.createProduct({name, priceCents, categoryId}, files, userId);
+    
     return res.status(StatusCodes.CREATED).json({
         success: true,
         msg: 'Product created'
@@ -65,20 +40,10 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const {name, priceCents, categoryId} = req.body;
-    const fields = {
-        name,
-        priceCents,
-        categoryId
-    }
-    const product = await Product.findOneAndUpdate({_id: productId, isDeleted: false}, fields, {
-        runValidators: true,
-        returnDocument: 'after'
-    });
-
-    if(!product){
-        throw new NotFoundError(`No product found with id: ${productId}`);
-    }
+    const {name, priceCents, categoryId, currentImages} = req.body;
+    const files = req.files;
+    
+    const product = await productService.updateProduct(productId, {name, priceCents, categoryId, currentImages}, files);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -88,12 +53,8 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const product = await Product.findOne({_id: productId});
-    if(!product){
-        throw new NotFoundError(`No product found with id: ${productId}`);
-    }
-
-    await product.softDelete();
+    
+    const product = await productService.deleteProduct(productId);
 
     return res.status(StatusCodes.OK).json({
         success: true,
