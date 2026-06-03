@@ -1,4 +1,4 @@
 1. Guests can order from the site and upon registering merge their guest orders with their new account. ✔
 2. Add images and image upload for products. ✔
-3. Add filtering, pagination and sorting features to products.
+3. Add filtering, pagination and sorting features to products. ✔
 4. Create an access-refresh jwt flow with refresh token rotation.

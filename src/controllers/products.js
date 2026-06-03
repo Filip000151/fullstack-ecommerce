@@ -5,7 +5,8 @@ const fs = require('fs');
 const productService = require('../services/productService');
 
 const getAllProducts = async (req, res) => {
-    const products = await productService.getAllProducts();
+    const query = req.query;
+    const products = await productService.getAllProducts(query);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -26,11 +27,11 @@ const getProduct = async (req, res) => {
 }
 
 const createProduct = async (req, res) => {
-    const {name, priceCents, categoryId} = req.body;
+    const {name, priceCents, categoryId, isFeatured} = req.body;
     const files = req.files;
     const {userId} = req.user;
 
-    const newProduct = await productService.createProduct({name, priceCents, categoryId}, files, userId);
+    const newProduct = await productService.createProduct({name, priceCents, categoryId, isFeatured}, files, userId);
     
     return res.status(StatusCodes.CREATED).json({
         success: true,
@@ -40,10 +41,10 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     const {id: productId} = req.params;
-    const {name, priceCents, categoryId, currentImages} = req.body;
+    const {name, priceCents, categoryId, currentImages, isFeatured} = req.body;
     const files = req.files;
     
-    const product = await productService.updateProduct(productId, {name, priceCents, categoryId, currentImages}, files);
+    const product = await productService.updateProduct(productId, {name, priceCents, categoryId, currentImages, isFeatured}, files);
 
     return res.status(StatusCodes.OK).json({
         success: true,

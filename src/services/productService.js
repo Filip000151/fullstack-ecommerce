@@ -5,12 +5,52 @@ const fs = require('fs').promises;
 const mongoose = require('mongoose');
 
 class ProductService{
-    async getAllProducts(){
-        const products = await Product.find({isDeleted: false}).populate({
-            path: 'categoryId',
-            select: 'name',
-            model: 'Category'
-        });
+    async getAllProducts(query){
+        const {name, page, limit, numericFilters, sort, category, isFeatured} = query;
+        const queryObject = {isDeleted: false};
+
+        if(name){
+            queryObject.name = {$regex: name, $options: 'i'};
+        }
+        if(category){
+            queryObject.categoryId = category;
+        }
+        if(isFeatured){
+            queryObject.isFeatured = isFeatured === 'true' ? true : false;
+        }
+        if(numericFilters){
+            const operatorMap = {
+                '>': '$gt',
+                '>=': '$gte',
+                '=': '$eq',
+                '<': '$lt',
+                '<=': '$lte'
+            };
+            const regEx = /\b(<|>|>=|=|<\<=)\b/g;
+            let filters = numericFilters.replace(regEx, (match) => `-${operatorMap[match]}-`);
+            const options = ['priceCents'];
+            const [field, operator, value] = filters.split('-');
+            if(options.includes(field)){
+                queryObject[field] = {[operator]: Number(value)};
+            }
+        }
+
+        let result = Product.find(queryObject);
+
+        if(sort){
+            const sortList = sort.split(',').join(' ');
+            result = result.sort(sortList);
+        }
+        else{
+            result = result.sort('createdAt');
+        }
+
+        const pageNumber = Number(page) || 1;
+        const limitNumber = Number(limit) || 10;
+        const skip = (pageNumber - 1) * limitNumber;
+        result = result.skip(skip).limit(limitNumber);
+
+        const products = await result;
 
         const formatted = products.map(product => ({
             id: product._id,
@@ -51,22 +91,24 @@ class ProductService{
             return `images/uploads/${image.filename}`;
         }) || [];
 
+        try{
+            productData.isFeatured = productData.isFeatured === 'true' ? true : false;
+            productData.priceCents = Number(productData.priceCents);
+
+            const coverImagePath = files?.coverImage?.[0] 
+                ? `images/uploads/${files?.coverImage?.[0]?.filename}`
+                : null;
         
-        const coverImagePath = files?.coverImage?.[0] 
-            ? `images/uploads/${files?.coverImage?.[0]?.filename}`
-            : null;
-    
-        const fields = {
-            ...productData,
-            coverImage: coverImagePath,
-            images: imagePaths,
-            createdBy: userId
-        };
-        try {
+            const fields = {
+                ...productData,
+                coverImage: coverImagePath,
+                images: imagePaths,
+                createdBy: userId
+            };
             const newProduct = await Product.create(fields);
             return newProduct;
         } catch (error) {
-            deleteFiles(files);
+            this.deleteFiles(files);
             throw error;
         }
     }
@@ -82,8 +124,9 @@ class ProductService{
             }
 
             product.name = updateData.name;
-            product.priceCents = updateData.priceCents;
+            product.priceCents = Number(updateData.priceCents);
             product.categoryId = updateData.categoryId;
+            product.isFeatured = updateData.isFeatured === 'true' ? true : false;
 
             let imagesToKeep;
 
@@ -95,6 +138,12 @@ class ProductService{
             }
             else{
                 imagesToKeep = updateData.currentImages;
+            }
+
+            for(const image of imagesToKeep){
+                if(!product.images.includes(image)){
+                    throw new BadRequestError('Current image does not belong to this product.');
+                }
             }
 
             const imagesToDelete = product.images.filter(oldImage => !imagesToKeep.includes(oldImage));
@@ -127,6 +176,7 @@ class ProductService{
         }
         catch(error){
             await session.abortTransaction();
+            this.deleteFiles(files);
             throw error;
         }
         finally{

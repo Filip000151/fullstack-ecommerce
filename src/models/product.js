@@ -5,8 +5,7 @@ const {BadRequestError} = require('../errors');
 const ProductSchema = mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Product must have a name.'],
-        unique: [true, 'Product with that name already exists.']
+        required: [true, 'Product must have a name.']
     },
     priceCents: {
         type: Number,
@@ -19,6 +18,10 @@ const ProductSchema = mongoose.Schema({
     images: [{
         type: String
     }],
+    isFeatured: {
+        type: Boolean,
+        default: false
+    },
     categoryId: {
         type: mongoose.Types.ObjectId,
         ref: 'Category'
