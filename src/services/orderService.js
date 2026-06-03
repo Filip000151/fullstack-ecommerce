@@ -2,7 +2,6 @@ const Order = require('../models/order');
 const Shipping = require('../models/shipping');
 const Product = require('../models/product');
 const Cart = require('../models/cart');
-const {StatusCodes} = require('http-status-codes');
 const {NotFoundError, BadRequestError, ForbiddenError} = require('../errors');
 
 class OrderService {

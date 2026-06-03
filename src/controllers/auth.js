@@ -1,19 +1,11 @@
-const User = require('../models/user');
-const RefreshToken = require('../models/refreshToken');
-const {BadRequestError, UnauthorizedError} = require('../errors');
 const {StatusCodes} = require('http-status-codes');
+const authService = require('../services/authService');
 
 const register = async (req, res) => {
-    const {name, email, password, confirmPassword} = req.body;
-    if(password !== confirmPassword){
-        throw new BadRequestError('Passwords do not match.');
-    }
-
-    const user = await User.create({
-        name,
-        email,
-        password
-    });
+    const {name, email, password, confirmPassword, role} = req.body;
+    const {role: userRole} = req.user;
+    
+    const user = await authService.registerUser({name, email, password, confirmPassword, role}, userRole);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -21,53 +13,20 @@ const register = async (req, res) => {
     });
 };
 
-const adminRegister = async (req, res) => {
-    const {name, email, password, confirmPassword, role} = req.body;
-    if(password !== confirmPassword){
-        throw new BadRequestError('Passwords do not match.');
-    }
-
-    const user = await User.create({
-        name,
-        email,
-        password,
-        role
-    });
-
-    return res.status(StatusCodes.OK).json({
-        success: true,
-        msg: 'User registered.'
-    });
-}
-
 const login = async (req, res) => {
     const {email, password} = req.body;
-    if(!email || !password){
-        throw new BadRequestError('Please enter email and password');
-    }
-
-    const user = await User.findOne({email});
-    if(!user){
-        throw new BadRequestError('User does not exist.');
-    }
-
-    const passwordVerified = await user.verifyPassword(password);
-    if(!passwordVerified){
-        throw new UnauthorizedError('Invalid credentials.');
-    }
-
     const deviceInfo = req.headers['user-agent'] || 'Unknown';
-    const token = await user.createRefreshToken(deviceInfo);
-    res.cookie('refreshToken', token, {
+
+    const tokens = await authService.loginUser(email, password, deviceInfo);
+    
+    res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
         maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
-    const accessToken = user.createAccessToken();
-
-    res.cookie('accessToken', accessToken, {
+    res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
@@ -83,11 +42,9 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
+    
     if(refreshToken){
-        await RefreshToken.findOneAndUpdate(
-            {token: refreshToken},
-            {revoked: true}
-        );
+        await authService.logoutUser(refreshToken);
     }
 
     res.clearCookie('accessToken');
@@ -101,7 +58,7 @@ const logout = async (req, res) => {
 
 const getLoggedUser = async (req, res) => {
     const {userId} = req.user;
-    const user = await User.findById(userId).select('-password');
+    const user = await authService.getLoggedUser(userId);
     return res.status(StatusCodes.OK).json({
         success: true,
         user
@@ -110,41 +67,18 @@ const getLoggedUser = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
-
-    if(!refreshToken){
-        throw new UnauthorizedError('No active session, please log in.');
-    }
-
-    const storedToken = await RefreshToken.findOne({
-        token: refreshToken,
-        expiresAt: {$gt: new Date()}
-    });
-
-    if(!storedToken){
-        throw new UnauthorizedError('Invalid or expired refresh token.');
-    }
-    if(storedToken.revoked === true){
-        throw new UnauthorizedError('Attempted account breach detected!', 'IDENTITY_THEFT');
-    }
-
-    const user = await User.findById(storedToken.userId);
-
     const deviceInfo = req.headers['user-agent'] || 'Unknown';
 
-    const newRefreshToken = await user.createRefreshToken(deviceInfo);
-    storedToken.revoked = true;
-    await storedToken.save();
+    const tokens = await authService.refreshUserToken(refreshToken, deviceInfo);
 
-    res.cookie('refreshToken', newRefreshToken, {
+    res.cookie('refreshToken', tokens.refreshToken, {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
         maxAge: 30 * 24 * 60 * 60 * 1000
     })
 
-    const newAccessToken = user.createAccessToken();
-
-    res.cookie('accessToken', newAccessToken, {
+    res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 15 * 60 * 1000
@@ -161,6 +95,5 @@ module.exports = {
     login,
     logout,
     getLoggedUser,
-    adminRegister,
     refreshAccessToken
 };

@@ -25,7 +25,7 @@ const errorHandler = (err, req, res, next) => {
         customError.statusCode = StatusCodes.UNAUTHORIZED;
     }
 
-    return res.status(customError.statusCode).json({error: customError});
+    return res.status(customError.statusCode).json(customError);
 };
 
 module.exports = errorHandler;

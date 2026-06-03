@@ -1,5 +1,4 @@
-const { BadRequestError, ForbiddenError, NotFoundError } = require('../errors');
-const Order = require('../models/order');
+const { BadRequestError } = require('../errors');
 const orderService = require('../services/orderService');
 const {StatusCodes} = require('http-status-codes');
 
@@ -27,10 +26,6 @@ const getOrder = async (req, res) => {
     const {userId} = req.user;
 
     const order = await orderService.getOrder(id, userId);
-
-    if(!order){
-        throw new BadRequestError('Order not found');
-    }
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -64,10 +59,6 @@ const updateOrderStatus = async (req, res) => {
     const {status} = req.body;
 
     const order = await orderService.updateOrderStatus(id, status);
-
-    if(!order){
-        throw new NotFoundError('Order not found');
-    }
 
     return res.status(StatusCodes.OK).json({
         success: true,

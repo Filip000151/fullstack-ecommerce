@@ -1,7 +1,7 @@
 const Cart = require('../models/cart');
 const Product = require('../models/product');
 const Shipping = require('../models/shipping');
-const {NotFoundError} = require('../errors');
+const {NotFoundError, BadRequestError} = require('../errors');
 
 class CartService{
     async getCart(userId){
@@ -16,6 +16,14 @@ class CartService{
         return cart;
     }
     async addToCart(userId, productId, shippingId, quantity = 1){
+        if(!productId){
+            throw new BadRequestError('Product id is required');
+        }
+    
+        if(!shippingId){
+            throw new BadRequestError('Shipping id is required');
+        }
+
         const cart = await Cart.findOne({userId, 'items.productId': productId});
 
         if(cart){
@@ -41,6 +49,10 @@ class CartService{
     }
 
     async updateQuantity(userId, productId, quantity){
+        if(!quantity || quantity < 0){
+            throw new BadRequestError('Valid quantity is required');
+        }
+        
         if(quantity < 1){
             return await this.removeFromCart(userId, productId);
         }

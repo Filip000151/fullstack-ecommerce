@@ -1,8 +1,5 @@
 const cartService = require('../services/cartService');
 const {StatusCodes} = require('http-status-codes');
-const {BadRequestError, NotFoundError} = require('../errors');
-const shipping = require('../models/shipping');
-
 
 const getCart = async (req, res) => {
     const {userId} = req.user;
@@ -19,14 +16,6 @@ const addToCart = async (req, res) => {
     const {userId} = req.user;
     const {productId, shippingId, quantity} = req.body;
 
-    if(!productId){
-        throw new BadRequestError('Product id is required');
-    }
-
-    if(!shippingId){
-        throw new BadRequestError('Shipping id is required');
-    }
-
     await cartService.addToCart(userId, productId, shippingId, quantity);
 
     res.status(StatusCodes.OK).json({
@@ -39,10 +28,6 @@ const updateCartItem = async (req, res) => {
     const {userId} = req.user;
     const {id: productId} = req.params;
     const {quantity} = req.body;
-
-    if(!quantity || quantity < 0){
-        throw new BadRequestError('Valid quantity is required');
-    }
 
     await cartService.updateQuantity(userId, productId, quantity);
 
