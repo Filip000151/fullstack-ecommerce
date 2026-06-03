@@ -56,23 +56,22 @@ const login = async (req, res) => {
         throw new UnauthorizedError('Invalid credentials.');
     }
 
+    const deviceInfo = req.headers['user-agent'] || 'Unknown';
+    const token = await user.createRefreshToken(deviceInfo);
+    res.cookie('refreshToken', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        //secure: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
     const accessToken = user.createAccessToken();
 
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
-        maxAge: 2 * 60 * 60 * 1000
-    });
-
-    const deviceInfo = req.headers['user-agent'] || 'Unknown';
-    const token = await user.createRefreshToken(deviceInfo);
-
-    res.cookie('refreshToken', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        //secure: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000
+        maxAge: 15 * 60 * 1000
     });
 
     return res.status(StatusCodes.OK).json({
@@ -118,22 +117,37 @@ const refreshAccessToken = async (req, res) => {
 
     const storedToken = await RefreshToken.findOne({
         token: refreshToken,
-        revoked: false,
         expiresAt: {$gt: new Date()}
     });
 
     if(!storedToken){
         throw new UnauthorizedError('Invalid or expired refresh token.');
     }
+    if(storedToken.revoked === true){
+        throw new UnauthorizedError('Attempted account breach detected!', 'IDENTITY_THEFT');
+    }
 
     const user = await User.findById(storedToken.userId);
+
+    const deviceInfo = req.headers['user-agent'] || 'Unknown';
+
+    const newRefreshToken = await user.createRefreshToken(deviceInfo);
+    storedToken.revoked = true;
+    await storedToken.save();
+
+    res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        //secure: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
+    })
 
     const newAccessToken = user.createAccessToken();
 
     res.cookie('accessToken', newAccessToken, {
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 2 * 60 * 60 * 1000
+        maxAge: 15 * 60 * 1000
     });
 
     return res.status(StatusCodes.OK).json({
