@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const RefreshToken = require('../models/refreshToken');
 const {BadRequestError, UnauthorizedError} = require('../errors');
 const {StatusCodes} = require('http-status-codes');
 
@@ -64,6 +65,16 @@ const login = async (req, res) => {
         maxAge: 2 * 60 * 60 * 1000
     });
 
+    const deviceInfo = req.headers['user-agent'] || 'Unknown';
+    const token = await user.createRefreshToken(deviceInfo);
+
+    res.cookie('refreshToken', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        //secure: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
     return res.status(StatusCodes.OK).json({
         success: true,
         msg: `User ${user.name} is logged in.`
@@ -71,8 +82,18 @@ const login = async (req, res) => {
 
 };
 
-const logout = (req, res) => {
+const logout = async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+    if(refreshToken){
+        await RefreshToken.findOneAndUpdate(
+            {token: refreshToken},
+            {revoked: true}
+        );
+    }
+
     res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
     return res.status(StatusCodes.OK).json({
         success: true,
         msg: `User ${req.user.name} logged out.`
@@ -88,10 +109,44 @@ const getLoggedUser = async (req, res) => {
     });
 }
 
+const refreshAccessToken = async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if(!refreshToken){
+        throw new UnauthorizedError('No active session, please log in.');
+    }
+
+    const storedToken = await RefreshToken.findOne({
+        token: refreshToken,
+        revoked: false,
+        expiresAt: {$gt: new Date()}
+    });
+
+    if(!storedToken){
+        throw new UnauthorizedError('Invalid or expired refresh token.');
+    }
+
+    const user = await User.findById(storedToken.userId);
+
+    const newAccessToken = user.createAccessToken();
+
+    res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 2 * 60 * 60 * 1000
+    });
+
+    return res.status(StatusCodes.OK).json({
+        success: true,
+        msg: 'Access token refreshed'
+    });
+};
+
 module.exports = {
     register,
     login,
     logout,
     getLoggedUser,
-    adminRegister
+    adminRegister,
+    refreshAccessToken
 };

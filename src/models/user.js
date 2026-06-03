@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Cart = require('./cart');
 const orderService = require('../services/orderService');
+const crypto = require('crypto');
+const RefreshToken = require('./refreshToken');
 
 const UserSchema = mongoose.Schema({
     name: {
@@ -51,6 +53,17 @@ UserSchema.methods.createAccessToken = function(){
         {expiresIn: process.env.JWT_ACCESS_LIFETIME}
     );
 };
+
+UserSchema.methods.createRefreshToken = async function(deviceInfo){
+    const token = crypto.randomBytes(40).toString('hex');
+    await RefreshToken.create({
+        token,
+        userId: this._id,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        deviceInfo
+    });
+    return token;
+}
 
 UserSchema.methods.verifyPassword = async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);
