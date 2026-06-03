@@ -2,4 +2,4 @@
 2. Add images and image upload for products. ✔
 3. Add filtering, pagination and sorting features to products. ✔
 4. Create an access-refresh jwt flow with refresh token rotation and theft detection. ✔ 
-5. Add proper error responses.
+5. Add proper error responses. ✔

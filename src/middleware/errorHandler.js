@@ -6,10 +6,26 @@ const errorHandler = (err, req, res, next) => {
         msg: err.message,
         code: err.code
     }
-    const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
+    customError.statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
 
+    if(err.name === 'ValidationError'){
+        customError.msg = Object.values(err.errors)
+            .map(item => item.message)
+            .join(`\n`);
+        customError.statusCode = StatusCodes.BAD_REQUEST;
+    }
+    if(err.name === 'CastError'){
+        customError.msg = `No item found with id: ${err.value}`;
+        customError.statusCode = StatusCodes.NOT_FOUND;
+    }
 
-    return res.status(statusCode).json({err, customError});
+    if(err.name === 'TokenExpiredError'){
+        customError.msg = 'Token expired. Please log in.';
+        customError.code = 'TOKEN_EXPIRED';
+        customError.statusCode = StatusCodes.UNAUTHORIZED;
+    }
+
+    return res.status(customError.statusCode).json({error: customError});
 };
 
 module.exports = errorHandler;

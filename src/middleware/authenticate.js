@@ -13,21 +13,14 @@ const authenticate = (req, res, next) => {
         return next();
     }
 
-    try {
-        const payload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
-        req.user = {
-            userId: payload.userId,
-            role: payload.role,
-            name: payload.name,
-            isGuest: false
-        };
-        next();
-    } catch (error) {
-        if(error.name === 'TokenExpiredError'){
-            throw new UnauthorizedError('Token expired. Please log in.', 'TOKEN_EXPIRED');
-        }
-        throw error;
-    }
+    const payload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
+    req.user = {
+        userId: payload.userId,
+        role: payload.role,
+        name: payload.name,
+        isGuest: false
+    };
+    next();
 };
 
 module.exports = authenticate;
