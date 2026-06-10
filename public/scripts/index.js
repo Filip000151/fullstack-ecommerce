@@ -1,6 +1,5 @@
-import getHeader from "./components/header.js";
+import renderHeader from "./components/header.js";
+import renderProductGroup from "./components/productGroup.js";
 
-const container = document.querySelector('.container');
-
-const header = getHeader();
-container.appendChild(header);
+renderHeader();
+renderProductGroup();
