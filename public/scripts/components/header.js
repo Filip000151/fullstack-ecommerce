@@ -1,10 +1,18 @@
+import categories from "../api/categories.js";
+
 export function renderHeader(){
+
+    createHeader();
+
     function createHeader(){
+        const categoryOptionsHTML = renderCategoryOptions();
+
         const headerInnerHTML = `
             <img src="images/logo.png" class="header-logo">
             <div class="search-section">
                 <select name="" id="" class="category-selection">
                     <option value="">All categories</option>
+                    ${categoryOptionsHTML}
                 </select>
                 <input type="text" placeholder="Search products" class="search-bar">
                 <button class="search-button">
@@ -42,7 +50,14 @@ export function renderHeader(){
         const container = document.querySelector('.container');
         container.appendChild(header);
     }
-
-    createHeader();
+    function renderCategoryOptions(){
+        let html = '';
+        categories.forEach(category => {
+            html += `
+                <option value="${category._id}">${category.name}</option>
+            `;
+        });
+        return html;
+    }
 }
 export default renderHeader;

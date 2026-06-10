@@ -3,6 +3,7 @@
     background-color: #C6C7C4;
     position: relative;
     overflow: hidden;
+    margin-top: 2em;
 }
 .product-group h3{
     font-size: 1.7rem;
@@ -13,7 +14,7 @@
     display: flex;
     gap: 2em;
     padding: 1em;
-    transition: transform 0.15s;
+    transition: transform 0.15s ease-in;
 }
 .prev-button,
 .next-button{

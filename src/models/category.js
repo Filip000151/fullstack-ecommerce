@@ -5,7 +5,11 @@ const CategorySchema = mongoose.Schema({
         type: String,
         required: [true, 'Category must have a name.']
     },
-    description: String
+    description: String,
+    isDisplayed: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model('Category', CategorySchema);

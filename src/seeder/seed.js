@@ -32,8 +32,12 @@ const start = async () => {
     
         const categories = await Category.find({});
 
-        jsonProducts[0].categoryId = categories[0]._id;
-        jsonProducts[1].categoryId = categories[1]._id;
+        for(let i = 0; i < jsonProducts.length; i++){
+            if(i < 9)
+                jsonProducts[i].categoryId = categories[0]._id;
+            else
+                jsonProducts[i].categoryId = categories[1]._id;
+        }
 
         const products = jsonProducts.map(product => {
             return {

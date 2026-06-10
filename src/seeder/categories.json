@@ -1,10 +1,12 @@
 [
     {
         "name": "Electronics",
-        "description": "Electronic devices"
+        "description": "Electronic devices",
+        "isDisplayed": "true"
     },
     {
         "name": "Accessories",
-        "description": "Computer accessories"
+        "description": "Computer accessories",
+        "isDisplayed": "true"
     }
 ]

@@ -9,12 +9,99 @@
         ]
     },
     {
+        "name": "Dell XPS 15 Laptop",
+        "priceCents": 250000,
+        "coverImage": "images/seeded/coverImage-dell_laptop.avif",
+        "images": [
+            "images/seeded/images-dell_laptop_1.jpg", 
+            "images/seeded/images-dell_laptop_2.jpg"
+        ]
+    },
+    {
+        "name": "Apple MacBook Pro M3",
+        "priceCents": 350000,
+        "coverImage": "images/seeded/coverImage-apple_macbook.webp",
+        "images": [
+            "images/seeded/images-apple_macbook_1.jpg", 
+            "images/seeded/images-apple-macbook_2.jpeg"
+        ]
+    },
+    {
+        "name": "Samsung 4K Monitor 32 inch",
+        "priceCents": 45000,
+        "coverImage": "images/seeded/coverImage-samsung_monitor.webp",
+        "images": [
+            "images/seeded/images-samsung_monitor_1.webp", 
+            "images/seeded/images-samsung_monitor_2.jpg"
+        ]
+    },
+    {
+        "name": "Sony WH-1000XM5 Headphones",
+        "priceCents": 40000,
+        "coverImage": "images/seeded/coverImage-sony_headphones.webp",
+        "images": [
+            "images/seeded/images-sony_headphones_1.jpg", 
+            "images/seeded/images-sony_headphones_2.jpg"
+        ]
+    },
+    {
+        "name": "Apple AirPods Pro 2",
+        "priceCents": 30000,
+        "coverImage": "images/seeded/coverImage-apple_airpods.webp",
+        "images": [
+            "images/seeded/images-apple_airpods_1.webp", 
+            "images/seeded/images-apple_airpods_2.jpg"
+        ]
+    },
+    {
+        "name": "Logitech MX Master 3S Mouse",
+        "priceCents": 15000,
+        "coverImage": "images/seeded/coverImage-logitech_master_mouse.webp",
+        "images": [
+            "images/seeded/images-logitech_master_mouse_1.jfif", 
+            "images/seeded/images-logitech_master_mouse_2.jpg"
+        ]
+    },
+    {
+        "name": "Keychron K2 Mechanical Keyboard",
+        "priceCents": 12000,
+        "coverImage": "images/seeded/coverImage-keychron_keyboard.webp",
+        "images": [
+            "images/seeded/images-keychron_keyboard_1.jpg", 
+            "images/seeded/images-keychron_keyboard_2.jpg"
+        ]
+    },
+    {
         "name": "Logitech Mouse",
         "priceCents": 4999,
         "coverImage": "images/seeded/coverImage-logitech_mouse.webp",
         "images": [
             "images/seeded/images-logitech_mouse_1.jpg",
             "images/seeded/images-logitech_mouse_2.webp"
+        ]
+    },
+    {
+        "name": "Samsung 45W USB-C Charger",
+        "priceCents": 3500,
+        "coverImage": "images/seeded/coverImage-samsung_45w_charger.jfif",
+        "images": ["images/seeded/images-samsung_45w_charger_1.avif"]
+    },
+    {
+        "name": "Anker Power Bank 20000mAh",
+        "priceCents": 5000,
+        "coverImage": "images/seeded/coverImage-anker_power_bank.jfif",
+        "images": [
+            "images/seeded/images-anker_power_bank_1.png", 
+            "images/seeded/images-anker_power_bank_2.png"
+        ]
+    },
+    {
+        "name": "Spigen iPhone 15 Case",
+        "priceCents": 3000,
+        "coverImage": "images/seeded/coverImage-spigen_iphone_case.jfif",
+        "images": [
+            "images/seeded/images-spigen_iphone_case_1.jpg", 
+            "images/seeded/images-spigen_iphone_case_2.webp"
         ]
     }
 ]

@@ -12,12 +12,14 @@ const categoryRouter = require('./routes/categories');
 const orderRouter = require('./routes/orders');
 const cartRouter = require('./routes/cart');
 const shippingRouter = require('./routes/shipping');
+const staticRoutes = require('./routes/staticRoutes');
 
 const cookieParser = require('cookie-parser');
 const errorHandlerMiddleware = require('./middleware/errorHandler');
 const notFoundMiddleware = require('./middleware/notFound');
 const authMiddleware = require('./middleware/authenticate');
 
+app.use('/', staticRoutes);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -31,7 +33,6 @@ app.use('/api/orders', orderRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/shipping', shippingRouter);
 
-app.use(express.static('../public'));
 app.use(errorHandlerMiddleware);
 app.use(notFoundMiddleware);
 

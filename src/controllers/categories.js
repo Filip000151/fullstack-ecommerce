@@ -22,9 +22,9 @@ const getCategory = async (req, res) => {
 };
 
 const createCategory = async (req, res) => {
-    const {name, description} = req.body;
+    const {name, description, isDisplayed} = req.body;
     
-    const category = await categoryService.createCategory(name, description);
+    const category = await categoryService.createCategory(name, description, isDisplayed);
 
     return res.status(StatusCodes.CREATED).json({
         success: true,
