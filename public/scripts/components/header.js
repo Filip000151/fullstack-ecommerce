@@ -1,4 +1,5 @@
 import categories from "../api/categories.js";
+import {cart, getCartQuantity} from "../api/cart.js";
 
 export function renderHeader(){
 
@@ -6,6 +7,9 @@ export function renderHeader(){
 
     function createHeader(){
         const categoryOptionsHTML = renderCategoryOptions();
+        const cartQuantity = getCartQuantity();
+        const displayCartQuantity = cartQuantity > 0 ? `<span class="cart-quantity">${cartQuantity}</span>` : '';
+        console.log(cartQuantity);
 
         const headerInnerHTML = `
             <img src="images/logo.png" class="header-logo">
@@ -35,6 +39,7 @@ export function renderHeader(){
                     <span>Profile</span>
                 </button>
                 <button class="icon-button">
+                    ${displayCartQuantity}
                     <svg class="svg-icon cart-icon">
                         <use href="images/icons/sprite.svg#cart-icon"></use>
                     </svg>
@@ -43,12 +48,16 @@ export function renderHeader(){
             </div>
         `;
 
-        const header = document.createElement('header');
-        header.classList.add('header');
-        header.innerHTML = headerInnerHTML;
-        
-        const container = document.querySelector('.container');
-        container.appendChild(header);
+        let header = document.querySelector('.header');
+        if(header)
+            header.innerHTML = headerInnerHTML;
+        else{
+            header = document.createElement('header');
+            header.classList.add('header');
+            header.innerHTML = headerInnerHTML;
+
+            document.body.appendChild(header);
+        }
     }
     function renderCategoryOptions(){
         let html = '';

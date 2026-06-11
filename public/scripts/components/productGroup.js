@@ -1,4 +1,7 @@
 import formatCurrency from '../utils/money.js';
+import {cart, addToCart} from '../api/cart.js';
+
+import renderHeader from './header.js';
 
 export function renderProductGroup(groupId, title, products){
     createProductGroup();
@@ -25,6 +28,16 @@ export function renderProductGroup(groupId, title, products){
         }
     });
 
+    const addButtons = document.querySelectorAll(`.js-add-to-cart-${groupId}`);
+    addButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const {productId} = btn.dataset;
+            const quantity = Number(document.querySelector(`.js-quantity-input-${productId}`).value);
+            addToCart(productId, quantity);
+            renderHeader();
+        });
+    });
+
     function createProductGroup(){
         const productsHTML = renderProducts();
         const productGroupHTML = `
@@ -36,12 +49,18 @@ export function renderProductGroup(groupId, title, products){
             </div>
         `;
 
-        const productGroup = document.createElement('section');
-        productGroup.classList.add('product-group');
-        productGroup.innerHTML = productGroupHTML;
+        let productGroup = document.querySelector(`.js-product-group-${groupId}`);
+        if(productGroup){
+            productGroup.innerHTML = productGroupHTML;
+        }
+        else{
+            const productGroup = document.createElement('section');
+            productGroup.classList.add('product-group', `js-product-group-${groupId}`);
+            productGroup.innerHTML = productGroupHTML;
 
-        const container = document.querySelector('.container');
-        container.appendChild(productGroup);
+            const container = document.querySelector('.container');
+            container.appendChild(productGroup);
+        }
     }
     function renderProducts(){
         let html = '';
@@ -54,11 +73,11 @@ export function renderProductGroup(groupId, title, products){
                     <p class="product-name">${product.name}</p>
                     <div class="product-price-section">
                         <p class="product-price">$${formatCurrency(product.priceCents)}</p>
-                        <button class="primary-button">Add to cart</button>
+                        <button class="primary-button js-add-to-cart-${groupId}" data-product-id="${product._id}">Add to cart</button>
                     </div>
                     <div class="quantity-selection">
                         <span class="quantity-text">Quantity:</span>
-                        <select class="quantity-input">
+                        <select class="quantity-input js-quantity-input-${product._id}">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>

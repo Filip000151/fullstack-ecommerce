@@ -1,7 +1,11 @@
 import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
+import {cart} from './api/cart.js';
 
 import renderHeader from "./components/header.js";
 import renderProductGroup from "./components/productGroup.js";
+import renderFooter from './components/footer.js';
+
+renderPage();
 
 async function renderPage(){
     await loadCategories();
@@ -24,7 +28,6 @@ async function renderPage(){
             renderProductGroup(groupId, title, products);
         }
     });
-        
-}
 
-renderPage();
+    renderFooter();
+}

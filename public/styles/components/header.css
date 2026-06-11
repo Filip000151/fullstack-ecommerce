@@ -6,6 +6,11 @@
     background-color: #846A6A;
     padding: 0.2em 1em;
     color: #353B3C;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
 }
 
 .header-logo{
@@ -84,6 +89,7 @@
     background-color: transparent;
     color: #353B3C;
     transition: box-shadow 0.15s, color 0.15s, transform 0.15s;
+    position: relative;
 }
 .svg-icon{
     width: 32px;
@@ -101,4 +107,14 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
     transform: scale(1.15, 1.15);
     filter: blur(1px) brightness(1.2);
+}
+
+.cart-quantity{
+    position: absolute;
+    padding: 2px 5px;
+    border-radius: 50%;
+    background-color: #C6C7C4;
+    right: 0;
+    top: 0;
+    font-weight: bold;
 }
