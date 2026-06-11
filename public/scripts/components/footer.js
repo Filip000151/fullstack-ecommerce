@@ -4,24 +4,26 @@ export function renderFooter(){
     function createFooter(){
         const footerInnerHtml = `
             <div class="footer-upper-section">
-                <img class="footer-logo" src="images/logo.png" alt="">
+                <a href="/">
+                    <img class="footer-logo" src="images/logo.png" alt="">
+                </a>
                 <div class="footer-link-section">
                     <div class="footer-link-group">
                         <h4>Navigation</h4>
                         <ul class="footer-links">
-                            <li><span>Link</span></li>
-                            <li><span>Link</span></li>
-                            <li><span>Link</span></li>
-                            <li><span>Link</span></li>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/products">Products</a></li>
+                            <li><a href="">Link</a></li>
+                            <li><a href="">Link</a></li>
                         </ul>
                     </div>
                     <div class="footer-link-group">
                         <h4>Information</h4>
                         <ul class="footer-links">
-                            <li><span>About Us</span></li>
-                            <li><span>Contact Us</span></li>
-                            <li><span>Affiliates</span></li>
-                            <li><span>Resources</span></li>
+                            <li><a>About Us</a></li>
+                            <li><a>Contact Us</a></li>
+                            <li><a>Affiliates</a></li>
+                            <li><a>Resources</a></li>
                         </ul>
                     </div>
                 </div>

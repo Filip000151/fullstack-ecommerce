@@ -1,6 +1,8 @@
 import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
 import {cart} from './api/cart.js';
 
+import getQueryParams from "./utils/queryParams.js";
+
 import renderHeader from "./components/header.js";
 import renderProductGroup from "./components/productGroup.js";
 import renderFooter from './components/footer.js';
@@ -8,15 +10,15 @@ import renderFooter from './components/footer.js';
 renderPage();
 
 async function renderPage(){
+    const queryParams = getQueryParams();
+
     await loadCategories();
-    renderHeader();
+    renderHeader(queryParams);
 
     const displayedCategories = categories.filter(c => c.isDisplayed);
-
     const categoriesInfoResponse = await Promise.all(
         displayedCategories.map(category => getCategoryInfo(category._id))
     );
-
     categoriesInfoResponse.forEach(response => {
         if(response.success){
             const categoryInfo = response.category;

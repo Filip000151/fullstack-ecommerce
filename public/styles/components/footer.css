@@ -49,15 +49,17 @@
     flex-direction: column;
     gap: 0.2em;
 }
-.footer-links span{
+.footer-links a{
     user-select: none;
     cursor: pointer;
     transition: opacity 0.15s;
+    text-decoration: none;
+    color: inherit;
 }
-.footer-links span:hover{
+.footer-links a:hover{
     opacity: 0.7;
 }
-.footer-links span:active{
+.footer-links a:active{
     opacity: 0.5;
 }
 

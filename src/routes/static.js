@@ -9,5 +9,8 @@ router.use('/images', express.static(path.join(__dirname, '..', '..', 'public', 
 router.route('/').get((req, res) => {
     res.sendFile(path.join(__dirname, '..', '..', 'public', 'index.html'));
 });
+router.route('/products').get((req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'public', 'products.html'));
+});
 
 module.exports = router;

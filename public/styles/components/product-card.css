@@ -69,11 +69,3 @@
 .quantity-input:focus{
     outline: none;
 }
-
-
-
-@media (max-width: 1536px){
-    .product-card{
-        height: 330px;
-    }
-}
