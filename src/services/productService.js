@@ -6,8 +6,10 @@ const mongoose = require('mongoose');
 
 class ProductService{
     async getAllProducts(query){
-        const {name, page, limit, numericFilters, sort, category, isFeatured} = query;
-        const queryObject = {isDeleted: false};
+        const {name, page, limit, maxPrice, minPrice, sort, category, isFeatured} = query;
+        const queryObject = {
+            isDeleted: false
+        };
 
         if(name){
             queryObject.name = {$regex: name, $options: 'i'};
@@ -15,34 +17,36 @@ class ProductService{
         if(category){
             queryObject.categoryId = category;
         }
-        if(isFeatured){
-            queryObject.isFeatured = isFeatured === 'true' ? true : false;
+        if(isFeatured !== undefined){
+            queryObject.isFeatured = isFeatured === 'true';
         }
-        if(numericFilters){
-            const operatorMap = {
-                '>': '$gt',
-                '>=': '$gte',
-                '=': '$eq',
-                '<': '$lt',
-                '<=': '$lte'
-            };
-            const regEx = /\b(<|>|>=|=|<\<=)\b/g;
-            let filters = numericFilters.replace(regEx, (match) => `-${operatorMap[match]}-`);
-            const options = ['priceCents'];
-            const [field, operator, value] = filters.split('-');
-            if(options.includes(field)){
-                queryObject[field] = {[operator]: Number(value)};
+        if(maxPrice || minPrice){
+            queryObject['priceCents'] = {};
+        }
+        if(maxPrice){
+            const value = Number(maxPrice);
+            if(isNaN(value) || value < 0){
+                throw new BadRequestError(`Value needs to be a valid positive number: ${maxPrice}`);
             }
+            queryObject['priceCents'].$lte = Number(maxPrice);
         }
-
+        if(minPrice){
+            const value = Number(minPrice);
+            if(isNaN(value) || value < 0){
+                throw new BadRequestError(`Value needs to be a valid positive number: ${minPrice}`);
+            }
+            queryObject['priceCents'].$gte = Number(minPrice);
+        }
+        
+        const total = await Product.countDocuments(queryObject);
         let result = Product.find(queryObject);
 
-        if(sort){
+        if(sort && sort.trim()){
             const sortList = sort.split(',').join(' ');
-            result = result.sort(sortList);
+            result = result.sort(sortList + ' _id');
         }
         else{
-            result = result.sort('createdAt');
+            result = result.sort('createdAt _id');
         }
 
         const pageNumber = Number(page) || 1;
@@ -53,7 +57,7 @@ class ProductService{
         const products = await result;
 
         const formatted = products.map(product => ({
-            id: product._id,
+            _id: product._id,
             name: product.name,
             priceCents: product.priceCents,
             coverImage: product.coverImage,
@@ -61,7 +65,17 @@ class ProductService{
             category: product.categoryId
         }));
 
-        return formatted;
+        return {
+            products: formatted,
+            pagination: {
+                page: pageNumber,
+                limit: limitNumber,
+                total,
+                totalPages: Math.ceil(total / limitNumber),
+                hasNextPage: pageNumber * limitNumber < total,
+                hasPrevPage: pageNumber > 1
+            }
+        };
     }
 
     async getProduct(productId){
@@ -76,7 +90,7 @@ class ProductService{
         }
     
         const formatted = {
-            id: product._id,
+            _id: product._id,
             name: product.name,
             priceCents: product.priceCents,
             coverImage: product.coverImage,

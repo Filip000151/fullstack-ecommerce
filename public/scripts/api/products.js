@@ -1,17 +1,17 @@
 import apiClient from './apiClient.js';
 
-import { createQueryString } from '../utils/queryParams.js';
+export const products = {
+    querriedProducts: [],
+    pagination: {}
+};
 
-export const products = [];
-
-export async function loadProducts(queryParams){
-    const query = createQueryString(queryParams);
-        
+export async function queryProducts(query){
     const response = await apiClient.get(`/api/products${query}`);
     const data = await response.json();
 
     if(data.success){
-        products.push(...data.products);
+        products.querriedProducts = data.products;
+        products.pagination = data.pagination;
     }
     
     return data;

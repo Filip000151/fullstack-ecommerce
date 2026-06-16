@@ -4,6 +4,7 @@
     position: relative;
     overflow: hidden;
     margin: 2em 0;
+    border-radius: 5px;
 }
 .product-group h3{
     font-size: 1.7rem;
@@ -13,7 +14,7 @@
     scroll-behavior: smooth;
     display: flex;
     gap: 2em;
-    padding: 1em;
+    width: 100%;
     transition: transform 0.3s ease-in-out;
 }
 .prev-button,
@@ -22,11 +23,12 @@
     top: 50%;
     padding: 0.5em 1em;
     font-size: 1.2rem;
-    border: none;
     color: #353B3C;
     background-color: #846A6A;
-    transition: opacity 0.15s, transform 0.15s;
+    transition: opacity 0.15s, transform 0.05s;
     z-index: 100;
+    border: solid 1px #353B3C;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.15);
 }
 .prev-button:hover,
 .next-button:hover{
@@ -34,13 +36,14 @@
 }
 .prev-button:active,
 .next-button:active{
-    transform: scale(0.9, 0.9);
+    transform: translate(3px, 3px);
+    box-shadow: none;
 }
 .next-button{
-    right: 0;
+    right: 0.5em;
     border-radius: 5px 20px 20px 5px;
 }
 .prev-button{
-    left: 0;
+    left: 0.5em;
     border-radius: 20px 5px 5px 20px;
 }

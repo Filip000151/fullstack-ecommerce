@@ -1,24 +1,27 @@
 import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
-import {products, loadProducts} from './api/products.js';
-import {cart} from './api/cart.js';
+import {queryProducts} from './api/products.js';
 
-import getQueryParams from "./utils/queryParams.js";
+import {getQueryParams, createQueryString} from "./utils/query.js";
 
-import renderHeader from "./components/header.js";
-import renderFooter from "./components/footer.js";
-import renderProductsSection from "./components/productsSection.js";
+import renderHeaderComponent from './components/header/index.js';
+import renderFooterComponent from "./components/footer/index.js";
+import renderProductsSectionComponent from "./components/productsSection/index.js";
 
 renderPage();
 
 async function renderPage(){
-    const queryParams = getQueryParams();
+    const queryParams = {
+        ...getQueryParams(),
+        limit: 9
+    };
+    const query = createQueryString(queryParams);
     
     await Promise.all([
         loadCategories(),
-        loadProducts(queryParams)
+        queryProducts(query)
     ]);
 
-    renderHeader(queryParams);
-    renderProductsSection();
-    renderFooter();
+    renderHeaderComponent();
+    renderProductsSectionComponent();
+    renderFooterComponent();
 }

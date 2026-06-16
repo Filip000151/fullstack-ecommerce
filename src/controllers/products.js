@@ -3,12 +3,13 @@ const productService = require('../services/productService');
 
 const getAllProducts = async (req, res) => {
     const query = req.query;
-    const products = await productService.getAllProducts(query);
+    const {products, pagination} = await productService.getAllProducts(query);
 
     return res.status(StatusCodes.OK).json({
         success: true,
         nbHits: products.length,
-        products
+        products,
+        pagination
     });
 };
 

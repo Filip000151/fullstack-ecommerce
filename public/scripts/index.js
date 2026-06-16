@@ -1,19 +1,14 @@
 import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
-import {cart} from './api/cart.js';
 
-import getQueryParams from "./utils/queryParams.js";
-
-import renderHeader from "./components/header.js";
-import renderProductGroup from "./components/productGroup.js";
-import renderFooter from './components/footer.js';
+import renderHeaderComponent from "./components/header/index.js";
+import renderProductGroupComponent from "./components/productGroup/index.js";
+import renderFooterComponent from './components/footer/index.js';
 
 renderPage();
 
 async function renderPage(){
-    const queryParams = getQueryParams();
-
     await loadCategories();
-    renderHeader(queryParams);
+    renderHeaderComponent();
 
     const displayedCategories = categories.filter(c => c.isDisplayed);
     const categoriesInfoResponse = await Promise.all(
@@ -27,9 +22,9 @@ async function renderPage(){
             const title = categoryInfo.name;
             const products = categoryInfo.products;
 
-            renderProductGroup(groupId, title, products);
+            renderProductGroupComponent(groupId, title, products);
         }
     });
 
-    renderFooter();
+    renderFooterComponent();
 }
