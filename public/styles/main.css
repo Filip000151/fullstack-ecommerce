@@ -35,6 +35,13 @@ button{
     padding-right: 0.5rem;
     padding-top: 100px;
 }
+.overlay{
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 102;
+    visibility: hidden;
+}
 
 .primary-button{
     padding: 1em;

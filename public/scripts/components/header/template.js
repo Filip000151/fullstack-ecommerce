@@ -1,6 +1,7 @@
 import categories from '../../api/categories.js';
 import { getQueryParams } from '../../utils/query.js';
-import { getCartQuantity } from '../../api/cart.js';
+import formatCurrency from '../../utils/money.js';
+import { cart, getCartQuantity } from '../../api/cart.js';
 
 export function renderElement() {
     const queryParams = getQueryParams();
@@ -37,7 +38,7 @@ export function renderElement() {
                 </svg>
                 <span>Profile</span>
             </button>
-            <button class="icon-button">
+            <button class="icon-button js-cart-button">
                 ${displayCartQuantity}
                 <svg class="svg-icon cart-icon">
                     <use href="images/icons/sprite.svg#cart-icon"></use>
@@ -64,6 +65,46 @@ export function renderElement() {
                     <option value="${category._id}" ${queryParams.category && queryParams.category === category._id ? "selected" : ""}>${category.name}</option>
                 `;
         });
+        return html;
+    }
+}
+
+export function renderCartDropdown(){
+    const html = `
+        <h4>Cart (${getCartQuantity()} products)</h4>
+        <div class="header-dropdown-scroll-wrapper">
+            <div class="header-cart-products">
+                ${renderCartProducts()}
+            </div>
+        </div>
+        <button class="checkout-button">Go to checkout &rarr;</button>
+    `;
+    return html;
+
+    function renderCartProducts(){
+        let html = '';
+        cart.guestCart.forEach(item => {
+            html += `
+                <div class="header-cart-product">
+                    <div class="header-image-container">
+                        <img src="${item.product.image}">
+                    </div>
+                    <div class="header-cart-product-info">
+                        <div class="header-cart-product-upper-section">
+                            <p>${item.product.name}</p>
+                            <p class="header-product-price">$${formatCurrency(item.product.priceCents)}</p>
+                        </div>
+                        <div class="header-cart-product-lower-section">
+                            <p>Quantity: ${item.quantity}</p>
+                            <button class="header-product-remove-button js-header-remove-product-button" data-product-id="${item.product.productId}">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        if(html.length === 0){
+            html += `<p class="empty-cart-text">Cart is empty</p>`
+        }
         return html;
     }
 }

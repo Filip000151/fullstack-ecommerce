@@ -19,9 +19,15 @@ function setEvents(){
         const addButons = document.querySelectorAll('.js-add-to-cart');
         addButons.forEach(btn => {
             btn.addEventListener('click', () => {
-                const {productId} = btn.dataset;
+                const {productId, productName, productPrice, productImage} = btn.dataset;
                 const quantity = Number(document.querySelector(`.js-quantity-input-${productId}`).value);
-                addToCart(productId, quantity);
+                const product = {
+                    productId,
+                    name: productName,
+                    priceCents: productPrice,
+                    image: productImage
+                };
+                addToCart(product, quantity);
                 renderHeaderComponent();
                 setHeaderEvents();
             });

@@ -138,7 +138,7 @@ export function renderProducts(){
                     <p class="product-name">${product.name}</p>
                     <div class="product-price-section">
                         <p class="product-price">$${formatCurrency(product.priceCents)}</p>
-                        <button class="primary-button js-add-to-cart" data-product-id="${product._id}">Add to cart</button>
+                        <button class="primary-button js-add-to-cart" data-product-id="${product._id}" data-product-name="${product.name}" data-product-price="${product.priceCents}" data-product-image="${product.coverImage}">Add to cart</button>
                     </div>
                     <div class="quantity-selection">
                         <span class="quantity-text">Quantity:</span>
