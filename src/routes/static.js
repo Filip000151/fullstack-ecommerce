@@ -12,5 +12,8 @@ router.route('/').get((req, res) => {
 router.route('/products').get((req, res) => {
     res.sendFile(path.join(__dirname, '..', '..', 'public', 'products.html'));
 });
+router.route('/checkout').get((req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'public', 'checkout.html'));
+});
 
 module.exports = router;

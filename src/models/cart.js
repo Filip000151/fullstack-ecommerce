@@ -14,11 +14,6 @@ const CartSchema = mongoose.Schema({
             ref: 'Product',
             required: [true, 'Product must be present inside a cart.']
         },
-        shippingId: {
-            type: mongoose.Types.ObjectId,
-            ref: 'Shipping',
-            required: [true, 'Product must have a shipping option']
-        },
         quantity: {
             type: Number,
             default: 1

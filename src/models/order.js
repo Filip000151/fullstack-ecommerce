@@ -20,6 +20,15 @@ const OrderSchema = mongoose.Schema({
         type: String,
         required: [true, 'Address is mandatory.']
     },
+    shippingSnapshot: {
+        name: String,
+        deliveryDays: String,
+        priceCents: Number
+    },
+    deliveryDate: {
+        type: Date,
+        required: true
+    },
     totalPriceCents: {
         type: Number,
         required: true,
@@ -39,20 +48,11 @@ const OrderSchema = mongoose.Schema({
                 type: String
             }]
         },
-        shippingSnapshot: {
-            name: String,
-            deliveryDays: String,
-            priceCents: Number
-        },
         quantity: {
             type: Number,
             required: true,
             min: 1,
             default: 1
-        },
-        deliveryDate: {
-            type: Date,
-            required: true
         }
     }]
 },{

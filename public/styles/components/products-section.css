@@ -3,10 +3,12 @@
     margin: 2em 0;
     align-items: start;
     border-radius: 10px;
+    width: 1536px;
 }
 .product-filter-section{
     display: flex;
     align-items: start;
+    justify-content: space-between;
 }
 .products-grid{
     display: grid;

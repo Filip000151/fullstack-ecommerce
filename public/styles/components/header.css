@@ -219,9 +219,14 @@
     font-weight: bold;
     transition: opacity 0.15s;
     margin-top: 1em;
+    width: 100%;
 }
 .checkout-button:hover{
     opacity: 0.7;
+}
+.checkout-button-wrapper{
+    display: flex;
+    text-decoration: none;
 }
 
 .empty-cart-text{

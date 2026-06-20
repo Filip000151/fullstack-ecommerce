@@ -35,7 +35,7 @@ const getOrder = async (req, res) => {
 
 const createOrder = async (req, res) => {
     const {userId, isGuest} = req.user;
-    const {guestEmail, deliveryAddress, items} = req.body;
+    const {guestEmail, deliveryAddress, items, shippingId} = req.body;
 
     let order;
 
@@ -43,10 +43,10 @@ const createOrder = async (req, res) => {
         if(!items || items.length === 0){
             throw new BadRequestError('Cart is empty.');
         }
-        order = await orderService.createGuestOrder(guestEmail, deliveryAddress, items);
+        order = await orderService.createGuestOrder(guestEmail, deliveryAddress, items, shippingId);
     }
     else
-        order = await orderService.createOrderFromCart(userId, deliveryAddress);
+        order = await orderService.createOrderFromCart(userId, deliveryAddress, shippingId);
 
     res.status(StatusCodes.CREATED).json({
         success: true,

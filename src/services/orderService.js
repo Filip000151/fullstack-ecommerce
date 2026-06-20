@@ -5,10 +5,14 @@ const Cart = require('../models/cart');
 const {NotFoundError, BadRequestError, ForbiddenError} = require('../errors');
 
 class OrderService {
-    async createOrderFromCart(userId, deliveryAddress){
+    async createOrderFromCart(userId, deliveryAddress, shippingId){
         const cart = await Cart.findOne({userId})
-            .populate('items.productId')
-            .populate('items.shippingId');
+            .populate('items.productId');
+        const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
+
+        if(!shipping){
+            throw new NotFoundError('No shipping option found.');
+        }
 
         if(!cart || cart.items.length === 0){
             throw new BadRequestError('Cart is empty');
@@ -19,34 +23,36 @@ class OrderService {
 
         for(const item of cart.items){
             const product = item.productId;
-            const shipping = item.shippingId;
-
-            const deliveryDate = new Date();
-            deliveryDate.setDate(deliveryDate.getDate() + shipping.deliveryDays);
 
             const itemTotalCents = product.priceCents * item.quantity;
-            totalPriceCents += itemTotalCents + shipping.priceCents;
+            totalPriceCents += itemTotalCents;
 
             items.push({
                 quantity: item.quantity,
-                deliveryDate,
                 productSnapshot: {
                     name: product.name,
                     priceCents: product.priceCents,
                     images: product.images,
                     coverImage: product.coverImage
-                },
-                shippingSnapshot: {
-                    name: shipping.name,
-                    deliveryDays: shipping.deliveryDays,
-                    priceCents: shipping.priceCents
                 }
             });
         }
+        totalPriceCents += shipping.priceCents;
+
+        const deliveryDate = new Date();
+        deliveryDate.setDate(deliveryDate.getDate() + shipping.deliveryDays);
+
+        const shippingSnapshot = {
+            name: shipping.name,
+            deliveryDays: shipping.deliveryDays,
+            priceCents: shipping.priceCents
+        };
 
         const order = await Order.create({
             userId,
             deliveryAddress,
+            shippingSnapshot,
+            deliveryDate,
             totalPriceCents,
             items,
             status: 'pending'
@@ -58,23 +64,25 @@ class OrderService {
     }
 
 
-    async createGuestOrder(guestEmail, deliveryAddress, cartItems){
+    async createGuestOrder(guestEmail, deliveryAddress, cartItems, shippingId){
+        const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
+
+        if(!shipping){
+            throw new NotFoundError('No shipping option found.');
+        }
+
         let totalPriceCents = 0;
         const items = [];
 
         for (const item of cartItems){
             const product = await Product.findOne({_id: item.productId, isDeleted: false});
-            const shipping = await Shipping.findOne({_id: item.shippingId, isDeleted: false});
 
-            if(!product || !shipping){
-                throw new NotFoundError('No product or shipping option found.');
+            if(!product){
+                throw new NotFoundError('No product found.');
             }
 
-            const deliveryDate = new Date();
-            deliveryDate.setDate(deliveryDate.getDate() + shipping.deliveryDays);
-
             const itemTotalCents = product.priceCents * item.quantity;
-            totalPriceCents += itemTotalCents + shipping.priceCents;
+            totalPriceCents += itemTotalCents;
 
             items.push({
                 productSnapshot: {
@@ -83,19 +91,25 @@ class OrderService {
                     coverImage: product.coverImage,
                     images: product.images
                 },
-                shippingSnapshot: {
-                    name: shipping.name,
-                    deliveryDays: shipping.deliveryDays,
-                    priceCents: shipping.priceCents
-                },
-                quantity: item.quantity,
-                deliveryDate
+                quantity: item.quantity
             });
         }
+        totalPriceCents += shipping.priceCents;
+
+        const deliveryDate = new Date();
+        deliveryDate.setDate(deliveryDate.getDate() + shipping.deliveryDays);
+
+        const shippingSnapshot = {
+            name: shipping.name,
+            deliveryDays: shipping.deliveryDays,
+            priceCents: shipping.priceCents
+        };
 
         const order = await Order.create({
             guestEmail,
             deliveryAddress,
+            shippingSnapshot,
+            deliveryDate,
             status: 'pending',
             totalPriceCents,
             items

@@ -3,11 +3,11 @@ const {NotFoundError} = require('../errors');
 
 class ShippingService{
     async getAllShippingOptions(){
-        const shippingOptions = await Shipping.find({isDeleted: false});
+        const shippingOptions = await Shipping.find({isDeleted: false}).sort('priceCents');
         
         const shippingOptionsFormatted = shippingOptions.map(option => {
             return {
-                id: option._id,
+                _id: option._id,
                 name: option.name,
                 deliveryDays: option.deliveryDays,
                 priceCents: option.priceCents

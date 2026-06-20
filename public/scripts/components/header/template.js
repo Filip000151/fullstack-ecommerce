@@ -58,6 +58,14 @@ export function renderElement() {
         document.body.appendChild(header);
     }
 
+    let overlay = document.querySelector('.overlay');
+    if(overlay){
+        document.body.removeChild(overlay);
+    }
+    overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+    document.body.appendChild(overlay);
+
     function renderCategoryOptions() {
         let html = "";
         categories.forEach((category) => {
@@ -77,7 +85,9 @@ export function renderCartDropdown(){
                 ${renderCartProducts()}
             </div>
         </div>
-        <button class="checkout-button">Go to checkout &rarr;</button>
+        <a href="/checkout" class="checkout-button-wrapper">
+            <button class="checkout-button">Go to checkout &rarr;</button>
+        </a>
     `;
     return html;
 

@@ -10,7 +10,7 @@ export function renderElement(){
                     <ul class="footer-links">
                         <li><a href="/">Home</a></li>
                         <li><a href="/products">Products</a></li>
-                        <li><a href="">Link</a></li>
+                        <li><a href="/checkout">Checkout</a></li>
                         <li><a href="">Link</a></li>
                     </ul>
                 </div>
@@ -24,7 +24,6 @@ export function renderElement(){
                     </ul>
                 </div>
             </div>
-            
         </div>
         <hr>
         <div class="footer-lower-section">

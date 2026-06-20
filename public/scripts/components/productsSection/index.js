@@ -28,7 +28,7 @@ function setEvents(){
                     image: productImage
                 };
                 addToCart(product, quantity);
-                renderHeaderComponent();
+                renderHeaderComponent(setHeaderEvents);
                 setHeaderEvents();
             });
         });

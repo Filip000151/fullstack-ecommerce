@@ -14,9 +14,9 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
     const {userId} = req.user;
-    const {productId, shippingId, quantity} = req.body;
+    const {productId, quantity} = req.body;
 
-    await cartService.addToCart(userId, productId, shippingId, quantity);
+    await cartService.addToCart(userId, productId, quantity);
 
     res.status(StatusCodes.OK).json({
         success: true,

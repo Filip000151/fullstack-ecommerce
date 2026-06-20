@@ -2,14 +2,15 @@ import createQueryString from "../../utils/query.js";
 import {renderElement, renderCartDropdown} from "./template.js";
 import { removeFromCart } from "../../api/cart.js";
 
-export function renderHeaderComponent() {
+export function renderHeaderComponent(queryEvent) {
     renderElement();
 
-    setQueryEvents();
-    setDropdownEvents();
+    if(queryEvent)
+        queryEvent();
+    else
+        setQueryEvents();
+    setDropdownEvents(queryEvent);
 }
-
-    
 
 function setQueryEvents(){
     const searchBar = document.querySelector('.js-search-bar');
@@ -41,11 +42,12 @@ function setQueryEvents(){
     }
 }
 
-function setDropdownEvents(){
+function setDropdownEvents(queryEvent){
     const overlay = document.querySelector('.overlay');
     const cartButton = document.querySelector('.js-cart-button');
 
     overlay.addEventListener('click', () => {
+        const dropdown = document.querySelector('.dropdown-container');
         const buttons = document.querySelectorAll('.icon-button');
         buttons.forEach(btn => {
             btn.classList.remove('icon-button-active');
@@ -105,12 +107,14 @@ function setDropdownEvents(){
             btn.addEventListener('click', () => {
                 const {productId} = btn.dataset;
                 removeFromCart(productId);
-                renderHeaderComponent();
+                renderHeaderComponent(queryEvent);
                 const dropdown = document.querySelector('.dropdown-container');
                 dropdown.innerHTML = renderCartDropdown();
                 setProductRemoveButtonEvents();
                 const cartButton = document.querySelector('.js-cart-button');
                 cartButton.classList.add('icon-button-active');
+                const overlay = document.querySelector('.overlay');
+                overlay.style.visibility = 'visible';
             });
         });
     }

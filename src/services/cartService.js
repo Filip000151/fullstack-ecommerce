@@ -6,8 +6,7 @@ const {NotFoundError, BadRequestError} = require('../errors');
 class CartService{
     async getCart(userId){
         let cart = await Cart.findOne({userId})
-            .populate('items.productId', 'name priceCents images coverImage')
-            .populate('items.shippingId', 'name price deliveryDays');
+            .populate('items.productId', 'name priceCents images coverImage');
 
         if(!cart){
             cart = await Cart.create({userId, items: []});
@@ -15,13 +14,9 @@ class CartService{
 
         return cart;
     }
-    async addToCart(userId, productId, shippingId, quantity = 1){
+    async addToCart(userId, productId, quantity = 1){
         if(!productId){
             throw new BadRequestError('Product id is required');
-        }
-    
-        if(!shippingId){
-            throw new BadRequestError('Shipping id is required');
         }
 
         const cart = await Cart.findOne({userId, 'items.productId': productId});
@@ -30,8 +25,7 @@ class CartService{
             return await Cart.findOneAndUpdate(
                 {userId, 'items.productId': productId},
                 {
-                    $inc: {'items.$.quantity': quantity},
-                    $set: {'items.$.shippingId': shippingId}
+                    $inc: {'items.$.quantity': quantity}
                 },
                 {returnDocuemnt: 'after', runValidators: true}
             );
@@ -40,7 +34,7 @@ class CartService{
             return await Cart.findOneAndUpdate(
                 {userId},
                 {
-                    $push: {items: {productId, shippingId, quantity}},
+                    $push: {items: {productId, quantity}},
                     $inc: {totalItems: 1}
                 },
                 {upsert: true, new: true}

@@ -21,8 +21,19 @@ export function addToCart(product, quantity){
     saveToStorage();
 }
 
+export function updateQuantity(productId, quantity){
+    const item = cart.guestCart.find(item => item.product.productId === productId);
+    item.quantity = quantity;
+    saveToStorage();
+}
+
 export function removeFromCart(productId){
     cart.guestCart = cart.guestCart.filter(item => item.product.productId !== productId);
+    saveToStorage();
+}
+
+export function clearCart(){
+    cart.guestCart = [];
     saveToStorage();
 }
 
