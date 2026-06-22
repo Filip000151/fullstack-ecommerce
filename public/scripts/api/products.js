@@ -2,7 +2,8 @@ import apiClient from './apiClient.js';
 
 export const products = {
     querriedProducts: [],
-    pagination: {}
+    pagination: {},
+    product: window.__PRODUCT_DATA__ ? window.__PRODUCT_DATA__ : null
 };
 
 export async function queryProducts(query){

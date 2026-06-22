@@ -103,7 +103,7 @@ function setOrderEvents(){
                     shippingSection.style.visibility = 'visible';
                     const shippingButton = document.querySelector('.js-show-shipping-button');
                     shippingButton.style.visibility = 'hidden';
-                    shippingSection.scrollIntoView();
+                    shippingSection.scrollIntoView({behavior: 'smooth'});
                 }
                 return;
             }

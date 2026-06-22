@@ -9,11 +9,14 @@ body{
 }
 
 /* div{
-    border: solid black 1px;
+    border: solid red 1px;
 } */
 
 p{
     margin: 0;
+}
+a{
+    text-decoration: none;
 }
 
 button,
@@ -34,13 +37,6 @@ button{
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     padding-top: 100px;
-}
-.overlay{
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: 102;
-    visibility: hidden;
 }
 
 .primary-button{

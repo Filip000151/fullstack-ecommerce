@@ -10,11 +10,17 @@ export function renderProductsSectionComponent(){
 }
 
 function setEvents(){
-    setHeaderEvents();
+    renderHeaderComponent(setHeaderEvents);
     setCartButtonsEvents();
     setFilterAndSortEvents();
     setPaginationEvents();
 
+    function setHeaderEvents(){
+        const searchBar = document.querySelector('.js-search-bar');
+        const categorySelection = document.querySelector('.js-category-selection');
+        searchBar.addEventListener('keyup', getProducts);
+        categorySelection.addEventListener('change', getProducts);
+    }
     function setCartButtonsEvents(){
         const addButons = document.querySelectorAll('.js-add-to-cart');
         addButons.forEach(btn => {
@@ -32,12 +38,6 @@ function setEvents(){
                 setHeaderEvents();
             });
         });
-    }
-    function setHeaderEvents(){
-        const searchBar = document.querySelector('.js-search-bar');
-        const categorySelection = document.querySelector('.js-category-selection');
-        searchBar.addEventListener('keyup', getProducts);
-        categorySelection.addEventListener('change', getProducts);
     }
     function setFilterAndSortEvents(){
         const sortSelection = document.querySelector('.js-sort-input');

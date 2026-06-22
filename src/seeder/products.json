@@ -6,7 +6,8 @@
         "images": [
             "images/seeded/images-lenovo_laptop_1.avif",
             "images/seeded/images-lenovo_laptop_2.webp"
-        ]
+        ],
+        "isFeatured": true
     },
     {
         "name": "Dell XPS 15 Laptop",
@@ -23,8 +24,9 @@
         "coverImage": "images/seeded/coverImage-apple_macbook.webp",
         "images": [
             "images/seeded/images-apple_macbook_1.jpg", 
-            "images/seeded/images-apple-macbook_2.jpeg"
-        ]
+            "images/seeded/images-apple_macbook_2.jpeg"
+        ],
+        "isFeatured": true
     },
     {
         "name": "Samsung 4K Monitor 32 inch",
@@ -33,7 +35,8 @@
         "images": [
             "images/seeded/images-samsung_monitor_1.webp", 
             "images/seeded/images-samsung_monitor_2.jpg"
-        ]
+        ],
+        "isFeatured": true
     },
     {
         "name": "Sony WH-1000XM5 Headphones",
@@ -69,7 +72,8 @@
         "images": [
             "images/seeded/images-keychron_keyboard_1.jpg", 
             "images/seeded/images-keychron_keyboard_2.jpg"
-        ]
+        ],
+        "isFeatured": true
     },
     {
         "name": "Logitech Mouse",

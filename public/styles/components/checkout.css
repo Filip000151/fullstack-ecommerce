@@ -71,6 +71,11 @@
     font-size: 1rem;
     flex: 1;
     font-weight: bold;
+    color: inherit;
+    transition: opacity 0.1s;
+}
+.cart-product-name:hover{
+    opacity: 0.7;
 }
 .cart-product-price{
     font-weight: bold;

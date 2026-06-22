@@ -1,0 +1,200 @@
+.product{
+    display: flex;
+    justify-content: space-between;
+    margin: 2em 0;
+    background-color: #C6C7C4;
+    padding: 2em 0;
+    border-radius: 20px;
+    color: #353B3C;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+.left-section{
+    user-select: none;
+}
+.product-image-display{
+    width: 840px;
+    height: 400px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    margin: 0 3em;
+    border-radius: 20px;
+}
+.product-image-display::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
+    border-radius: 20px;
+}
+.product-image-display img{
+    max-width: 300px;
+    max-height: 100%;
+    border-radius: 20px;
+}
+.product-images{
+    padding: 1em 3em;
+    position: relative;
+}
+.product-image-scroller{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    width: 840px;
+}
+.product-image{
+    width: 120px;
+    height: 120px;
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    border-radius: 10px;
+    flex: 0 0 auto;
+}
+.product-image img{
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+    opacity: 0.6;
+    transition: opacity 0.1s;
+}
+.product-image::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05));
+    border-radius: 10px;
+}
+.product-image-selected{
+    border: 5px solid #846A6A;
+    border-radius: 10px;
+    position: absolute;
+    inset: 0;
+    transition: transform 0.15s ease-in-out;
+    z-index: 100;
+    pointer-events: none;
+}
+.prev-image-button,
+.next-image-button{
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.5em 0.9em;
+    border-radius: 50%;
+    position: absolute;
+    border: #846A6A solid 1px;
+    color: #846A6A;
+    transition: opacity 0.1s, transform 0.1s;
+}
+.prev-image-button:hover,
+.next-image-button:hover{
+    opacity: 0.7;
+}
+.prev-image-button:active,
+.next-image-button:active{
+    transform: scale(0.90);
+}
+.prev-image-button{
+    left: 5px;
+    bottom: 70px;
+}
+.next-image-button{
+    right: 5px;
+    bottom: 70px;
+}
+
+.right-section{
+    padding: 0 1em;
+    padding-right: 3em;
+}
+.product-name{
+    font-size: 1.3rem;
+    margin: 0;
+    margin-bottom: 1em;
+    width: 30ch;
+}
+.product-price{
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+.product-category{
+    font-size: 1.2rem;
+}
+.product-category a{
+    color: #846A6A;
+    transition: opacity 0.1s;
+}
+.product-category a:hover{
+    opacity: 0.7;
+}
+.product-add-to-cart-section{
+    display: flex;
+    gap: 1em;
+    padding: 1em 0;
+    align-items: center;
+}
+.product-button{
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    background-color: #846A6A;
+    color: #353B3C;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.product-button:hover{
+    opacity: 0.7;
+}
+.product-button:active{
+    transform: scale(0.9);
+}
+.primary-button{
+    flex: 1;
+}
+.product-quantity-number{
+    font-size: 1.2rem;
+}
+
+
+.image-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 106;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+.image-overlay img{
+    max-height: 95vh;
+    max-width: 95vw;
+    z-index: 107;
+}
+.close-image-overlay-button{
+    position: absolute;
+    font-size: 1.5rem;
+    padding: 0.2em 0.6em;
+    border: none;
+    border-radius: 50%;
+    background-color: #C6C7C4;
+    z-index: 107;
+    top: 1em;
+    right: 1em;
+    transition: opacity 0.1s, transform 0.1s;
+}
+.close-image-overlay-button:hover{
+    opacity: 0.7;
+}
+.close-image-overlay-button:active{
+    transform: scale(0.9);
+}

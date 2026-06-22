@@ -31,8 +31,9 @@ export function renderElement(groupId, title, products){
                 <div class="product-card js-group-product-${groupId}">
                     <div class="image-container">
                         <img src="${product.coverImage}">
+                        </a>
                     </div>
-                    <p class="product-name">${product.name}</p>
+                    <a href="/products/${product._id}" class="product-name">${product.name}</a>
                     <div class="product-price-section">
                         <p class="product-price">$${formatCurrency(product.priceCents)}</p>
                         <button class="primary-button js-add-to-cart-${groupId}" data-product-id="${product._id}" data-product-name="${product.name}" data-product-price="${product.priceCents}" data-product-image="${product.coverImage}">Add to cart</button>

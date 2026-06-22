@@ -66,7 +66,7 @@ export function renderProducts(){
                         <img src="${item.product.image}">
                     </div>
                     <div class="cart-product-info">
-                        <div class="cart-product-name">${item.product.name}</div>
+                        <a href="/products/${item.product.productId}" class="cart-product-name">${item.product.name}</a>
                         <div class="cart-product-price">$${formatCurrency(item.product.priceCents)}</div>
                         <div class="cart-product-buttons">
                             <div class="cart-product-quantity">
