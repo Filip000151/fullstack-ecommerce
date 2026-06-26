@@ -1,6 +1,11 @@
 import apiClient from './apiClient.js';
 import {cart, clearCart} from './cart.js';
 
+export const orders = {
+    userOrders: [],
+    order: null
+};
+
 export async function createGuestOrder(guestEmail, deliveryAddress, shippingId){
     const items = cart.guestCart.map(item => {
         return {
@@ -9,9 +14,7 @@ export async function createGuestOrder(guestEmail, deliveryAddress, shippingId){
         };
     });
 
-    console.log(guestEmail, deliveryAddress, shippingId, items);
-
-    const response = await apiClient.post('/api/orders', {
+    const data = await apiClient.post('/api/orders', {
         guestEmail,
         deliveryAddress,
         shippingId,
@@ -19,4 +22,34 @@ export async function createGuestOrder(guestEmail, deliveryAddress, shippingId){
     });
 
     clearCart();
+
+    return data;
 }
+
+export async function cancelOrder(id){
+    const data = await apiClient.delete(`/api/orders/${id}`);
+
+    return data;
+}
+
+export async function loadUserOrders(){
+    const data = await apiClient.get('/api/orders');
+
+    if(data.success){
+        orders.userOrders = data.orders;
+    }
+
+    return data;
+}
+
+export async function loadOrder(id){
+    const data = await apiClient.get(`/api/orders/${id}`);
+
+    if(data.success){
+        orders.order = data.order;
+    }
+
+    return data;
+}
+
+export default orders;

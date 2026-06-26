@@ -1,33 +1,55 @@
 class ApiClient{
     async request(url, options, headerOptions){
-        const makeRequest = () => fetch(url, {
-            ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...headerOptions
+        const requestInfo = {
+            url,
+            options: {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...headerOptions
+                }
             }
-        });
+        };
+
+        const makeRequest = () => fetch(url, requestInfo.options);
 
         const response = await makeRequest();
+        if(!response.ok){
+            const jsonData = await response.json();
+            await this.handleErrors(jsonData, requestInfo);
+        }
+        else{
+            const jsonData = await response.json();
+            return jsonData;
+        }
+    }
 
-        return response;
+    async handleErrors(jsonData, originalRequestInfo){
+        if(jsonData.code === 'GUEST_ID_MISSING'){
+            const guestId = localStorage.getItem('guestId');
+            const data = await this.post('/api/auth/guest', {guestId});
+            if(!guestId || guestId !== data.guestId){
+                localStorage.setItem('guestId', data.guestId);
+            }
+            this.request(originalRequestInfo.url, originalRequestInfo.options);
+        }
     }
 
     async get(url){
         return this.request(url, {method: 'GET'});
     }
 
-    async post(url, data, headerOptions){
+    async post(url, body, headerOptions){
         return this.request(url, {
             method: 'POST',
-            body: JSON.stringify(data)
+            body: JSON.stringify(body)
         });
     }
 
-    async patch(url, data, headerOptions){
+    async patch(url, body, headerOptions){
         return this.request(url, {
             method: 'PATCH',
-            body: JSON.stringify(data)
+            body: JSON.stringify(body)
         });
     }
 

@@ -96,6 +96,7 @@
     color: #353B3C;
     transition: box-shadow 0.15s, color 0.15s, transform 0.1s;
     position: relative;
+    user-select: none;
 }
 .svg-icon{
     width: 32px;

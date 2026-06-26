@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Order = require('../models/order');
 const RefreshToken = require('../models/refreshToken');
 const {BadRequestError, UnauthorizedError} = require('../errors');
 
@@ -91,6 +92,15 @@ class AuthService{
             accessToken: newAccessToken,
             refreshToken: newRefreshToken
         };
+    }
+
+    async validateGuestId(guestId){
+        if(!guestId || !guestId.startsWith('guest_')){
+            return false;
+        }
+
+        const order = await Order.findOne({guestId});
+        return !!order;
     }
 }
 

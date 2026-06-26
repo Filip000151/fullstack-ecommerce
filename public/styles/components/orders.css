@@ -1,0 +1,125 @@
+.your-orders-section{
+    color: #353B3C;
+    background: linear-gradient(to bottom, #A2999E40, #846A6A40);
+    border-radius: 30px;
+    padding: 2em;
+    margin: 2em 0;
+    width: 1000px;
+}
+.your-orders-title{
+    font-size: 1.4rem;
+    padding: 1em;
+    margin: 0;
+    padding-bottom: 2em;
+    text-align: center;
+}
+
+.orders-section{
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    align-items: center;
+}
+.single-order{
+    border: solid 1px #846A6A;
+    border-radius: 10px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15);
+    width: 700px;
+}
+.single-order-header{
+    display: flex;
+    justify-content: space-between;
+    background-color: #846A6A;
+    padding: 1em;
+    border-radius: 10px 10px 0 0;
+}
+.single-order-header-left{
+    display: flex;
+    gap: 45px;
+}
+.header-label{
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+.header-group{
+    padding: 0.3em;
+}
+
+
+.order-products{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1em 3em;
+    padding: 1em;
+    align-items: start;
+    background-color: #C6C7C4;
+}
+.single-order-product{
+    display: flex;
+    gap: 1em;
+}
+.single-order-product-image-container{
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 10px;
+    position: relative;
+}
+.single-order-product-image-container::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.05));
+    border-radius: 10px;
+}
+.single-order-product-image-container img{
+    width: 100%;
+    border-radius: 10px;
+}
+.single-order-product-info{
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 1em;
+}
+.single-order-product-info p{
+    font-size: 1.1rem;
+}
+.single-order-product-name{
+    font-size: 1.2rem;
+}
+.single-order-product-price{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 1em;
+}
+.single-order-product-price-amount{
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.track-order-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    background-color: #A2999E;
+    border-radius: 0 0 10px 10px;
+}
+.track-order-button{
+    padding: 0.5em 2em;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    color: #353B3C;
+    background-color: #846A6A;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.track-order-button:hover{
+    opacity: 0.7;
+}
+.track-order-button:active{
+    transform: scale(0.95);
+}

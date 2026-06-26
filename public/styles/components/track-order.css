@@ -1,0 +1,181 @@
+.track-order-section{
+    width: 1200px;
+    padding: 1em;
+    background-color: #C6C7C4;
+    color: #353B3C;
+    border-radius: 30px;
+    margin: 2em 0;
+    font-size: 1.2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+.track-order-section h4{
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+.status-wrapper{
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+}
+.current-status{
+    display: flex;
+    justify-content: space-between;
+    padding: 1em 0;
+    font-size: 1.2rem;
+    user-select: none;
+}
+.status-bar{
+    width: 800px;
+    height: 25px;
+    border-radius: 30px;
+    overflow: hidden;
+    border: solid 1px #353b3c49;
+}
+.status-bar-progress{
+    height: 100%;
+    background-color: rgba(55, 143, 55, 0.76);
+}
+.status-active{
+    color: rgba(26, 107, 26, 0.76);
+    font-weight: bold;
+}
+
+.track-order-details{
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    padding-top: 1em;
+}
+.track-order-products,
+.track-order-info{
+    padding: 1em;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    border-radius: 20px;
+    background-color: #A2999E;
+}
+.track-order-product{
+    display: flex;
+    padding: 0.5em;
+    background-color: #846A6A;
+    border-radius: 10px;
+}
+.track-order-product-image{
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 10px;
+    position: relative;
+}
+.track-order-product-image::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+    border-radius: 10px;
+}
+.track-order-product-image img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+.track-order-product-details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    padding: 0 1em;
+}
+.track-order-product-price{
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+.track-order-product-name{
+    font-size: 1.2rem;
+}
+
+.track-order-line{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+.track-order-total{
+    font-size: 2rem;
+    font-weight: bold;
+}
+.track-order-label{
+    font-size: 1.4rem;
+}
+.track-order-label-info{
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.cancel-order-button-wrapper{
+    display: flex;
+    justify-content: end;
+}
+.cancel-order-button{
+    padding: 0.5em 1em;
+    font-size: 1.2rem;
+    border: none;
+    background-color: #912d2de1;
+    color: #EEF0F2;
+    border-radius: 10px;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.cancel-order-button:hover{
+    opacity: 0.7;
+}
+.cancel-order-button:active{
+    transform: scale(0.95);
+}
+hr{
+    border-color: #353B3C;
+    border-style: groove;
+}
+
+.cancel-order-modal-overlay{
+    position: absolute;
+    inset: 0;
+    z-index: 107;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cancel-order-modal{
+    width: 400px;
+    background-color: #C6C7C4;
+    z-index: 108;
+    border-radius: 10px;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    position: relative;
+}
+.cancel-order-modal h4{
+    text-align: start;
+    margin: 0;
+}
+.cancel-order-modal-buttons{
+    display: flex;
+    justify-content: space-around;
+}
+.cancel-order-modal-button{
+    border: none;
+    font-size: 1.2rem;
+    background-color: #EEF0F2;
+    border-radius: 10px;
+    width: 70px;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.cancel-order-modal-button:hover{
+    opacity: 0.7;
+}
+.cancel-order-modal-button:active{
+    transform: scale(0.9);
+}

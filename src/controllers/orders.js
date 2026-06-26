@@ -3,12 +3,15 @@ const orderService = require('../services/orderService');
 const {StatusCodes} = require('http-status-codes');
 
 const getOrders = async (req, res) => {
-    const {userId, role} = req.user;
+    const {userId, role, isGuest, guestId} = req.user;
 
     let orders;
 
     if(role === 'admin'){
         orders = await orderService.getAllOrders();
+    }
+    else if(isGuest){
+        orders = await orderService.getGuestOrders(guestId);
     }
     else{
         orders = await orderService.getUserOrders(userId);
@@ -23,9 +26,16 @@ const getOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
     const {id} = req.params;
-    const {userId} = req.user;
+    const {userId, isGuest, guestId} = req.user;
 
-    const order = await orderService.getOrder(id, userId);
+    let order;
+
+    if(isGuest){
+        order = await orderService.getGuestOrder(id, guestId);
+    }
+    else{
+        order = await orderService.getOrder(id, userId);
+    }
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -34,7 +44,7 @@ const getOrder = async (req, res) => {
 };
 
 const createOrder = async (req, res) => {
-    const {userId, isGuest} = req.user;
+    const {userId, isGuest, guestId} = req.user;
     const {guestEmail, deliveryAddress, items, shippingId} = req.body;
 
     let order;
@@ -43,7 +53,7 @@ const createOrder = async (req, res) => {
         if(!items || items.length === 0){
             throw new BadRequestError('Cart is empty.');
         }
-        order = await orderService.createGuestOrder(guestEmail, deliveryAddress, items, shippingId);
+        order = await orderService.createGuestOrder(guestId, guestEmail, deliveryAddress, items, shippingId);
     }
     else
         order = await orderService.createOrderFromCart(userId, deliveryAddress, shippingId);
@@ -54,23 +64,18 @@ const createOrder = async (req, res) => {
     });
 };
 
-const updateOrderStatus = async (req, res) => {
-    const {id} = req.params;
-    const {status} = req.body;
-
-    const order = await orderService.updateOrderStatus(id, status);
-
-    return res.status(StatusCodes.OK).json({
-        success: true,
-        msg: 'Order status updated'
-    });
-};
-
 const cancelOrder = async (req, res) => {
     const {id} = req.params;
-    const {userId, role} = req.user;
+    const {userId, role, guestId, isGuest} = req.user;
 
-    const order = await orderService.cancelOrder(id, userId, role);
+    let order;
+
+    if(isGuest){
+        order = await orderService.cancelGuestOrder(id, guestId, role);
+    }
+    else{
+        order = await orderService.cancelOrder(id, userId, role);
+    }
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -82,6 +87,5 @@ module.exports = {
     getOrders,
     getOrder,
     createOrder,
-    updateOrderStatus,
     cancelOrder
 };

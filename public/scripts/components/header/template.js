@@ -29,7 +29,7 @@ export function renderElement() {
                 </button>
             </div>
             <div class="header-icons">
-                <button class="icon-button">
+                <button class="icon-button js-orders-button">
                     <svg class="svg-icon orders-icon">
                         <use href="images/icons/sprite.svg#orders-icon"></use>
                     </svg>

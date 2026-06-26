@@ -17,6 +17,7 @@ export function renderHeaderComponent(customQueryEvent) {
         setDefaultQueryEvents();
 
     setCartEvents(customQueryEvent);
+    setOrdersEvent();
 }
 
 function setDefaultQueryEvents(){
@@ -104,6 +105,20 @@ function setCartEvents(customQueryEvent){
                 const cartButton = document.querySelector('.js-cart-button');
                 cartButton.classList.add('icon-button-active');
             });
+        });
+    }
+}
+
+function setOrdersEvent(){
+    const ordersButton = document.querySelector('.js-orders-button');
+    const currentPath = window.location.pathname;
+    if(currentPath === '/orders'){
+        ordersButton.style.opacity = '0.5';
+        ordersButton.style.pointerEvents = 'none';
+    }
+    else{
+        ordersButton.addEventListener('click', () => {
+            window.location.href = '/orders';
         });
     }
 }

@@ -3,8 +3,7 @@ import apiClient from './apiClient.js';
 export const categories = [];
 
 export async function loadCategories(){
-    const response = await apiClient.get('/api/category');
-    const data = await response.json();
+    const data = await apiClient.get('/api/category');
 
     if(data.success){
         categories.push(...data.categories);
@@ -14,9 +13,7 @@ export async function loadCategories(){
 }
 
 export async function getCategoryInfo(categoryId){
-    const response = await apiClient.get(`/api/category/${categoryId}`);
-    const data = await response.json();
-
+    const data = await apiClient.get(`/api/category/${categoryId}`);
     return data;
 }
 

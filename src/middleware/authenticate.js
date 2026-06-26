@@ -4,11 +4,13 @@ const User = require('../models/user');
 
 const authenticate = (req, res, next) => {
     const accessToken = req.cookies?.accessToken;
+    const guestId = req.cookies?.guestId;
 
     if(!accessToken){
         req.user = {
             role: 'guest',
-            isGuest: true
+            isGuest: true,
+            guestId
         };
         return next();
     }
@@ -16,9 +18,10 @@ const authenticate = (req, res, next) => {
     const payload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
     req.user = {
         userId: payload.userId,
-        role: payload.role,
         name: payload.name,
-        isGuest: false
+        role: payload.role,
+        isGuest: false,
+        guestId: null
     };
     next();
 };

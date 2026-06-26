@@ -1,5 +1,6 @@
 const {StatusCodes} = require('http-status-codes');
 const authService = require('../services/authService');
+const crypto = require('crypto');
 
 const register = async (req, res) => {
     const {name, email, password, confirmPassword, role} = req.body;
@@ -90,10 +91,32 @@ const refreshAccessToken = async (req, res) => {
     });
 };
 
+const requestGuestId = async (req, res) => {
+    let {guestId} = req.body;
+    
+    const isValid = await authService.validateGuestId(guestId);
+    
+    if(!isValid){
+        guestId = 'guest_' + crypto.randomUUID();
+    }
+
+    res.cookie('guestId', guestId, {
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        guestId
+    });
+};
+
 module.exports = {
     register,
     login,
     logout,
     getLoggedUser,
-    refreshAccessToken
+    refreshAccessToken,
+    requestGuestId
 };

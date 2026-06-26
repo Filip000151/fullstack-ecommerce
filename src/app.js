@@ -19,6 +19,8 @@ const errorHandlerMiddleware = require('./middleware/errorHandler');
 const notFoundMiddleware = require('./middleware/notFound');
 const authMiddleware = require('./middleware/authenticate');
 
+const scheduler = require('./services/scheduler');
+
 app.use('/', staticRouter);
 
 app.use(express.json());
@@ -42,6 +44,7 @@ const start = async () => {
         await connectDB(process.env.MONGO_URI);
         app.listen(port, () => {
             console.log(`Listening on port ${port}...`);
+            scheduler.start();
         });
     } catch (error) {
         console.log(error);

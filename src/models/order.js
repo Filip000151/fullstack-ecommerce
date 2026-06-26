@@ -6,6 +6,13 @@ const OrderSchema = mongoose.Schema({
         ref: 'User',
         default: null
     },
+    guestId: {
+        type: String,
+        required: function(){
+            return !this.userId;
+        },
+        default: null
+    },
     guestEmail: {
         type: String,
         required: function(){

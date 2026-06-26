@@ -5,8 +5,7 @@ export const shipping = {
 };
 
 export async function loadShippingOptions(){
-    const response = await apiClient.get('/api/shipping');
-    const data = await response.json();
+    const data = await apiClient.get('/api/shipping');
     if(data.success){
         shipping.shippingOptions = data.shippingOptions;
     }

@@ -11,7 +11,7 @@ export function renderElement(){
                         <li><a href="/">Home</a></li>
                         <li><a href="/products">Products</a></li>
                         <li><a href="/checkout">Checkout</a></li>
-                        <li><a href="">Link</a></li>
+                        <li><a href="/orders">Orders</a></li>
                     </ul>
                 </div>
                 <div class="footer-link-group">

@@ -2,7 +2,7 @@ const Order = require('../models/order');
 const Shipping = require('../models/shipping');
 const Product = require('../models/product');
 const Cart = require('../models/cart');
-const {NotFoundError, BadRequestError, ForbiddenError} = require('../errors');
+const {NotFoundError, BadRequestError, ForbiddenError, UnauthorizedError} = require('../errors');
 
 class OrderService {
     async createOrderFromCart(userId, deliveryAddress, shippingId){
@@ -64,7 +64,11 @@ class OrderService {
     }
 
 
-    async createGuestOrder(guestEmail, deliveryAddress, cartItems, shippingId){
+    async createGuestOrder(guestId, guestEmail, deliveryAddress, cartItems, shippingId){
+        if(!guestId){
+            throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+        }
+        
         const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
 
         if(!shipping){
@@ -106,6 +110,7 @@ class OrderService {
         };
 
         const order = await Order.create({
+            guestId,
             guestEmail,
             deliveryAddress,
             shippingSnapshot,
@@ -118,14 +123,59 @@ class OrderService {
         return order;
     }
 
-    async getOrder(orderId, userId){
+    async getUserOrder(orderId, userId){
         const order = await Order.findOne({_id: orderId, userId});
 
         if(!order){
             throw new NotFoundError('No order found.');
         }
 
-        return order;
+        const progress = this.calculateProgress(order);
+
+        return {
+            _id: order._id,
+            deliveryDate: order.deliveryDate,
+            totalPriceCents: order.totalPriceCents,
+            status: order.status,
+            items: order.items,
+            shippingSnapshot: order.shippingSnapshot,
+            createdAt: order.createdAt,
+            progress
+        };
+    }
+
+    async getGuestOrder(orderId, guestId){
+        if(!guestId){
+            throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+        }
+        const order = await Order.findOne({_id: orderId, guestId});
+
+        if(!order){
+            throw new NotFoundError('No order found.');
+        }
+
+        const progress = this.calculateProgress(order);
+
+        return {
+            _id: order._id,
+            deliveryDate: order.deliveryDate,
+            totalPriceCents: order.totalPriceCents,
+            status: order.status,
+            items: order.items,
+            shippingSnapshot: order.shippingSnapshot,
+            createdAt: order.createdAt,
+            progress
+        };
+    }
+
+    async getGuestOrders(guestId){
+        if(!guestId){
+            throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+        }
+        const orders = await Order.find({guestId})
+            .sort({createdAt: -1});
+
+        return orders;
     }
 
     async getUserOrders(userId){
@@ -142,20 +192,6 @@ class OrderService {
             .sort({createdAt: -1});
         
         return orders;
-    }
-
-    async updateOrderStatus(orderId, status){
-        const order = await Order.findByIdAndUpdate(
-            orderId,
-            {status},
-            {returnDocument: 'after', runValidators: true}
-        );
-
-        if(!order){
-            throw new NotFoundError('Order not found.');
-        }
-
-        return order;
     }
 
     async cancelOrder(orderId, userId, role){
@@ -181,6 +217,33 @@ class OrderService {
         return order;
     }
 
+    async cancelGuestOrder(orderId, guestId, role){
+        const order = await Order.findOne({
+            _id: orderId
+        });
+
+        if(!order){
+            throw new NotFoundError('Order not found.');
+        }
+
+        if(!guestId){
+            throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+        }
+
+        if(order.guestId !== guestId && role !== 'admin'){
+            throw new ForbiddenError('You are not authorized to perform this action.');
+        }
+
+        if(order.status !== 'pending'){
+            throw new BadRequestError('Only pending orders can be cancelled');
+        }
+
+        order.status = 'cancelled';
+        await order.save();
+
+        return order;
+    }
+
     async linkGuestOrdersToUser(email, userId){
         const result = await Order.updateMany(
             {guestEmail: email, userId: null},
@@ -188,6 +251,47 @@ class OrderService {
         );
 
         return result;
+    }
+
+    async updateAllOrderStatuses(){
+        const orders = await Order.find({
+            status: {$nin: ['cancelled', 'delivered']}
+        });
+
+        let updatedCount = 0;
+        
+        for(const order of orders){
+            const progress = this.calculateProgress(order);
+            let newStatus;
+
+            if(progress < 33) newStatus = 'pending';
+            else if(progress < 67) newStatus = 'processing';
+            else if(progress < 100) newStatus = 'shipped';
+            else newStatus = 'delivered';
+
+            if(order.status !== newStatus){
+                order.status = newStatus;
+                await order.save();
+                updatedCount++;
+            }
+        }
+
+        return {
+            updatedCount,
+            total: orders.length
+        };
+    }
+
+    calculateProgress(order){
+        const now = new Date();
+        const orderDate = new Date(order.createdAt);
+        const deliveryDate = new Date(order.deliveryDate);
+
+        const totalDuration = deliveryDate - orderDate;
+        const elapsedTime = now - orderDate;
+        const progress = Math.min(100, Math.round((elapsedTime / totalDuration) * 100));
+        
+        return progress;
     }
 }
 
