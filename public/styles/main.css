@@ -56,6 +56,52 @@ button{
     transform: scale(0.9);
 }
 
+.toast-container{
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    z-index: 107;
+}
+.toast{
+    padding: 1em;
+    box-sizing: border-box;
+    border-radius: 0.5em;
+    width: 300px;
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    overflow: hidden;
+}
+.toast::after{
+    content: "\00D7";
+    position: absolute;
+    top: 2px;
+    right: 5px;
+}
+.toast-duration{
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    height: 5px;
+    background-color: white;
+    margin: 0 2px;
+    border-radius: 0.5em;
+}
+.toast:hover{
+    opacity: 0.8;
+}
+.toast-success{
+    background-color: rgba(55, 143, 55);
+    color: #EEF0F2;
+}
+.toast-error{
+    background-color: #912d2d;
+    color: #EEF0F2;
+}
+
 @media (max-width: 1536px){
     .container{
         max-width: 1280px;

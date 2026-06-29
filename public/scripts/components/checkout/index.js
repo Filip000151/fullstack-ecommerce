@@ -1,5 +1,6 @@
 import { removeFromCart, addToCart, updateQuantity, getCartQuantity } from "../../api/cart.js";
 import { createGuestOrder } from "../../api/orders.js";
+import renderToast from '../../utils/toast.js';
 import {createElement, renderProducts, renderOrderSummaryInfo} from "./template.js";
 import validateCheckoutInputs from "./validate.js";
 
@@ -55,6 +56,7 @@ function setCartEvents(){
         btn.addEventListener('click', () => {
             const {productId} = btn.dataset;
             removeFromCart(productId);
+            renderToast('Product removed from cart!');
             cartQuantity.innerText = `Your cart (${getCartQuantity()})`;
             const cartProducts = document.querySelector('.js-cart-products');
             cartProducts.innerHTML = renderProducts();
@@ -96,7 +98,7 @@ function setShippingEvents(){
 function setOrderEvents(){
     const makeOrderButton = document.querySelector('.js-make-order-button');
     if(makeOrderButton){
-        makeOrderButton.addEventListener('click', () => {
+        makeOrderButton.addEventListener('click', async () => {
             if(!validateCheckoutInputs()){
                 const shippingSection = document.querySelector('.js-checkout-shipping-section');
                 if(shippingSection.style.visibility === 'hidden'){
@@ -111,7 +113,8 @@ function setOrderEvents(){
             const guestEmail = document.querySelector('.js-email-input').value.trim();
             const shippingOption = document.querySelector('.radio-checked');
             const {shippingId} = shippingOption.dataset;
-            createGuestOrder(guestEmail, deliveryAddress, shippingId);
+            await createGuestOrder(guestEmail, deliveryAddress, shippingId);
+            renderToast('Order completed successfully!', {toastDuration: 8000, redirect: '/orders'});
         });
     }
 }

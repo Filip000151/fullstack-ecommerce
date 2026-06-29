@@ -1,4 +1,5 @@
 import createQueryString from "../../utils/query.js";
+import renderToast from "../../utils/toast.js";
 import {renderElement, renderCartDropdown, renderSearchDropdown} from "./template.js";
 import { removeFromCart } from "../../api/cart.js";
 import { queryProducts } from "../../api/products.js";
@@ -99,6 +100,7 @@ function setCartEvents(customQueryEvent){
             btn.addEventListener('click', () => {
                 const {productId} = btn.dataset;
                 removeFromCart(productId);
+                renderToast('Product removed from cart');
                 renderHeaderComponent(customQueryEvent);
                 dropdownHandler().renderDropdown('header-icon-dropdown', renderCartDropdown());
                 setProductRemoveButtonEvents();

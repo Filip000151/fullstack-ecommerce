@@ -28,6 +28,7 @@ export async function createGuestOrder(guestEmail, deliveryAddress, shippingId){
 
 export async function cancelOrder(id){
     const data = await apiClient.delete(`/api/orders/${id}`);
+    await loadOrder(id);
 
     return data;
 }

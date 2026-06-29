@@ -2,6 +2,7 @@ import products from '../../api/products.js';
 import {addToCart} from '../../api/cart.js';
 import createElement from "./template.js";
 import renderHeaderComponent from '../header/index.js';
+import renderToast from '../../utils/toast.js';
 
 export function renderProductComponent(){
     createElement();
@@ -121,6 +122,7 @@ function setCartEvents(){
             image: products.product.coverImage
         };
         addToCart(product, quantity);
+        renderToast('Product added to cart!');
         renderHeaderComponent();
     });
 }

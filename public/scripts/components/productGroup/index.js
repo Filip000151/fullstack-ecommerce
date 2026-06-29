@@ -1,4 +1,5 @@
 import {addToCart} from '../../api/cart.js';
+import renderToast from '../../utils/toast.js';
 
 import renderElement from './template.js';
 import renderHeaderComponent from '../header/index.js';
@@ -54,6 +55,7 @@ function setEvents(groupId){
                 image: productImage
             };
             addToCart(product, quantity);
+            renderToast('Product added to cart!');
             renderHeaderComponent();
         });
     });

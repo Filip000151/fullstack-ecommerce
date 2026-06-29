@@ -5,7 +5,7 @@ export function createElement(){
     const html = `
         <div class="left-section">
             <div class="image-overlay js-image-overlay">
-                <button class="close-image-overlay-button js-close-image-button">x</button>
+                <button class="close-image-overlay-button js-close-image-button">&#x2715;</button>
                 <img src="${products.product.coverImage}">
             </div>
             <div class="product-images-section">

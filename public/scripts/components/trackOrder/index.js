@@ -1,5 +1,6 @@
 import { cancelOrder } from "../../api/orders.js";
 import createElement from "./template.js";
+import renderToast from '../../utils/toast.js';
 
 export function renderTrackOrderComponent(){
     createElement();
@@ -19,10 +20,10 @@ function setCancelOrderEvent(){
         yesButton.addEventListener('click', async () => {
             const {orderId} = yesButton.dataset;
             await cancelOrder(orderId);
+            renderToast('Order cancelled!', {toastDuration: 5000});
+            renderTrackOrderComponent();
         });
     }
-
-   
 }
 
 export default renderTrackOrderComponent;

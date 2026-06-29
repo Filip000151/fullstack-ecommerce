@@ -42,7 +42,10 @@ export function createElement(){
                             </div>
                             <div class="header-group">
                                 <p class="header-label">Status:</p>
-                                <p ${order.status === 'cancelled' ? 'style="color: rgba(145, 45, 45, 0.882);"' : ''}>${order.status}</p>
+                                <p ${order.status === 'cancelled' ? 'style="color: rgba(145, 45, 45, 0.882); font-weight: bold;"' : ''}
+                                ${order.status === 'delivered' ? 'style="color: rgba(26, 107, 26, 0.76); font-weight: bold;"' : ''}>
+                                    ${order.status}
+                                </p>
                             </div>
                         </div>
                         <div class="header-group">

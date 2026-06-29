@@ -1,6 +1,7 @@
 import { queryProducts } from "../../api/products.js";
 import { addToCart } from '../../api/cart.js';
 import { createQueryString, updateUrlParameters } from "../../utils/query.js";
+import renderToast from "../../utils/toast.js";
 import { renderProducts, renderElement, renderPagination } from "./template.js";
 import renderHeaderComponent from '../header/index.js';
 
@@ -34,6 +35,7 @@ function setEvents(){
                     image: productImage
                 };
                 addToCart(product, quantity);
+                renderToast('Product added to cart!');
                 renderHeaderComponent(setHeaderEvents);
                 setHeaderEvents();
             });
