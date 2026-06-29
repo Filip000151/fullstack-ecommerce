@@ -83,15 +83,19 @@ export function renderElement() {
 
 export function renderCartDropdown(){
     const html = `
-        <h4>Cart (${getCartQuantity()} products)</h4>
-        <div class="header-dropdown-scroll-wrapper">
-            <div class="header-cart-products">
-                ${renderCartProducts()}
+        <div class="cart-dropdown-wrapper">
+            <div class="cart-dropdown">
+                <h4>Cart (${getCartQuantity()} products)</h4>
+                <div class="header-dropdown-scroll-wrapper">
+                    <div class="header-cart-products">
+                        ${renderCartProducts()}
+                    </div>
+                </div>
+                <a href="/checkout" class="checkout-button-wrapper">
+                    <button class="checkout-button">Go to checkout &rarr;</button>
+                </a>
             </div>
         </div>
-        <a href="/checkout" class="checkout-button-wrapper">
-            <button class="checkout-button">Go to checkout &rarr;</button>
-        </a>
     `;
     return html;
 
