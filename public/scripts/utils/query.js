@@ -29,6 +29,12 @@ export function createQueryString(params){
     if(params.page){
         parameters.push(`page=${params.page}`);
     }
+    if(params.isDisplayed){
+        parameters.push(`isDisplayed=${params.isDisplayed}`);
+    }
+    if(params.withProducts){
+        parameters.push(`withProducts=${params.withProducts}`);
+    }
 
     const query = parameters.length > 0 ? `?${parameters.join('&')}` : '';
     return query;

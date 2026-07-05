@@ -1,6 +1,7 @@
 import categories from '../../api/categories.js';
 import products from '../../api/products.js';
-import { cart, getCartQuantity } from '../../api/cart.js';
+import auth from '../../api/auth.js';
+import cart from '../../api/cart.js';
 
 import { getQueryParams } from '../../utils/query.js';
 import formatCurrency from '../../utils/money.js';
@@ -8,8 +9,8 @@ import formatCurrency from '../../utils/money.js';
 export function renderElement() {
     const queryParams = getQueryParams();
     const categoryOptionsHTML = renderCategoryOptions();
-    const cartQuantity = getCartQuantity();
-    const displayCartQuantity = cartQuantity > 0 ? `<span class="cart-quantity">${cartQuantity}</span>` : '';
+
+    const displayCartQuantity = cart.totalItems > 0 ? `<span class="cart-quantity">${cart.totalItems}</span>` : '';
 
     const headerInnerHTML = `
         <div class="header">
@@ -35,11 +36,11 @@ export function renderElement() {
                     </svg>
                     <span>Orders</span>
                 </button>
-                <button class="icon-button">
+                <button class="icon-button js-profile-button">
                     <svg class="svg-icon">
                         <use href="images/icons/sprite.svg#profile-icon"></use>
                     </svg>
-                    <span>Profile</span>
+                    <span>${auth.isGuest ? 'Profile' : auth.currentUser.name}</span>
                 </button>
                 <button class="icon-button js-cart-button">
                     ${displayCartQuantity}
@@ -72,7 +73,7 @@ export function renderElement() {
 
     function renderCategoryOptions() {
         let html = '';
-        categories.forEach((category) => {
+        categories.categories.forEach((category) => {
             html += `
                     <option value="${category._id}" ${queryParams.category && queryParams.category === category._id ? "selected" : ""}>${category.name}</option>
                 `;
@@ -83,9 +84,9 @@ export function renderElement() {
 
 export function renderCartDropdown(){
     const html = `
-        <div class="cart-dropdown-wrapper">
+        <div class="header-icon-dropdown-wrapper">
             <div class="cart-dropdown">
-                <h4>Cart (${getCartQuantity()} products)</h4>
+                <h4>Cart (${cart.totalItems} products)</h4>
                 <div class="header-dropdown-scroll-wrapper">
                     <div class="header-cart-products">
                         ${renderCartProducts()}
@@ -101,20 +102,20 @@ export function renderCartDropdown(){
 
     function renderCartProducts(){
         let html = '';
-        cart.guestCart.forEach(item => {
+        cart.items.forEach(item => {
             html += `
                 <div class="header-cart-product">
                     <div class="header-image-container">
-                        <img src="${item.product.image}">
+                        <img src="${item.product.coverImage}">
                     </div>
                     <div class="header-cart-product-info">
                         <div class="header-cart-product-upper-section">
-                            <a href="/products/${item.product.productId}" class="header-cart-product-name">${item.product.name}</a>
+                            <a href="/products/${item.product._id}" class="header-cart-product-name">${item.product.name}</a>
                             <p class="header-product-price">$${formatCurrency(item.product.priceCents)}</p>
                         </div>
                         <div class="header-cart-product-lower-section">
                             <p>Quantity: ${item.quantity}</p>
-                            <button class="header-product-remove-button js-header-remove-product-button" data-product-id="${item.product.productId}">Remove</button>
+                            <button class="header-product-remove-button js-header-remove-product-button" data-product-id="${item.product._id}">Remove</button>
                         </div>
                     </div>
                 </div>
@@ -163,6 +164,37 @@ export function renderSearchDropdown(searchText){
         return html;
     }
 
+    return html;
+}
+
+export function renderProfileDropdown(){
+    let html = '';
+    if(auth.isGuest){
+        html = `
+            <div class="header-icon-dropdown-wrapper">
+                <div class="profile-dropdown">
+                    <h4>You are not logged in.</h4>
+                    <div class="dropdown-auth-buttons">
+                        <a href="/login"><button class="dropdown-auth-button">Login</button></a>
+                        <a href="/register"><button class="dropdown-auth-button">Register</button></a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    else if(auth.currentUser.role === 'client'){
+        html = `
+            <div class="header-icon-dropdown-wrapper">
+                <div class="profile-dropdown">
+                    <h4>Hello ${auth.currentUser.name}.</h4>
+                    <div class="dropdown-auth-buttons">
+                        <a href="/register"><button class="dropdown-auth-button">Register account</button></a>
+                        <button class="dropdown-auth-button js-logout-button">Logout</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
     return html;
 }
 

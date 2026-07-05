@@ -8,6 +8,9 @@ const Product = require('../models/product');
 const Category = require('../models/category');
 const Shipping = require('../models/shipping');
 const User = require('../models/user');
+const Order = require('../models/order');
+const RefreshToken = require('../models/refreshToken');
+const Cart = require('../models/cart');
 
 const connectDB = require('../db/connect');
 
@@ -20,6 +23,10 @@ const start = async () => {
         await Product.deleteMany();
         await Shipping.deleteMany();
         await User.deleteMany();
+        await Order.deleteMany();
+        await RefreshToken.deleteMany();
+        await Cart.deleteMany();
+
 
         const adminUser = await User.create({
             name: 'admin',
@@ -34,9 +41,9 @@ const start = async () => {
 
         for(let i = 0; i < jsonProducts.length; i++){
             if(i < 9)
-                jsonProducts[i].categoryId = categories[0]._id;
+                jsonProducts[i].category = categories[0]._id;
             else
-                jsonProducts[i].categoryId = categories[1]._id;
+                jsonProducts[i].category = categories[1]._id;
         }
 
         const products = jsonProducts.map(product => {

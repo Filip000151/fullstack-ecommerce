@@ -15,7 +15,7 @@ class ProductService{
             queryObject.name = {$regex: name, $options: 'i'};
         }
         if(category){
-            queryObject.categoryId = category;
+            queryObject.category = category;
         }
         if(isFeatured !== undefined){
             queryObject.isFeatured = isFeatured === 'true';
@@ -62,7 +62,7 @@ class ProductService{
             priceCents: product.priceCents,
             coverImage: product.coverImage,
             images: product.images,
-            category: product.categoryId
+            category: product.category
         }));
 
         return {
@@ -79,11 +79,7 @@ class ProductService{
     }
 
     async getProduct(productId){
-        const product = await Product.findOne({_id: productId, isDeleted: false}).populate({
-            path: 'categoryId',
-            select: 'name',
-            model: 'Category'
-        });
+        const product = await Product.findOne({_id: productId, isDeleted: false}).populate('category', 'name');
     
         if(!product){
             throw new NotFoundError(`No product found with id: ${productId}`);
@@ -95,7 +91,7 @@ class ProductService{
             priceCents: product.priceCents,
             coverImage: product.coverImage,
             images: product.images,
-            category: product.categoryId
+            category: product.category
         };
 
         return formatted;
@@ -139,7 +135,7 @@ class ProductService{
 
             product.name = updateData.name;
             product.priceCents = Number(updateData.priceCents);
-            product.categoryId = updateData.categoryId;
+            product.category = updateData.categoryId;
             product.isFeatured = updateData.isFeatured === 'true' ? true : false;
 
             let imagesToKeep;

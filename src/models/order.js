@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = mongoose.Schema({
-    userId: {
+    user: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
         default: null
@@ -9,14 +9,14 @@ const OrderSchema = mongoose.Schema({
     guestId: {
         type: String,
         required: function(){
-            return !this.userId;
+            return !this.user;
         },
         default: null
     },
     guestEmail: {
         type: String,
         required: function(){
-            return !this.userId;
+            return !this.user;
         },
         match: [
             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -50,10 +50,7 @@ const OrderSchema = mongoose.Schema({
         productSnapshot: {
             name: String,
             priceCents: Number,
-            coverImage: String,
-            images: [{
-                type: String
-            }]
+            coverImage: String
         },
         quantity: {
             type: Number,

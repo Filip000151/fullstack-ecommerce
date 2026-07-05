@@ -1,12 +1,13 @@
-import {cart, getCartQuantity} from '../../api/cart.js';
+import cart from '../../api/cart.js';
 import shipping from '../../api/shipping.js';
+import auth from '../../api/auth.js';
 import formatCurrency from '../../utils/money.js';
 
 export function createElement(){
     const html = `
         <div class="buyer-details">
             <div class="cart-details">
-                <h4 class="js-checkout-cart-quantity">Your cart (${getCartQuantity()})</h4>
+                <h4 class="js-checkout-cart-quantity">Your cart (${cart.totalItems})</h4>
                 <div class="cart-products js-cart-products">
                     ${renderProducts()}
                 </div>
@@ -25,11 +26,13 @@ export function createElement(){
                 <div class="checkout-delivery-info">
                     <h4>Enter your data</h4>
                     <form class="checkout-form">
+                        ${auth.isGuest ? `
                         <div class="checkout-form-field">
                             <label for="">Email:</label>
                             <input class="js-email-input" type="email" placeholder="Please provide your email">
                             <span class="checkout-validation-error js-email-error"></span>
                         </div>
+                        ` : ''}                  
                         <div class="checkout-form-field">
                             <label for="">Delivery address:</label>
                             <input class="js-address-input" type="text" placeholder="Please provide your address">
@@ -58,24 +61,25 @@ export function createElement(){
 
 export function renderProducts(){
     let html = '';
-    if(cart.guestCart.length > 0){
-        cart.guestCart.forEach(item => {
+    if(cart.items.length > 0){
+        cart.items.forEach(item => {
+            let timeoutId = null;
             html += `
-                <div class="cart-product">
+                <div class="cart-product js-cart-product-${item.product._id}">
                     <div class="cart-product-image">
-                        <img src="${item.product.image}">
+                        <img src="${item.product.coverImage}">
                     </div>
                     <div class="cart-product-info">
-                        <a href="/products/${item.product.productId}" class="cart-product-name">${item.product.name}</a>
+                        <a href="/products/${item.product._id}" class="cart-product-name">${item.product.name}</a>
                         <div class="cart-product-price">$${formatCurrency(item.product.priceCents)}</div>
                         <div class="cart-product-buttons">
                             <div class="cart-product-quantity">
-                                <button class="cart-product-button js-cart-decrement-button" data-product-id="${item.product.productId}">-</button>
-                                <span class="cart-product-quantity-number js-cart-product-quantity-${item.product.productId}">${item.quantity}</span>
-                                <button class="cart-product-button js-cart-increment-button" data-product-id="${item.product.productId}">+</button>
+                                <button class="cart-product-button js-cart-decrement-button" data-product-id="${item.product._id}">-</button>
+                                <span class="cart-product-quantity-number js-cart-product-quantity-${item.product._id}">${item.quantity}</span>
+                                <button class="cart-product-button js-cart-increment-button" data-product-id="${item.product._id}">+</button>
                                 
                             </div>
-                            <button class="delete-cart-product-button js-delete-cart-product-button" data-product-id="${item.product.productId}">
+                            <button class="delete-cart-product-button js-delete-cart-product-button" data-product-id="${item.product._id}">
                                 <svg>
                                     <use href="images/icons/sprite.svg#trash-icon">
                                 </svg>
@@ -153,7 +157,7 @@ export function renderOrderSummaryInfo(){
             <span class="checkout-total-price-number">$${shippingInfo ? formatCurrency(productTotalPrice + shippingInfo.shippingPrice) : formatCurrency(productTotalPrice)}</span>
         </div>
         <div class="order-button-wrapper">
-            <button class="make-order-button ${cart.guestCart.length > 0 && shippingInfo ? 'js-make-order-button' : 'make-order-button-disabled'}">Make order</button>
+            <button class="make-order-button ${cart.items.length > 0 && shippingInfo ? 'js-make-order-button' : 'make-order-button-disabled'}">Make order</button>
         </div>
     `;
 
@@ -161,7 +165,7 @@ export function renderOrderSummaryInfo(){
 
     function getProductTotalPrice(){
         let total = 0;
-        cart.guestCart.forEach(item => {
+        cart.items.forEach(item => {
             total += item.quantity * item.product.priceCents;
         });
         return total;

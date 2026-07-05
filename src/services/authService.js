@@ -30,7 +30,7 @@ class AuthService{
         return user;
     }
 
-    async loginUser(email, password, deviceInfo){
+    async loginUser(email, password, rememberMe, deviceInfo){
         if(!email || !password){
             throw new BadRequestError('Please enter email and password');
         }
@@ -45,7 +45,9 @@ class AuthService{
             throw new UnauthorizedError('Invalid credentials.');
         }
 
-        const refreshToken = await user.createRefreshToken(deviceInfo);
+        let refreshToken = null;
+
+        if(rememberMe) refreshToken = await user.createRefreshToken(deviceInfo);
         const accessToken = user.createAccessToken();
 
         return {refreshToken, accessToken};

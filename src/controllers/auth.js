@@ -1,6 +1,7 @@
 const {StatusCodes} = require('http-status-codes');
 const authService = require('../services/authService');
 const crypto = require('crypto');
+const { UnauthorizedError } = require('../errors');
 
 const register = async (req, res) => {
     const {name, email, password, confirmPassword, role} = req.body;
@@ -15,17 +16,19 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-    const {email, password} = req.body;
+    const {email, password, rememberMe} = req.body;
     const deviceInfo = req.headers['user-agent'] || 'Unknown';
 
-    const tokens = await authService.loginUser(email, password, deviceInfo);
+    const tokens = await authService.loginUser(email, password, rememberMe, deviceInfo);
     
-    res.cookie('refreshToken', tokens.refreshToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        //secure: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000
-    });
+    if(tokens.refreshToken){
+        res.cookie('refreshToken', tokens.refreshToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            //secure: true,
+            maxAge: 30 * 24 * 60 * 60 * 1000
+        });
+    }
 
     res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
@@ -69,6 +72,11 @@ const getLoggedUser = async (req, res) => {
 const refreshAccessToken = async (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
     const deviceInfo = req.headers['user-agent'] || 'Unknown';
+
+    if(!refreshToken){
+        res.clearCookie('accessToken');
+        throw new UnauthorizedError('Session expired. Please log in again.', 'TOKEN_MISSING');
+    }
 
     const tokens = await authService.refreshUserToken(refreshToken, deviceInfo);
 

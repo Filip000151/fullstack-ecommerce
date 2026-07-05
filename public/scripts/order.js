@@ -1,5 +1,7 @@
 import { loadCategories } from './api/categories.js';
 import { loadOrder } from './api/orders.js';
+import { loadCurrentUser } from "./api/auth.js";
+import { loadCart } from './api/cart.js';
 
 import renderHeaderComponent from './components/header/index.js';
 import renderFooterComponent from './components/footer/index.js';
@@ -10,9 +12,11 @@ renderPage();
 async function renderPage(){
     const orderId = window.location.pathname.split('/')[2];
     
+    await loadCurrentUser();
     await Promise.all([
         loadOrder(orderId),
-        loadCategories()
+        loadCategories(),
+        loadCart()
     ]);
 
     renderHeaderComponent();

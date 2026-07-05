@@ -1,4 +1,7 @@
-import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
+import { categories, loadCategories, queryCategories } from "./api/categories.js";
+import { showPendingToast } from "./utils/toast.js";
+import { loadCurrentUser } from "./api/auth.js";
+import { loadCart } from './api/cart.js';
 
 import renderHeaderComponent from "./components/header/index.js";
 import renderProductGroupComponent from "./components/productGroup/index.js";
@@ -7,23 +10,19 @@ import renderFooterComponent from './components/footer/index.js';
 renderPage();
 
 async function renderPage(){
-    await loadCategories();
+    showPendingToast();
+
+    await loadCurrentUser();
+    await Promise.all([
+        loadCategories(),
+        loadCart()
+    ]);
+
     renderHeaderComponent();
-
-    const displayedCategories = categories.filter(c => c.isDisplayed);
-    const categoriesInfoResponse = await Promise.all(
-        displayedCategories.map(category => getCategoryInfo(category._id))
-    );
-    categoriesInfoResponse.forEach(response => {
-        if(response.success){
-            const categoryInfo = response.category;
-
-            const groupId = categoryInfo._id;
-            const title = categoryInfo.name;
-            const products = categoryInfo.products;
-
-            renderProductGroupComponent(groupId, title, products);
-        }
+    
+    const querriedCategories = await queryCategories({isDisplayed: true, withProducts: true});
+    querriedCategories.forEach(category => {
+        renderProductGroupComponent(category._id, category.name, category.products);
     });
 
     renderFooterComponent();

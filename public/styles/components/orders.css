@@ -123,3 +123,13 @@
 .track-order-button:active{
     transform: scale(0.95);
 }
+.no-orders-text{
+    font-size: 1.3rem;
+}
+.no-orders-text a{
+    color: #846A6A;
+    transition: opacity 0.15s;
+}
+.no-orders-text a:hover{
+    opacity: 0.7;
+}

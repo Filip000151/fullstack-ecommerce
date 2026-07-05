@@ -1,3 +1,5 @@
+const toastTimers = new WeakMap();
+
 export function renderToast(text, options = {}){
     const settings = {
         success: true,
@@ -73,8 +75,7 @@ function showToast(text, settings){
         removeToast(toast);
     }, settings.toastDuration);
 
-    toast._timeoutId = timeoutId;
-    toast._intervalId = intervalId;
+    toastTimers.set(toast, {intervalId, timeoutId});
 }
 
 export function showPendingToast(){
@@ -92,8 +93,9 @@ export function showPendingToast(){
 }
 
 async function removeToast(toast){
-    clearInterval(toast._intervalId);
-    clearTimeout(toast._timeoutId);
+    const {intervalId, timeoutId} = toastTimers.get(toast);
+    clearTimeout(timeoutId);
+    clearInterval(intervalId);
 
     const width = toast.offsetWidth;
     const slideOutAnimation = toast.animate([

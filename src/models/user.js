@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Cart = require('./cart');
-const orderService = require('../services/orderService');
 const crypto = require('crypto');
 const RefreshToken = require('./refreshToken');
 
@@ -43,6 +42,7 @@ UserSchema.pre('save', async function(){
     this.password = await bcrypt.hash(this.password, salt);
 
     await Cart.create({userId: this._id, items: []});
+    const orderService = require('../services/orderService');
     await orderService.linkGuestOrdersToUser(this.email, this._id);
 });
 

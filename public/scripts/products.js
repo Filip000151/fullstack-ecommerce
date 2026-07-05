@@ -1,5 +1,7 @@
 import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
 import {queryProducts} from './api/products.js';
+import { loadCurrentUser } from './api/auth.js';
+import { loadCart } from './api/cart.js';
 
 import {getQueryParams, createQueryString} from "./utils/query.js";
 
@@ -16,9 +18,11 @@ async function renderPage(){
     };
     const query = createQueryString(queryParams);
     
+    await loadCurrentUser();
     await Promise.all([
         loadCategories(),
-        queryProducts(query)
+        queryProducts(query),
+        loadCart()
     ]);
 
     renderHeaderComponent();

@@ -26,44 +26,49 @@ export function createElement(){
     function renderOrders(){
         let html = '';
 
-        orders.userOrders.forEach(order => {
-            const creationDate = convertDateToObject(order.createdAt);
-            html += `
-                <div class="single-order">
-                    <div class="single-order-header">
-                        <div class="single-order-header-left">
-                            <div class="header-group">
-                                <p class="header-label">Order Placed:</p>
-                                <p>${creationDate.month} ${creationDate.dayNum}</p>
+        if(orders.userOrders.length > 0){
+            orders.userOrders.forEach(order => {
+                const creationDate = convertDateToObject(order.createdAt);
+                html += `
+                    <div class="single-order">
+                        <div class="single-order-header">
+                            <div class="single-order-header-left">
+                                <div class="header-group">
+                                    <p class="header-label">Order Placed:</p>
+                                    <p>${creationDate.month} ${creationDate.dayNum}</p>
+                                </div>
+                                <div class="header-group">
+                                    <p class="header-label">Total:</p>
+                                    <p>$${formatCurrency(order.totalPriceCents)}</p>
+                                </div>
+                                <div class="header-group">
+                                    <p class="header-label">Status:</p>
+                                    <p ${order.status === 'cancelled' ? 'style="color: rgba(145, 45, 45, 0.882); font-weight: bold;"' : ''}
+                                    ${order.status === 'delivered' ? 'style="color: rgba(26, 107, 26, 0.76); font-weight: bold;"' : ''}>
+                                        ${order.status}
+                                    </p>
+                                </div>
                             </div>
                             <div class="header-group">
-                                <p class="header-label">Total:</p>
-                                <p>$${formatCurrency(order.totalPriceCents)}</p>
-                            </div>
-                            <div class="header-group">
-                                <p class="header-label">Status:</p>
-                                <p ${order.status === 'cancelled' ? 'style="color: rgba(145, 45, 45, 0.882); font-weight: bold;"' : ''}
-                                ${order.status === 'delivered' ? 'style="color: rgba(26, 107, 26, 0.76); font-weight: bold;"' : ''}>
-                                    ${order.status}
-                                </p>
+                                <p class="header-label">Order ID:</p>
+                                <p>${order._id}</p>
                             </div>
                         </div>
-                        <div class="header-group">
-                            <p class="header-label">Order ID:</p>
-                            <p>${order._id}</p>
+                        <div class="order-products">
+                            ${renderOrderProducts(order)}
+                        </div>
+                        <div class="track-order-wrapper">
+                            <a href="/orders/${order._id}">
+                                <button class="track-order-button">Track Order</button>
+                            </a>
                         </div>
                     </div>
-                    <div class="order-products">
-                        ${renderOrderProducts(order)}
-                    </div>
-                    <div class="track-order-wrapper">
-                        <a href="/orders/${order._id}">
-                            <button class="track-order-button">Track Order</button>
-                        </a>
-                    </div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
+        else{
+            html += `<p class="no-orders-text">No orders created. <a href="/products">Browse products here</a></p>`
+        }
 
         return html;
     }

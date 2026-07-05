@@ -97,7 +97,7 @@ function setCartEvents(){
     const incrementButton = document.querySelector('.js-increment-button');
     const addToCartButton = document.querySelector('.js-add-to-cart-button');
 
-    decrementButton.addEventListener('click', () => {
+    decrementButton.addEventListener('click', async () => {
         const quantityElement = document.querySelector('.js-product-quantity');
         const value = Number(quantityElement.textContent);
         if(value > 1){
@@ -113,16 +113,15 @@ function setCartEvents(){
         }
     });
 
-    addToCartButton.addEventListener('click', () => {
+    addToCartButton.addEventListener('click', async () => {
         const quantity = Number(document.querySelector('.js-product-quantity').textContent);
         const product = {
-            productId: products.product._id,
+            _id: products.product._id,
             name: products.product.name,
             priceCents: products.product.priceCents,
-            image: products.product.coverImage
+            coverImage: products.product.coverImage
         };
-        addToCart(product, quantity);
-        renderToast('Product added to cart!');
+        await addToCart(product, quantity);
         renderHeaderComponent();
     });
 }

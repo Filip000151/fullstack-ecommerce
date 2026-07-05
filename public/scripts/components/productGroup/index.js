@@ -45,17 +45,16 @@ function setEvents(groupId){
 
     const addButtons = document.querySelectorAll(`.js-add-to-cart-${groupId}`);
     addButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const {productId, productName, productPrice, productImage} = btn.dataset;
-            const quantity = Number(document.querySelector(`.js-quantity-input-${productId}`).value);
+        btn.addEventListener('click', async () => {
+            const {productId:_id, productName:name, productPrice:priceCents, productImage:coverImage} = btn.dataset;
+            const quantity = Number(document.querySelector(`.js-quantity-input-${_id}`).value);
             const product = {
-                productId,
-                name: productName,
-                priceCents: productPrice,
-                image: productImage
+                _id,
+                name,
+                priceCents,
+                coverImage
             };
-            addToCart(product, quantity);
-            renderToast('Product added to cart!');
+            await addToCart(product, quantity);
             renderHeaderComponent();
         });
     });

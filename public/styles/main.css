@@ -83,11 +83,11 @@ button{
 }
 .toast-duration{
     position: absolute;
-    bottom: 2px;
+    bottom: 3px;
     left: 0;
+    right: 0;
     height: 5px;
     background-color: white;
-    margin: 0 2px;
     border-radius: 0.5em;
 }
 .toast:hover{

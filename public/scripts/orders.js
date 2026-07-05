@@ -1,5 +1,7 @@
 import { loadUserOrders } from "./api/orders.js";
 import {loadCategories} from './api/categories.js';
+import { loadCurrentUser } from "./api/auth.js";
+import { loadCart } from './api/cart.js';
 
 import { showPendingToast } from "./utils/toast.js";
 
@@ -12,9 +14,11 @@ renderPage();
 async function renderPage(){
     showPendingToast();
     
+    loadCurrentUser();
     await Promise.all([
         loadUserOrders(),
-        loadCategories()
+        loadCategories(),
+        loadCart()
     ]);
 
     renderHeaderComponent();

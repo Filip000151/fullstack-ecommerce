@@ -12,7 +12,7 @@ export function renderProductsSectionComponent(){
 
 function setEvents(){
     renderHeaderComponent(setHeaderEvents);
-    setCartButtonsEvents();
+    setCartButtonEvents();
     setFilterAndSortEvents();
     setPaginationEvents();
 
@@ -22,20 +22,19 @@ function setEvents(){
         searchBar.addEventListener('keyup', getProducts);
         categorySelection.addEventListener('change', getProducts);
     }
-    function setCartButtonsEvents(){
+    function setCartButtonEvents(){
         const addButons = document.querySelectorAll('.js-add-to-cart');
         addButons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const {productId, productName, productPrice, productImage} = btn.dataset;
-                const quantity = Number(document.querySelector(`.js-quantity-input-${productId}`).value);
+            btn.addEventListener('click', async () => {
+                const {productId:_id, productName:name, productPrice:priceCents, productImage:coverImage} = btn.dataset;
+                const quantity = Number(document.querySelector(`.js-quantity-input-${_id}`).value);
                 const product = {
-                    productId,
-                    name: productName,
-                    priceCents: productPrice,
-                    image: productImage
+                    _id,
+                    name,
+                    priceCents,
+                    coverImage
                 };
-                addToCart(product, quantity);
-                renderToast('Product added to cart!');
+                await addToCart(product, quantity);
                 renderHeaderComponent(setHeaderEvents);
                 setHeaderEvents();
             });
@@ -101,7 +100,7 @@ function setEvents(){
 
         const productsGrid = document.querySelector('.products-grid');
         productsGrid.innerHTML = renderProducts();
-        setCartButtonsEvents();
+        setCartButtonEvents();
 
         const pageList = document.querySelector('.page-list');
         pageList.innerHTML = renderPagination();

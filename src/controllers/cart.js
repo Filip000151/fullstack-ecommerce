@@ -16,11 +16,12 @@ const addToCart = async (req, res) => {
     const {userId} = req.user;
     const {productId, quantity} = req.body;
 
-    await cartService.addToCart(userId, productId, quantity);
+    const cart = await cartService.addToCart(userId, productId, quantity);
 
     res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product added to cart'
+        msg: 'Product added to cart',
+        cart
     });
 };
 
@@ -29,11 +30,12 @@ const updateCartItem = async (req, res) => {
     const {id: productId} = req.params;
     const {quantity} = req.body;
 
-    await cartService.updateQuantity(userId, productId, quantity);
+    const cart = await cartService.updateQuantity(userId, productId, quantity);
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Cart updated'
+        msg: 'Cart updated',
+        cart
     });
 };
 
@@ -41,11 +43,12 @@ const removeFromCart = async (req, res) => {
     const {userId} = req.user;
     const {id: productId} = req.params;
 
-    await cartService.removeFromCart(userId, productId);
+    const cart = await cartService.removeFromCart(userId, productId);
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product removed from cart'
+        msg: 'Product removed from cart',
+        cart
     });
 };
 

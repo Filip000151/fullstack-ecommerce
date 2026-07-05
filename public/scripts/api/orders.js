@@ -1,27 +1,33 @@
 import apiClient from './apiClient.js';
 import {cart, clearCart} from './cart.js';
+import auth from './auth.js';
+import renderToast from '../utils/toast.js';
 
 export const orders = {
     userOrders: [],
     order: null
 };
 
-export async function createGuestOrder(guestEmail, deliveryAddress, shippingId){
-    const items = cart.guestCart.map(item => {
-        return {
-            productId: item.product.productId,
-            quantity: item.quantity
-        };
-    });
+export async function createOrder(body = {}, redirect = {}){
+    if(auth.isGuest){
+        const items = cart.items.map(item => {
+            return {
+                productId: item.product._id,
+                quantity: item.quantity
+            };
+        });
+        body.items = items;
+    }
 
-    const data = await apiClient.post('/api/orders', {
-        guestEmail,
-        deliveryAddress,
-        shippingId,
-        items
-    });
+    const data = await apiClient.post('/api/orders', body);
 
-    clearCart();
+    if(data.success){
+        clearCart();
+        renderToast(data.msg, {toastDuration: 5000, redirect: redirect.redirect, beforeRedirect: redirect.beforeRedirect});
+    }
+    else{
+        renderToast(data.msg, {toastDuration: 10000, success: false});
+    }
 
     return data;
 }

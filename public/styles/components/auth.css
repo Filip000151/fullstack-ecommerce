@@ -1,0 +1,95 @@
+.auth-section{
+    padding: 1em;
+    margin: 2em 0;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2rem;
+    gap: 1em;
+    background-color: #A2999E;
+    color: #353B3C;
+    border-radius: 20px;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.15);
+}
+.auth-section h4{
+    margin: 0;
+    text-align: center;
+    font-size: 1.4rem;
+}
+.auth-input-section{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.auth-input{
+    height: 30px;
+    border: solid 1px #EEF0F2;
+    border-radius: 3px;
+}
+.auth-input:focus{
+    outline: none;
+}
+
+.auth-lower-section{
+    margin-top: 2em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    font-size: 1.1rem;
+    align-items: start;
+}
+.auth-button{
+    font-size: 1.2rem;
+    padding: 0.5em;
+    width: 100%;
+    border: none;
+    background-color: #353B3C;
+    color: #EEF0F2;
+    border-radius: 5px;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.auth-button:hover{
+    opacity: 0.7;
+}
+.auth-button:active{
+    transform: scale(0.95);
+}
+.auth-lower-section a{
+    color: #846A6A;
+    font-weight: bold;
+    transition: opacity 0.1s;
+}
+.auth-lower-section a:hover{
+    opacity: 0.7;
+}
+
+.auth-remember-me{
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    user-select: none;
+    border: solid 2px #846A6A;
+    border-radius: 5px;
+    padding: 0.5em;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+.checkbox-icon rect{
+    stroke: #846A6A;
+}
+.remember-me-not-active{
+    background-color: transparent;
+}
+.remember-me-not-active:hover{
+    background-color: #c6c7c47a;
+}
+.remember-me-active{
+    background-color: #c6c7c4;
+}
+.remember-me-active .checkbox-icon path{
+    stroke: #846A6A;
+}
+
+.auth-error-validation{
+    color: red;
+    max-width: 30ch;
+}

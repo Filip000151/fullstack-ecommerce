@@ -9,7 +9,7 @@ const CartSchema = mongoose.Schema({
         index: true
     },
     items: [{
-        productId: {
+        product: {
             type: mongoose.Types.ObjectId,
             ref: 'Product',
             required: [true, 'Product must be present inside a cart.']

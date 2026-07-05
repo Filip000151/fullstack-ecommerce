@@ -1,63 +1,67 @@
 const Category = require('../models/category');
+const Product = require('../models/product');
 const {NotFoundError} = require('../errors');
 const mongoose = require('mongoose');
 
 class CategoryService{
-    async getAllCategories(){
-        const categories = await Category.find({}).select('_id name description isDisplayed');
+    async getAllCategories(query){
+        const {isDisplayed, withProducts} = query;
+
+        const queryObject = {};
+
+        let categories;
+        if(isDisplayed){
+            queryObject.isDisplayed = isDisplayed === 'true';
+        }
+
+        if(withProducts && withProducts === 'true'){
+            categories = await Category.aggregate([
+                {$match: queryObject},
+                {
+                    $lookup: {
+                        from: 'products',
+                        let: {categoryProductsId: '$_id'},
+                        pipeline: [
+                            {$match: {$expr: {$eq: ['$category', '$$categoryProductsId']}}},
+                            {$project: {
+                                createdAt: 0,
+                                createdBy: 0,
+                                isFeatured: 0,
+                                isDeleted: 0,
+                                deletedAt: 0,
+                                updatedAt: 0,
+                                images: 0,
+                                category: 0
+                            }}
+                        ],
+                        as: 'products'
+                    }
+                },
+                {$project: {
+                    isDisplayed: 0
+                }}
+            ]);
+        }
+        else{
+            categories = await Category.find(queryObject).select('-isDisplayed');
+        }
+
         return categories;
     }
 
-    async getCategory(categoryId){
-        const categories = await Category.aggregate([
-            {
-                $match: {_id: new mongoose.Types.ObjectId(categoryId)}
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    let: {categoryId: '$_id'},
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {$eq: ['$categoryId', '$$categoryId']},
-                                isDeleted: false
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 1,
-                                name: 1,
-                                priceCents: 1,
-                                coverImage: 1
-                            }
-                        }
-                    ],
-                    as: 'products'
-                }
-            },
-            {
-                $addFields: {
-                    productCount: {$size: '$products'}
-                }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    name: 1,
-                    description: 1,
-                    isDisplayed: 1,
-                    products: 1,
-                    productCount: 1
-                }
+    async getCategory(categoryId, query){
+        const withProducts = query.withProducts === 'true';
+
+        const category = await Category.findById(categoryId).select('-isDisplayed');
+        if(withProducts){
+            const products = await Product.find({category: categoryId}).select('-images -isFeatured -category -createdBy -isDeleted -deletedAt -createdAt -updatedAt');
+            return {
+                ...category.toObject(),
+                products
             }
-        ]);
-    
-        if(!categories || categories.length === 0){
-            throw new NotFoundError('No category found with id: ' + categoryId);
         }
 
-        return categories[0];
+        return category;
     }
 
     async createCategory(name, description, isDisplayed){
@@ -71,7 +75,7 @@ class CategoryService{
 
     async updateCategory(categoryId, data){
         const category = await Category.findOneAndUpdate(
-            {_id: categoryId}, 
+            {_id: new mongoose.Types.ObjectId(categoryId)}, 
             data, 
             {
                 runValidators: true,

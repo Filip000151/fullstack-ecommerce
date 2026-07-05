@@ -2,12 +2,13 @@ const Order = require('../models/order');
 const Shipping = require('../models/shipping');
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const User = require('../models/user');
 const {NotFoundError, BadRequestError, ForbiddenError, UnauthorizedError} = require('../errors');
 
 class OrderService {
     async createOrderFromCart(userId, deliveryAddress, shippingId){
         const cart = await Cart.findOne({userId})
-            .populate('items.productId');
+            .populate('items.product');
         const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
 
         if(!shipping){
@@ -22,7 +23,7 @@ class OrderService {
         const items = [];
 
         for(const item of cart.items){
-            const product = item.productId;
+            const product = item.product;
 
             const itemTotalCents = product.priceCents * item.quantity;
             totalPriceCents += itemTotalCents;
@@ -32,7 +33,6 @@ class OrderService {
                 productSnapshot: {
                     name: product.name,
                     priceCents: product.priceCents,
-                    images: product.images,
                     coverImage: product.coverImage
                 }
             });
@@ -49,7 +49,7 @@ class OrderService {
         };
 
         const order = await Order.create({
-            userId,
+            user: userId,
             deliveryAddress,
             shippingSnapshot,
             deliveryDate,
@@ -67,6 +67,11 @@ class OrderService {
     async createGuestOrder(guestId, guestEmail, deliveryAddress, cartItems, shippingId){
         if(!guestId){
             throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+        }
+
+        const user = await User.findOne({email: guestEmail});
+        if(user){
+            throw new BadRequestError('Email is already registered. Please log in.');
         }
         
         const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
@@ -92,8 +97,7 @@ class OrderService {
                 productSnapshot: {
                     name: product.name,
                     priceCents: product.priceCents,
-                    coverImage: product.coverImage,
-                    images: product.images
+                    coverImage: product.coverImage
                 },
                 quantity: item.quantity
             });
@@ -124,7 +128,7 @@ class OrderService {
     }
 
     async getUserOrder(orderId, userId){
-        const order = await Order.findOne({_id: orderId, userId});
+        const order = await Order.findOne({_id: orderId, user: userId});
 
         if(!order){
             throw new NotFoundError('No order found.');
@@ -133,13 +137,7 @@ class OrderService {
         const progress = this.calculateProgress(order);
 
         return {
-            _id: order._id,
-            deliveryDate: order.deliveryDate,
-            totalPriceCents: order.totalPriceCents,
-            status: order.status,
-            items: order.items,
-            shippingSnapshot: order.shippingSnapshot,
-            createdAt: order.createdAt,
+            ...order.toObject(),
             progress
         };
     }
@@ -157,13 +155,7 @@ class OrderService {
         const progress = this.calculateProgress(order);
 
         return {
-            _id: order._id,
-            deliveryDate: order.deliveryDate,
-            totalPriceCents: order.totalPriceCents,
-            status: order.status,
-            items: order.items,
-            shippingSnapshot: order.shippingSnapshot,
-            createdAt: order.createdAt,
+            ...order.toObject(),
             progress
         };
     }
@@ -173,13 +165,15 @@ class OrderService {
             throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
         }
         const orders = await Order.find({guestId})
+            .select('-user -guestId')
             .sort({createdAt: -1});
 
         return orders;
     }
 
     async getUserOrders(userId){
-        const orders = await Order.find({userId})
+        const orders = await Order.find({user: userId})
+            .select('-user -guestId')
             .sort({createdAt: -1});
 
         return orders;
@@ -189,6 +183,7 @@ class OrderService {
         const query = {};
         
         const orders = await Order.find()
+            .select('-user -guestId')
             .sort({createdAt: -1});
         
         return orders;
@@ -203,7 +198,7 @@ class OrderService {
             throw new NotFoundError('Order not found.');
         }
 
-        if(order.userId.toString() !== userId && role !== 'admin'){
+        if(order.user.toString() !== userId && role !== 'admin'){
             throw new ForbiddenError('You are not authorized to perform this action.');
         }
 
@@ -246,8 +241,8 @@ class OrderService {
 
     async linkGuestOrdersToUser(email, userId){
         const result = await Order.updateMany(
-            {guestEmail: email, userId: null},
-            {userId, guestEmail: null}
+            {guestEmail: email, user: null},
+            {user: userId, guestEmail: null, guestId: null}
         );
 
         return result;

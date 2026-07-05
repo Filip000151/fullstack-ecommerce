@@ -1,44 +1,111 @@
+import renderToast from '../utils/toast.js';
+import apiClient from './apiClient.js';
+import auth from './auth.js';
+
 export const cart = {
-    guestCart: JSON.parse(localStorage.getItem('cart')) || []
+    items: [],
+    totalItems: 0
 };
 
-export function getCartQuantity(){
-    let totalItems = 0;
-    cart.guestCart.forEach(item => {
-        totalItems += item.quantity;
-    });
-    return totalItems;
-}
+export async function loadCart(){
+    if(auth.isGuest){
+        const guestCart = JSON.parse(localStorage.getItem('cart')) || {items: [], totalItems: 0};
+        cart.items = guestCart.items;
 
-export function addToCart(product, quantity){
-    if(!cart.guestCart.some(item => item.product.productId === product.productId)){
-        cart.guestCart.push({product, quantity});
+        let totalItems = 0;
+        cart.items.forEach(item => {
+            totalItems += item.quantity;
+        });
+        cart.totalItems = totalItems;
     }
     else{
-        const item = cart.guestCart.find(i => i.product.productId === product.productId);
-        item.quantity += quantity;
+        const data = await apiClient.get('/api/cart');
+        if(data.success){
+            cart.items = data.cart.items;
+            cart.totalItems = data.cart.totalItems;
+        }
     }
-    saveToStorage();
 }
 
-export function updateQuantity(productId, quantity){
-    const item = cart.guestCart.find(item => item.product.productId === productId);
-    item.quantity = quantity;
-    saveToStorage();
+export async function addToCart(product, quantity){
+    if(auth.isGuest){
+        if(!cart.items.some(item => item.product._id === product._id)){
+            cart.items.push({product, quantity});
+        }
+        else{
+            const item = cart.items.find(item => item.product._id === product._id);
+            item.quantity += quantity;
+        }
+        cart.totalItems += quantity;
+        saveToStorage();
+        renderToast('Product added to cart!');
+    }
+    else{
+        const data = await apiClient.post('/api/cart', {productId: product._id, quantity});
+        if(data.success){
+            cart.items = data.cart.items;
+            cart.totalItems = data.cart.totalItems;
+            renderToast(data.msg);
+        }
+        else{
+            renderToast(data.msg, {success: false});
+        }
+    }
 }
 
-export function removeFromCart(productId){
-    cart.guestCart = cart.guestCart.filter(item => item.product.productId !== productId);
-    saveToStorage();
+export async function updateQuantity(productId, quantity){
+    if(auth.isGuest){
+        const item = cart.items.find(item => item.product._id === productId);
+        cart.totalItems += quantity - item.quantity;
+        item.quantity = quantity;
+        saveToStorage();
+    }
+    else{
+        const data = await apiClient.patch(`/api/cart/${productId}`, {quantity});
+        if(data.success){
+            cart.items = data.cart.items;
+            cart.totalItems = data.cart.totalItems;
+        }
+    }    
 }
 
-export function clearCart(){
-    cart.guestCart = [];
-    saveToStorage();
+export async function removeFromCart(productId){
+    console.log(cart);
+    if(auth.isGuest){
+        const item = cart.items.find(item => item.product._id === productId);
+        cart.totalItems -= item.quantity;
+        cart.items = cart.items.filter(item => item.product._id !== productId);
+        saveToStorage();
+        renderToast('Product removed from cart!');
+    }
+    else{
+        const data = await apiClient.delete(`/api/cart/${productId}`);
+        if(data.success){
+            cart.items = data.cart.items;
+            cart.totalItems = data.cart.totalItems;
+            renderToast(data.msg);
+        }
+    }
+    console.log(cart);
+}
+
+export async function clearCart(){
+    if(auth.isGuest){
+        cart.items = [];
+        cart.totalItems = 0;
+        saveToStorage();
+    }
+    else{
+        const data = await apiClient.delete('/api/cart');
+        if(data.success){
+            cart.items = [];
+            cart.totalItems = 0;
+        }
+    }
 }
 
 function saveToStorage(){
-    localStorage.setItem('cart', JSON.stringify(cart.guestCart));
+    localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 export default cart;

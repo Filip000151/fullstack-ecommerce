@@ -34,7 +34,7 @@ const getOrder = async (req, res) => {
         order = await orderService.getGuestOrder(id, guestId);
     }
     else{
-        order = await orderService.getOrder(id, userId);
+        order = await orderService.getUserOrder(id, userId);
     }
 
     return res.status(StatusCodes.OK).json({

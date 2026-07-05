@@ -1,10 +1,12 @@
 import createQueryString from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
-import {renderElement, renderCartDropdown, renderSearchDropdown} from "./template.js";
+import {renderElement, renderCartDropdown, renderSearchDropdown, renderProfileDropdown} from "./template.js";
 import { removeFromCart } from "../../api/cart.js";
 import { queryProducts } from "../../api/products.js";
+import { logoutUser } from "../../api/auth.js";
 
 const dropdownHandler = createDropdownHandler();
+let queryEvent;
 
 export function renderHeaderComponent(customQueryEvent) {
     renderElement();
@@ -12,13 +14,12 @@ export function renderHeaderComponent(customQueryEvent) {
     const overlay = document.querySelector('.overlay');
     overlay.addEventListener('click', dropdownHandler().closeDropdown);
 
-    if(customQueryEvent)
-        customQueryEvent();
-    else
-        setDefaultQueryEvents();
+    queryEvent = customQueryEvent ? customQueryEvent : setDefaultQueryEvents;
+    queryEvent();
 
-    setCartEvents(customQueryEvent);
+    setCartEvents();
     setOrdersEvent();
+    setProfileEvents();
 }
 
 function setDefaultQueryEvents(){
@@ -74,17 +75,17 @@ function setDefaultQueryEvents(){
     }
 }
 
-function setCartEvents(customQueryEvent){
+function setCartEvents(){
     const overlay = document.querySelector('.overlay');
     const cartButton = document.querySelector('.js-cart-button');
 
     cartButton.addEventListener('click', () => {
-        const dropdown = document.querySelector('.header-icon-dropdown');
+        const dropdown = document.querySelector('.js-cart-dropdown');
         if(dropdown){
             dropdownHandler().closeDropdown();
         }
         else{
-            dropdownHandler().renderDropdown('header-icon-dropdown', renderCartDropdown(), () => {
+            dropdownHandler().renderDropdown('header-icon-dropdown js-cart-dropdown', renderCartDropdown(), () => {
                 const cartButton = document.querySelector('.js-cart-button');
                 cartButton.classList.remove('icon-button-active');
             });
@@ -97,11 +98,10 @@ function setCartEvents(customQueryEvent){
     function setProductRemoveButtonEvents(){
         const removeButtons = document.querySelectorAll('.js-header-remove-product-button');
         removeButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const {productId} = btn.dataset;
-                removeFromCart(productId);
-                renderToast('Product removed from cart');
-                renderHeaderComponent(customQueryEvent);
+                await removeFromCart(productId);
+                renderHeaderComponent(queryEvent);
                 dropdownHandler().renderDropdown('header-icon-dropdown', renderCartDropdown());
                 setProductRemoveButtonEvents();
                 const cartButton = document.querySelector('.js-cart-button');
@@ -125,13 +125,43 @@ function setOrdersEvent(){
     }
 }
 
+function setProfileEvents(){
+    const profileButton = document.querySelector('.js-profile-button');
+    
+    profileButton.addEventListener('click', () => {
+        const dropdown = document.querySelector('.js-profile-dropdown');
+        if(dropdown){
+            dropdownHandler().closeDropdown();
+        }
+        else{
+            dropdownHandler().renderDropdown('header-icon-dropdown js-profile-dropdown', renderProfileDropdown(), () => {
+                const profileButton = document.querySelector('.js-profile-button');
+                profileButton.classList.remove('icon-button-active');
+            });
+            profileButton.classList.add('icon-button-active');
+            setLogoutEvent();
+        }
+    });
+
+    function setLogoutEvent(){
+        const logoutButton = document.querySelector('.js-logout-button');
+        if(logoutButton){
+            logoutButton.addEventListener('click', () => {
+                logoutUser({redirect: '/'});
+            });
+        }
+    }
+}
+
 function createDropdownHandler(){
     let currentDropdown = null;
 
     function handleDropdown(){
         return {
             renderDropdown(className, html = '', closingFunc){
-                let dropdown = document.querySelector(`.${className}`);
+                const classes = className.trim().split(' ');
+
+                let dropdown = document.querySelector(`.${className.trim()}`);
                 if(dropdown){
                     dropdown.innerHTML = html;
                     currentDropdown.dropdown = dropdown;
@@ -149,7 +179,9 @@ function createDropdownHandler(){
 
 
                 dropdown = document.createElement('div');
-                dropdown.classList.add(className);
+                for(const singleClass of classes){
+                    dropdown.classList.add(singleClass);
+                }
                 dropdown.innerHTML = html;
                 document.body.appendChild(dropdown);
 

@@ -2,7 +2,8 @@ const {StatusCodes} = require('http-status-codes');
 const categoryService = require('../services/categoryService');
 
 const getAllCategories = async (req, res) => {
-    const categories = await categoryService.getAllCategories();
+    const query = req.query;
+    const categories = await categoryService.getAllCategories(query);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -11,9 +12,10 @@ const getAllCategories = async (req, res) => {
 };
 
 const getCategory = async (req, res) => {
+    const query = req.query;
     const {id} = req.params;
     
-    const category = await categoryService.getCategory(id);
+    const category = await categoryService.getCategory(id, query);
 
     return res.status(StatusCodes.OK).json({
         success: true,

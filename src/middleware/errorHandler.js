@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
     if(err.name === 'ValidationError'){
         customError.msg = Object.values(err.errors)
             .map(item => item.message)
-            .join(`\n`);
+            .join(' ');
         customError.statusCode = StatusCodes.BAD_REQUEST;
     }
     if(err.name === 'CastError'){

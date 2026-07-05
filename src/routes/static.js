@@ -24,10 +24,13 @@ router.route('/checkout').get((req, res) => {
 router.route('/orders').get((req, res) => {
     res.sendFile(path.join(publicPath, 'orders.html'));
 });
+router.route(['/login', '/register']).get((req, res) => {
+    res.sendFile(path.join(publicPath, 'auth.html'));
+});
 router.route('/products/:id').get(async (req, res) => {
     try{
         const {id} = req.params;
-        const product = await Product.findOne({_id: id, isDeleted: false}).populate('categoryId', 'name _id');
+        const product = await Product.findOne({_id: id, isDeleted: false}).populate('category', 'name _id');
 
         if(!product){
             return res.status(404).sendFile(path.join(publicPath, '404.html'));
@@ -39,7 +42,7 @@ router.route('/products/:id').get(async (req, res) => {
             priceCents: product.priceCents,
             coverImage: product.coverImage,
             images: product.images,
-            category: product.categoryId ? {_id: product.categoryId._id, name: product.categoryId.name} : null
+            category: product.category ? {_id: product.category._id, name: product.category.name} : null
         };
         const productDataJSON = JSON.stringify(productData);
 

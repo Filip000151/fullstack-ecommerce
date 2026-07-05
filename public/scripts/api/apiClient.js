@@ -1,9 +1,17 @@
 class ApiClient{
+
+    constructor(){
+        this.isRefreshing = false;
+        this.failedQueue = [];
+
+    }
+    
     async request(url, options, headerOptions){
         const requestInfo = {
             url,
             options: {
                 ...options,
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     ...headerOptions
@@ -16,7 +24,7 @@ class ApiClient{
         const response = await makeRequest();
         if(!response.ok){
             const jsonData = await response.json();
-            await this.handleErrors(jsonData, requestInfo);
+            return await this.handleErrors(jsonData, requestInfo);
         }
         else{
             const jsonData = await response.json();
@@ -24,15 +32,22 @@ class ApiClient{
         }
     }
 
-    async handleErrors(jsonData, originalRequestInfo){
+    async handleErrors(jsonData, requestInfo){
         if(jsonData.code === 'GUEST_ID_MISSING'){
             const guestId = localStorage.getItem('guestId');
             const data = await this.post('/api/auth/guest', {guestId});
-            if(!guestId || guestId !== data.guestId){
-                localStorage.setItem('guestId', data.guestId);
+            if(data.success){
+                if(!guestId || guestId !== data.guestId){
+                    localStorage.setItem('guestId', data.guestId);
+                }
+                return await this.request(requestInfo.url, requestInfo.options);
             }
-            this.request(originalRequestInfo.url, originalRequestInfo.options);
         }
+        else if(jsonData.code === 'TOKEN_EXPIRED'){
+            const data = await this.post('/api/auth/refresh');
+            if(data.success) return await this.request(requestInfo.url, requestInfo.options);
+        }
+        return jsonData;
     }
 
     async get(url){

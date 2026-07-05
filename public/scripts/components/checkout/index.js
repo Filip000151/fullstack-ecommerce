@@ -1,6 +1,6 @@
-import { removeFromCart, addToCart, updateQuantity, getCartQuantity } from "../../api/cart.js";
-import { createGuestOrder } from "../../api/orders.js";
-import renderToast from '../../utils/toast.js';
+import { cart, removeFromCart, addToCart, updateQuantity } from "../../api/cart.js";
+import { createOrder } from "../../api/orders.js";
+import auth from '../../api/auth.js';
 import {createElement, renderProducts, renderOrderSummaryInfo} from "./template.js";
 import validateCheckoutInputs from "./validate.js";
 
@@ -8,7 +8,7 @@ import validateCheckoutInputs from "./validate.js";
 export function renderCheckoutComponent(){
     createElement();
     const orderSummary = document.querySelector('.js-order-summary-info');
-    orderSummary.innerHTML = renderOrderSummaryInfo(true);
+    orderSummary.innerHTML = renderOrderSummaryInfo();
     setCartEvents();
     setShippingEvents();
     setOrderEvents();
@@ -19,19 +19,31 @@ function setCartEvents(){
     const decrementButtons = document.querySelectorAll('.js-cart-decrement-button');
     const deleteButtons = document.querySelectorAll('.js-delete-cart-product-button');
     const cartQuantity = document.querySelector('.js-checkout-cart-quantity');
+
+    const cartProducts = document.querySelectorAll('.cart-product');
+    const elementTimers = new WeakMap();
+    cartProducts.forEach(cartProduct => {
+        elementTimers.set(cartProduct, null);
+    });
     
     incrementButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const {productId} = btn.dataset;
             const quantity = document.querySelector(`.js-cart-product-quantity-${productId}`);
             const value = Number(quantity.textContent);
+            const cartProduct = document.querySelector(`.js-cart-product-${productId}`);
             if(value < 9){
                 quantity.textContent = value + 1;
-                updateQuantity(productId, value + 1);
-                cartQuantity.innerText = `Your cart (${getCartQuantity()})`;
-                const orderSummary = document.querySelector('.js-order-summary-info');
-                orderSummary.innerHTML = renderOrderSummaryInfo();
-                setOrderEvents();
+                const timeoutId = elementTimers.get(cartProduct); 
+                if(timeoutId) clearTimeout(timeoutId);
+                elementTimers.set(cartProduct, setTimeout(async () => {
+                    elementTimers.set(cartProduct, null);
+                    await updateQuantity(productId, value + 1);
+                    cartQuantity.innerText = `Your cart (${cart.totalItems})`;
+                    const orderSummary = document.querySelector('.js-order-summary-info');
+                    orderSummary.innerHTML = renderOrderSummaryInfo();
+                    setOrderEvents();
+                }, 700)); 
             }
         });
     });
@@ -41,23 +53,28 @@ function setCartEvents(){
             const {productId} = btn.dataset;
             const quantity = document.querySelector(`.js-cart-product-quantity-${productId}`);
             const value = Number(quantity.textContent);
+            const cartProduct = document.querySelector(`.js-cart-product-${productId}`);
             if(value > 1){
                 quantity.textContent = value - 1;
-                updateQuantity(productId, value - 1);
-                cartQuantity.innerText = `Your cart (${getCartQuantity()})`;
-                const orderSummary = document.querySelector('.js-order-summary-info');
-                orderSummary.innerHTML = renderOrderSummaryInfo();
-                setOrderEvents();
+                const timeoutId = elementTimers.get(cartProduct); 
+                if(timeoutId) clearTimeout(timeoutId);
+                elementTimers.set(cartProduct, setTimeout(async () => {
+                    elementTimers.set(cartProduct, null);
+                    await updateQuantity(productId, value - 1);
+                    cartQuantity.innerText = `Your cart (${cart.totalItems})`;
+                    const orderSummary = document.querySelector('.js-order-summary-info');
+                    orderSummary.innerHTML = renderOrderSummaryInfo();
+                    setOrderEvents();
+                }, 700));
             }
         });
     });
 
     deleteButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const {productId} = btn.dataset;
-            removeFromCart(productId);
-            renderToast('Product removed from cart!');
-            cartQuantity.innerText = `Your cart (${getCartQuantity()})`;
+            await removeFromCart(productId);
+            cartQuantity.innerText = `Your cart (${cart.totalItems})`;
             const cartProducts = document.querySelector('.js-cart-products');
             cartProducts.innerHTML = renderProducts();
             setCartEvents();
@@ -109,12 +126,14 @@ function setOrderEvents(){
                 }
                 return;
             }
-            const deliveryAddress = document.querySelector('.js-address-input').value.trim();
-            const guestEmail = document.querySelector('.js-email-input').value.trim();
             const shippingOption = document.querySelector('.radio-checked');
             const {shippingId} = shippingOption.dataset;
-            await createGuestOrder(guestEmail, deliveryAddress, shippingId);
-            renderToast('Order completed successfully!', {toastDuration: 8000, redirect: '/orders'});
+
+            const body = {};
+            body.deliveryAddress = document.querySelector('.js-address-input').value.trim();
+            body.shippingId = shippingId;
+            if(auth.isGuest) body.guestEmail = document.querySelector('.js-email-input').value.trim();
+            await createOrder(body, {redirect: '/orders'});
         });
     }
 }
