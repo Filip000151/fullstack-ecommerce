@@ -48,7 +48,7 @@ class AuthService{
         let refreshToken = null;
 
         if(rememberMe) refreshToken = await user.createRefreshToken(deviceInfo);
-        const accessToken = user.createAccessToken();
+        const accessToken = user.createAccessToken(rememberMe);
 
         return {refreshToken, accessToken};
     }
@@ -60,9 +60,11 @@ class AuthService{
         );
     }
 
-    async getLoggedUser(userId){
+    async getCurrentUser(userId, isGuest){
+        if(isGuest) return {isGuest: true, user: null};
+
         const user = await User.findById(userId).select('-password');
-        return user;
+        return {isGuest: false, user};
     }
 
     async refreshUserToken(refreshToken, deviceInfo){

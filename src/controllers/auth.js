@@ -34,7 +34,7 @@ const login = async (req, res) => {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
-        maxAge: 15 * 60 * 1000
+        maxAge: rememberMe ? 15 * 60 * 1000 : 2 * 60 * 60 * 1000
     });
 
     return res.status(StatusCodes.OK).json({
@@ -60,12 +60,13 @@ const logout = async (req, res) => {
     });
 };
 
-const getLoggedUser = async (req, res) => {
-    const {userId} = req.user;
-    const user = await authService.getLoggedUser(userId);
+const getCurrentUser = async (req, res) => {
+    const {userId, isGuest} = req.user;
+    const result = await authService.getCurrentUser(userId, isGuest);
     return res.status(StatusCodes.OK).json({
         success: true,
-        user
+        isGuest: result.isGuest,
+        user: result.user
     });
 }
 
@@ -124,7 +125,7 @@ module.exports = {
     register,
     login,
     logout,
-    getLoggedUser,
+    getCurrentUser,
     refreshAccessToken,
     requestGuestId
 };

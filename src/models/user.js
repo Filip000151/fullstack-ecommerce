@@ -46,11 +46,11 @@ UserSchema.pre('save', async function(){
     await orderService.linkGuestOrdersToUser(this.email, this._id);
 });
 
-UserSchema.methods.createAccessToken = function(){
+UserSchema.methods.createAccessToken = function(rememberMe){
     return jwt.sign(
         {userId: this._id, role: this.role, name: this.name}, 
         process.env.JWT_ACCESS_SECRET, 
-        {expiresIn: process.env.JWT_ACCESS_LIFETIME}
+        {expiresIn: rememberMe ? process.env.JWT_ACCESS_LIFETIME : process.env.JWT_ACCESS_ONCE_LIFETIME}
     );
 };
 

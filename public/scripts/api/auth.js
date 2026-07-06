@@ -10,15 +10,15 @@ export async function loadCurrentUser(){
     const data = await apiClient.get('/api/auth');
 
     if(data.success){
-        auth.isGuest = false;
-        auth.currentUser = data.user;
+        if(data.isGuest){
+            auth.isGuest = true;
+            auth.currentUser = null;
+        }
+        else{
+            auth.isGuest = false;
+            auth.currentUser = data.user;
+        }
     }
-    else{
-        auth.isGuest = true;
-        auth.currentUser = null;
-    }
-
-    console.log(auth);
 
     return data;
 }

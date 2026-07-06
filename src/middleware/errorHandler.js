@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
         code: err.code
     }
     customError.statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
-
+    
     if(err.name === 'ValidationError'){
         customError.msg = Object.values(err.errors)
             .map(item => item.message)

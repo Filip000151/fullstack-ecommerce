@@ -2,6 +2,7 @@ import { categories, loadCategories, getCategoryInfo } from "./api/categories.js
 import {queryProducts} from './api/products.js';
 import { loadCurrentUser } from './api/auth.js';
 import { loadCart } from './api/cart.js';
+import apiClient from "./api/apiClient.js";
 
 import {getQueryParams, createQueryString} from "./utils/query.js";
 
@@ -12,6 +13,8 @@ import renderProductsSectionComponent from "./components/productsSection/index.j
 renderPage();
 
 async function renderPage(){
+    apiClient.abortAllRequests();
+    
     const queryParams = {
         ...getQueryParams(),
         limit: 9
