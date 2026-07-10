@@ -15,7 +15,8 @@ class ProductService{
             queryObject.name = {$regex: name, $options: 'i'};
         }
         if(category){
-            queryObject.category = category;
+            if(category === 'uncategorised') queryObject.category = null;
+            else queryObject.category = category;
         }
         if(isFeatured !== undefined){
             queryObject.isFeatured = isFeatured === 'true';

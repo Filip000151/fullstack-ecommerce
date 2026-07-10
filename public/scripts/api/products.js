@@ -1,3 +1,4 @@
+import createQueryString from '../utils/query.js';
 import renderToast from '../utils/toast.js';
 import apiClient from './apiClient.js';
 
@@ -7,7 +8,8 @@ export const products = {
     current: window.__PRODUCT_DATA__ ? window.__PRODUCT_DATA__ : null
 };
 
-export async function queryProducts(query = ''){
+export async function queryProducts(queryParams = {}){
+    const query = createQueryString(queryParams);
     const data = await apiClient.get(`/api/products${query}`);
 
     if(data.success){
@@ -28,11 +30,11 @@ export async function loadProduct(productId){
     return data;
 }
 
-export async function createProduct(body){
+export async function createProduct(body, redirect = {}){
     const data = await apiClient.post(`/api/products`, body);
 
     if(data.success){
-        renderToast(data.msg);
+        renderToast(data.msg, {redirect: redirect.redirect});
     }
     else{
         renderToast(data.msg, {success: false});

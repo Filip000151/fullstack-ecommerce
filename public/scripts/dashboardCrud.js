@@ -1,9 +1,11 @@
 import { auth, loadCurrentUser } from "./api/auth.js";
 import renderDashboardItemsComponent from "./components/dashboardItems/index.js";
+import { showPendingToast } from "./utils/toast.js";
 
 renderPage();
 
 async function renderPage(){
+    showPendingToast();
     await loadCurrentUser();
 
     if(auth.isGuest || auth.currentUser.role !== 'admin'){
@@ -11,25 +13,31 @@ async function renderPage(){
         return;
     }
 
-    const pathname = window.location.pathname.split('/')[2];
-    switch(pathname){
-        case 'orders':
+    const loader = {
+        orders: async () => {
             const {loadUserOrders} = await import('./api/orders.js');
             await loadUserOrders();
-            break;
-        case 'products':
+        },
+        products: async () => {
             const {queryProducts} = await import('./api/products.js');
-            await queryProducts();
-            break;
-        case 'categories':
+            const {loadCategories} = await import('./api/categories.js');
+            await Promise.all([
+                loadCategories(),
+                queryProducts()
+            ]);
+        },
+        categories: async () => {
             const {loadCategories} = await import('./api/categories.js');
             await loadCategories();
-            break;
-        case 'shipping':
+        },
+        shipping: async () => {
             const {loadShippingOptions} = await import('./api/shipping.js');
             await loadShippingOptions();
-            break;
-    }
+        }
+    };
+
+    const pathname = window.location.pathname.split('/')[2];
+    await loader[pathname]();
 
     await renderDashboardItemsComponent(pathname);
 }

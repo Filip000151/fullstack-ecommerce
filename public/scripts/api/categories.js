@@ -1,5 +1,6 @@
 import apiClient from './apiClient.js';
 import createQueryString from '../utils/query.js';
+import renderToast from '../utils/toast.js';
 
 export const categories = {
     list: [],
@@ -33,6 +34,19 @@ export async function getCategoryInfo(categoryId, withProducts = true){
     if(data.success){
         categories.current = data.category;
     }
+    return data;
+}
+
+export async function createCategory(body, redirect){
+    const data = await apiClient.post('/api/category', body);
+
+    if(data.success){
+        renderToast(data.msg, {redirect: redirect.redirect});
+    }
+    else{
+        renderToast(data.msg, {success: false});
+    }
+
     return data;
 }
 

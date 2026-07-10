@@ -60,8 +60,7 @@ function setDefaultQueryEvents(){
             
             searchText = 'Search results';
         }
-        const query = createQueryString(params);
-        await queryProducts(query);
+        await queryProducts(params);
 
         dropdownHandler().renderDropdown('header-search-dropdown', renderSearchDropdown(searchText));
     }

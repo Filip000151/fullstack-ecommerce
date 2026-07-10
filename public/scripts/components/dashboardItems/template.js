@@ -30,7 +30,6 @@ async function importData(dataType){
 
 export async function createElement(dataType){
     await importData(dataType);
-    console.log(items);
     const html = `
         <a href="/dashboard" class="dashboard-back-link">Back</a>
         <h4>${getTitle()}</h4>
@@ -38,7 +37,7 @@ export async function createElement(dataType){
             ${renderItems()}
         </div>
         ${dataType !== 'orders' ? `
-        <button class="dashboard-new-button" data-item-type="${dataType}">New</button>
+        <button class="dashboard-new-button js-dashboard-new-button" data-item-type="${dataType}">New</button>
         ` : ''}
     `;
 
@@ -94,14 +93,13 @@ export function renderItems(){
     return html;
 }
 
-export function renderItemWindow(){
+export function renderItemViewWindow(){
     const html = `
         <div class="dashboard-item-content">
             <button class="dashboard-item-close-button js-close-button">&#x2715;</button>
             ${renderItemContent()}
         </div>
     `;
-    console.log(items);
     return html;
 
     function renderItemContent(){
@@ -251,7 +249,6 @@ export function renderItemWindow(){
         }
 
         function renderOrderProducts(){
-            console.log(item);
             let html = '';
             item.items.forEach(item => {
                 html += `
@@ -267,6 +264,163 @@ export function renderItemWindow(){
                     </div>
                 `;
             });
+            return html;
+        }
+    }
+}
+
+export async function renderCreateNewItemWindow(){
+    const fieldsHtml = await renderFields();
+    const html = `
+        <div class="dashboard-item-content">
+            <button class="dashboard-item-close-button js-close-button">&#x2715;</button>
+            ${fieldsHtml}
+        </div>
+    `;
+
+    return html;
+
+    async function renderFields(){
+        switch(items.type){
+            case 'products':
+                const {categories} = await import('../../api/categories.js');
+                return `
+                    <h4>New Product</h4>
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-left-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Name:</label>
+                                    <input class="js-name-input" type="text" placeholder="Enter name">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Price:</label>
+                                    <input class="js-price-input" type="number" placeholder="Enter price">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Featured:</label>
+                                    <input class="js-featured-input" type="checkbox">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Category:</label>
+                                    <select class="js-category-input">
+                                        <option value="">Uncategorised</option>
+                                        ${renderCategories(categories)}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="dashboard-item-crud-buttons">
+                                <button class="dashboard-item-crud-button js-dashboard-save-button">Save</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-item-right-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Cover Image:</label>
+                                    <input class="js-cover-image-upload" type="file" accept="image/*">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Images:</label>
+                                    <input class="js-images-upload" type="file" accept="image/*" multiple>
+                                </div>
+                            </div>
+                            <div class="dashboard-item-image-field">
+                                <p>Cover:</p>
+                                <div class="dashboard-item-cover-container js-dashboard-item-cover-container">
+                                    
+                                </div>
+                            </div>
+                            <div class="dashboard-item-image-field">
+                                <p>Images:</p>
+                                <div class="dashboard-item-images-scroller js-dashboard-item-images-scroller">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            case 'shipping':
+                return `
+                    <h4>New Shipping Option</h4>
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-left-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Name:</label>
+                                    <input class="js-name-input" type="text" placeholder="Enter name">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Delivery Days:</label>
+                                    <input class="js-delivery-days-input" type="number" placeholder="Enter number of days">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Price:</label>
+                                    <input class="js-price-input" type="number" placeholder="Enter price">
+                                </div>
+                            </div>
+                            <div class="dashboard-item-crud-buttons">
+                                <button class="dashboard-item-crud-button js-dashboard-save-button">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            case 'categories':
+                const {products, queryProducts} = await import('../../api/products.js');
+                await queryProducts({category: 'uncategorised'});
+                return `
+                    <h4>New Category</h4>
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-left-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Name:</label>
+                                    <input class="js-name-input" type="text" placeholder="Enter name">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Displayed:</label>
+                                    <input class="js-displayed-input" type="checkbox">
+                                </div>
+                            </div>
+                            <div class="dashboard-item-crud-buttons">
+                                <button class="dashboard-item-crud-button js-dashboard-save-button">Save</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-item-right-section">
+                            <div class="dashboard-item-list">
+                                ${renderProductList(products.list)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        function renderCategories(categories){
+            let html = '';
+            categories.list.forEach(category => {
+                html += `<option value="${category._id}">${category.name}</option>`;
+            });
+            return html;
+        }
+
+        function renderProductList(products){
+            let html = '';
+            if(products.length > 0){
+                products.forEach(product => {
+                    html += `
+                        <div class="dashboard-list-item">
+                            <div class="dashboard-list-item-image-container">
+                                <img src="${product.coverImage}">
+                            </div>
+                            <p>${product.name}</p>
+                            <input class="js-product-input" type="checkbox" data-id=${product._id}>
+                        </div>
+                    `;
+                });
+            }
+            else{
+                html = 'No uncategorised products.';
+            }
+            
             return html;
         }
     }

@@ -64,12 +64,13 @@ class CategoryService{
         return category;
     }
 
-    async createCategory(name, description, isDisplayed){
+    async createCategory(name, description, isDisplayed, productIds){
         const newCategory = await Category.create({
             name,
             description,
             isDisplayed
         });
+        if(productIds && productIds.length > 0) await newCategory.addProducts(productIds);
         return newCategory;
     }
 

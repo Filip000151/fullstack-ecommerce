@@ -23,7 +23,7 @@ export async function createOrder(body = {}, redirect = {}){
 
     if(data.success){
         clearCart();
-        renderToast(data.msg, {toastDuration: 5000, redirect: redirect.redirect, beforeRedirect: redirect.beforeRedirect});
+        renderToast(data.msg, {toastDuration: 5000, redirect: redirect.redirect});
     }
     else{
         if(data.code && data.code === 'PRODUCT_DELETED'){

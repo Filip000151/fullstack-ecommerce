@@ -16,7 +16,6 @@ class ApiClient{
 
         this.abortControllers.set(requestId, abortController);
 
-
         const requestInfo = {
             url,
             options: {
@@ -29,6 +28,9 @@ class ApiClient{
                 }
             }
         };
+
+        if(options.body instanceof FormData)
+            delete requestInfo.options.headers['Content-Type'];
 
         const timeoutId = setTimeout(() => {
             abortController.abort();
@@ -153,14 +155,14 @@ class ApiClient{
     async post(url, body, headerOptions){
         return this.request(url, {
             method: 'POST',
-            body: JSON.stringify(body)
+            body: body instanceof FormData ? body : JSON.stringify(body)
         });
     }
 
     async patch(url, body, headerOptions){
         return this.request(url, {
             method: 'PATCH',
-            body: JSON.stringify(body)
+            body: body instanceof FormData ? body : JSON.stringify(body)
         });
     }
 

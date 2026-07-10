@@ -24,7 +24,8 @@ const ProductSchema = mongoose.Schema({
     },
     category: {
         type: mongoose.Types.ObjectId,
-        ref: 'Category'
+        ref: 'Category',
+        default: null
     },
     createdBy: {
         type: mongoose.Types.ObjectId,

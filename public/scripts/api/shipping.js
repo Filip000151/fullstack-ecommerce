@@ -1,3 +1,4 @@
+import renderToast from '../utils/toast.js';
 import apiClient from './apiClient.js';
 
 export const shipping = {
@@ -18,6 +19,20 @@ export async function loadShippingOption(shippingId){
 
     if(data.success){
         shipping.current = data.shippingOption;
+    }
+
+    return data;
+}
+
+export async function createShippingOption(body, redirect){
+    const data = await apiClient.post(`/api/shipping`, body);
+
+    if(data.success){
+        shipping.list.push(data.shippingOption);
+        renderToast(data.msg, {redirect: redirect.redirect});
+    }
+    else{
+        renderToast(data.msg, {success: false});
     }
 
     return data;

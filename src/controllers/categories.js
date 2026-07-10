@@ -24,9 +24,9 @@ const getCategory = async (req, res) => {
 };
 
 const createCategory = async (req, res) => {
-    const {name, description, isDisplayed} = req.body;
+    const {name, description, isDisplayed, productIds} = req.body;
     
-    const category = await categoryService.createCategory(name, description, isDisplayed);
+    const category = await categoryService.createCategory(name, description, isDisplayed, productIds);
 
     return res.status(StatusCodes.CREATED).json({
         success: true,
