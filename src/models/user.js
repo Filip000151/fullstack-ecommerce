@@ -50,7 +50,7 @@ UserSchema.methods.createAccessToken = function(rememberMe){
     return jwt.sign(
         {userId: this._id, role: this.role, name: this.name}, 
         process.env.JWT_ACCESS_SECRET, 
-        {expiresIn: rememberMe ? process.env.JWT_ACCESS_LIFETIME : process.env.JWT_ACCESS_ONCE_LIFETIME}
+        {expiresIn: rememberMe ? process.env.JWT_ACCESS_LIFETIME : '6h'}
     );
 };
 

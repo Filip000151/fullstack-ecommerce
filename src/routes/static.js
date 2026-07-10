@@ -27,6 +27,12 @@ router.route('/orders').get((req, res) => {
 router.route(['/login', '/register']).get((req, res) => {
     res.sendFile(path.join(publicPath, 'auth.html'));
 });
+router.route('/dashboard').get((req, res) => {
+    res.sendFile(path.join(publicPath, 'dashboard.html'));
+});
+router.route(['/dashboard/products', '/dashboard/categories', '/dashboard/shipping', '/dashboard/orders']).get((req, res) => {
+    res.sendFile(path.join(publicPath, 'dashboard-crud.html'));
+});
 router.route('/products/:id').get(async (req, res) => {
     try{
         const {id} = req.params;

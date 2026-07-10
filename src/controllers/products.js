@@ -29,11 +29,12 @@ const createProduct = async (req, res) => {
     const files = req.files;
     const {userId} = req.user;
 
-    const newProduct = await productService.createProduct({name, priceCents, categoryId, isFeatured}, files, userId);
+    const product = await productService.createProduct({name, priceCents, categoryId, isFeatured}, files, userId);
     
     return res.status(StatusCodes.CREATED).json({
         success: true,
-        msg: 'Product created'
+        msg: 'Product created',
+        product
     });
 };
 
@@ -46,7 +47,8 @@ const updateProduct = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product updated'
+        msg: 'Product updated',
+        product
     });
 };
 
@@ -57,7 +59,8 @@ const deleteProduct = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Product deleted'
+        msg: 'Product deleted',
+        product
     });
 }
 

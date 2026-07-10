@@ -1,25 +1,26 @@
 import orders from '../../api/orders.js';
+import auth from '../../api/auth.js';
 import formatCurrency from '../../utils/money.js';
 import convertDateToObject from '../../utils/dates.js';
 
 export function createElement(){
-    const deliveryDate = convertDateToObject(orders.order.deliveryDate);
-    const creationDate = convertDateToObject(orders.order.createdAt);
+    const deliveryDate = convertDateToObject(orders.current.deliveryDate);
+    const creationDate = convertDateToObject(orders.current.createdAt);
 
     const html = `
-        ${orders.order.status !== 'cancelled' ? 
+        ${orders.current.status !== 'cancelled' ? 
             `
             <h4>Arriving on ${deliveryDate.day}, ${deliveryDate.month} ${deliveryDate.dayNum}</h4>
             <div class="status-wrapper">
                 <div class="status-info">
                     <div class="current-status">
                         <p class="status-active">Pending</p>
-                        <p ${orders.order.progress >= 33 ? 'class="status-active"' : ''}>Processing</p>
-                        <p ${orders.order.progress >= 67 ? 'class="status-active"' : ''}>Shipped</p>
-                        <p ${orders.order.progress === 100 ? 'class="status-active"' : ''}>Delivered</p>
+                        <p ${orders.current.progress >= 33 ? 'class="status-active"' : ''}>Processing</p>
+                        <p ${orders.current.progress >= 67 ? 'class="status-active"' : ''}>Shipped</p>
+                        <p ${orders.current.progress === 100 ? 'class="status-active"' : ''}>Delivered</p>
                     </div>
                     <div class="status-bar">
-                        <div class="status-bar-progress" style="width: ${orders.order.progress}%"></div>
+                        <div class="status-bar-progress" style="width: ${orders.current.progress}%"></div>
                     </div>
                 </div>
             </div>
@@ -33,6 +34,14 @@ export function createElement(){
             <div class="track-order-info">
                 <div>
                     <div class="track-order-line">
+                        <p class="track-order-label">Delivery Address:</p>
+                        <p class="track-order-label-info">${orders.current.deliveryAddress}</p>
+                    </div> 
+                    <div class="track-order-line">
+                        <p class="track-order-label">Email Address:</p>
+                        <p class="track-order-label-info">${orders.current.user ? orders.current.user.email : `${orders.current.guestEmail} (Guest)`}</p>
+                    </div>   
+                    <div class="track-order-line">
                         <p class="track-order-label">Order placed:</p>
                         <p class="track-order-label-info">${creationDate.dayNum}. ${creationDate.monthNum}. ${creationDate.year}.</p>
                     </div>
@@ -43,9 +52,9 @@ export function createElement(){
                     <div class="track-order-line">
                         <p class="track-order-label">Current status:</p>
                         <p class="track-order-label-info" 
-                            ${orders.order.status === 'cancelled' ? 'style="color: rgba(145, 45, 45, 0.882);"' : ''}
-                            ${orders.order.status === 'delivered' ? 'style="color: rgba(26, 107, 26, 0.76);"' : ''}>
-                            ${orders.order.status}
+                            ${orders.current.status === 'cancelled' ? 'style="color: rgba(145, 45, 45, 0.882);"' : ''}
+                            ${orders.current.status === 'delivered' ? 'style="color: rgba(26, 107, 26, 0.76);"' : ''}>
+                            ${orders.current.status}
                         </p>
                     </div>
                     <hr>
@@ -54,15 +63,15 @@ export function createElement(){
                         <p class="track-order-label-info">$${formatCurrency(getProductTotal())}</p>
                     </div>
                     <div class="track-order-line">
-                        <p class="track-order-label">Shipping price (${orders.order.shippingSnapshot.name}):</p>
-                        <p class="track-order-label-info">$${formatCurrency(orders.order.shippingSnapshot.priceCents)}</p>
+                        <p class="track-order-label">Shipping price (${orders.current.shippingSnapshot.name}):</p>
+                        <p class="track-order-label-info">$${formatCurrency(orders.current.shippingSnapshot.priceCents)}</p>
                     </div>
                     <hr>
                     <div class="track-order-line">
                         <p class="track-order-label">Total:</p>
-                        <p class="track-order-total">$${formatCurrency(orders.order.totalPriceCents)}</p>
+                        <p class="track-order-total">$${formatCurrency(orders.current.totalPriceCents)}</p>
                     </div>
-                    ${orders.order.status === 'pending' ? 
+                    ${orders.current.status === 'pending' ? 
                         `
                         <div class="cancel-order-button-wrapper">
                             <button class="cancel-order-button js-cancel-order-button">Cancel order</button>
@@ -73,7 +82,7 @@ export function createElement(){
                                 <p>Are you sure you want to cancel this order?</p>
                                 <div class="cancel-order-modal-buttons">
                                     <button class="cancel-order-modal-button js-cancel-order-no-button">No</button>
-                                    <button class="cancel-order-modal-button js-cancel-order-yes-button" data-order-id="${orders.order._id}">Yes</button>
+                                    <button class="cancel-order-modal-button js-cancel-order-yes-button" data-order-id="${orders.current._id}">Yes</button>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +110,7 @@ export function createElement(){
     function renderOrderProducts(){
         let html = '';
 
-        orders.order.items.forEach(item => {
+        orders.current.items.forEach(item => {
             html += `
                 <div class="track-order-product">
                     <div class="track-order-product-image">
@@ -133,7 +142,7 @@ export function createElement(){
 
     function getProductTotal(){
         let total = 0;
-        orders.order.items.forEach(item => {
+        orders.current.items.forEach(item => {
             total += item.productSnapshot.priceCents * item.quantity;
         });
         return total;

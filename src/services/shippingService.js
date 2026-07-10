@@ -17,6 +17,16 @@ class ShippingService{
         return shippingOptionsFormatted;
     }
 
+    async getShippingOption(shippingId){
+        const shippingOption = await Shipping.findOne({_id: shippingId});
+
+        if(!shippingOption){
+            throw new NotFoundError(`Shipping option with id ${shippingId} not found`);
+        }
+
+        return shippingOption;
+    }
+
     async createShippingOption(name, deliveryDays, priceCents){
         const shippingOption = await Shipping.create({
             name,

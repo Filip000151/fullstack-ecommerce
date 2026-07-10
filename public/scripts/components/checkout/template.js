@@ -101,8 +101,8 @@ export function renderProducts(){
 
 export function renderShippingOptions(){
     let html = '';
-    if(shipping.shippingOptions.length > 0){
-        shipping.shippingOptions.forEach((option, index) => {
+    if(shipping.list.length > 0){
+        shipping.list.forEach((option, index) => {
             html += `
                 <div class="checkout-shipping-option ${index === 0 ? 'radio-checked' : ''} js-checkout-shipping-option" data-shipping-price="${option.priceCents}" data-shipping-id="${option._id}" data-shipping-name="${option.name}">
                     <svg class="checkout-shipping-radio-icon" viewBox="0 0 24 24">

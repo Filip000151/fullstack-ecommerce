@@ -116,10 +116,10 @@ function setCartEvents(){
     addToCartButton.addEventListener('click', async () => {
         const quantity = Number(document.querySelector('.js-product-quantity').textContent);
         const product = {
-            _id: products.product._id,
-            name: products.product.name,
-            priceCents: products.product.priceCents,
-            coverImage: products.product.coverImage
+            _id: products.current._id,
+            name: products.current.name,
+            priceCents: products.current.priceCents,
+            coverImage: products.current.coverImage
         };
         await addToCart(product, quantity);
         renderHeaderComponent();

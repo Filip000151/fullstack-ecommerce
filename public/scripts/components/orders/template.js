@@ -1,10 +1,11 @@
 import orders from '../../api/orders.js';
+import auth from '../../api/auth.js';
 import formatCurrency from '../../utils/money.js';
 import convertDateToObject from '../../utils/dates.js';
 
 export function createElement(){
     const html = `
-        <h4 class="your-orders-title">Your Orders</h4>
+        <h4 class="your-orders-title">${!auth.isGuest && auth.currentUser.role === 'admin' ? 'All Orders' : 'Your Orders'}</h4>
         <div class="orders-section">
             ${renderOrders()}
         </div>
@@ -26,8 +27,8 @@ export function createElement(){
     function renderOrders(){
         let html = '';
 
-        if(orders.userOrders.length > 0){
-            orders.userOrders.forEach(order => {
+        if(orders.list.length > 0){
+            orders.list.forEach(order => {
                 const creationDate = convertDateToObject(order.createdAt);
                 html += `
                     <div class="single-order">

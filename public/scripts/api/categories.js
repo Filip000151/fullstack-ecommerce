@@ -2,15 +2,15 @@ import apiClient from './apiClient.js';
 import createQueryString from '../utils/query.js';
 
 export const categories = {
-    categories: [],
-    category: null
+    list: [],
+    current: null
 };
 
 export async function loadCategories(){
     const data = await apiClient.get(`/api/category`);
 
     if(data.success){
-        categories.categories = data.categories;
+        categories.list = data.categories;
     }
 
     return data;
@@ -27,11 +27,11 @@ export async function queryCategories(queryParams = {}){
     return [];
 }
 
-export async function getCategoryInfo(categoryId, withProducts = false){
+export async function getCategoryInfo(categoryId, withProducts = true){
     const query = createQueryString({withProducts});
     const data = await apiClient.get(`/api/category/${categoryId}${query}`);
     if(data.success){
-        categories.category = data.category;
+        categories.current = data.category;
     }
     return data;
 }

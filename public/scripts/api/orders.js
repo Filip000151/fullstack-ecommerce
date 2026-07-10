@@ -4,8 +4,8 @@ import auth from './auth.js';
 import renderToast from '../utils/toast.js';
 
 export const orders = {
-    userOrders: [],
-    order: null
+    list: [],
+    current: null
 };
 
 export async function createOrder(body = {}, redirect = {}){
@@ -26,6 +26,9 @@ export async function createOrder(body = {}, redirect = {}){
         renderToast(data.msg, {toastDuration: 5000, redirect: redirect.redirect, beforeRedirect: redirect.beforeRedirect});
     }
     else{
+        if(data.code && data.code === 'PRODUCT_DELETED'){
+            await clearCart();
+        }
         renderToast(data.msg, {toastDuration: 10000, success: false});
     }
 
@@ -43,7 +46,7 @@ export async function loadUserOrders(){
     const data = await apiClient.get('/api/orders');
 
     if(data.success){
-        orders.userOrders = data.orders;
+        orders.list = data.orders;
     }
 
     return data;
@@ -51,9 +54,9 @@ export async function loadUserOrders(){
 
 export async function loadOrder(id){
     const data = await apiClient.get(`/api/orders/${id}`);
-
+    
     if(data.success){
-        orders.order = data.order;
+        orders.current = data.order;
     }
 
     return data;

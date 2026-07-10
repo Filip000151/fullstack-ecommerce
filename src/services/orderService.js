@@ -84,10 +84,13 @@ class OrderService {
         const items = [];
 
         for (const item of cartItems){
-            const product = await Product.findOne({_id: item.productId, isDeleted: false});
+            const product = await Product.findOne({_id: item.productId});
 
             if(!product){
                 throw new NotFoundError('No product found.');
+            }
+            if(product.isDeleted){
+                throw new BadRequestError('The product was deleted.', 'PRODUCT_DELETED');
             }
 
             const itemTotalCents = product.priceCents * item.quantity;
@@ -127,8 +130,22 @@ class OrderService {
         return order;
     }
 
-    async getUserOrder(orderId, userId){
-        const order = await Order.findOne({_id: orderId, user: userId});
+    async getOrder(orderId, role, userId, guestId){
+        const queryObject = {_id: orderId};
+        if(role === 'guest'){
+            if(!guestId){
+                throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+            }
+            queryObject.guestId = guestId;
+        }
+        else if(role === 'client'){
+            queryObject.user = userId;
+        }
+        else if(role === 'admin'){
+            return await Order.findOne({...queryObject}).populate('user', 'name email');
+        }
+
+        const order = await Order.findOne(queryObject);
 
         if(!order){
             throw new NotFoundError('No order found.');
@@ -142,50 +159,26 @@ class OrderService {
         };
     }
 
-    async getGuestOrder(orderId, guestId){
-        if(!guestId){
-            throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+    async getOrders(role, userId, guestId){
+        const queryObject = {};
+        if(role === 'guest'){
+            if(!guestId){
+                throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
+            }
+            queryObject.guestId = guestId;
         }
-        const order = await Order.findOne({_id: orderId, guestId});
-
-        if(!order){
-            throw new NotFoundError('No order found.');
+        else if(role === 'client'){
+            queryObject.user = userId;
+        }
+        else if(role === 'admin'){
+            return await Order.find().sort({createdAt: -1});
         }
 
-        const progress = this.calculateProgress(order);
-
-        return {
-            ...order.toObject(),
-            progress
-        };
-    }
-
-    async getGuestOrders(guestId){
-        if(!guestId){
-            throw new UnauthorizedError('No guest ID found.', 'GUEST_ID_MISSING');
-        }
-        const orders = await Order.find({guestId})
-            .select('-user -guestId')
-            .sort({createdAt: -1});
-
-        return orders;
-    }
-
-    async getUserOrders(userId){
-        const orders = await Order.find({user: userId})
-            .select('-user -guestId')
-            .sort({createdAt: -1});
-
-        return orders;
-    }
-
-    async getAllOrders(){
-        const query = {};
-        
-        const orders = await Order.find()
+        const orders = await Order.find(queryObject)
             .select('-user -guestId')
             .sort({createdAt: -1});
         
+
         return orders;
     }
 

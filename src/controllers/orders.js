@@ -3,19 +3,9 @@ const orderService = require('../services/orderService');
 const {StatusCodes} = require('http-status-codes');
 
 const getOrders = async (req, res) => {
-    const {userId, role, isGuest, guestId} = req.user;
+    const {userId, role, guestId} = req.user;
 
-    let orders;
-
-    if(role === 'admin'){
-        orders = await orderService.getAllOrders();
-    }
-    else if(isGuest){
-        orders = await orderService.getGuestOrders(guestId);
-    }
-    else{
-        orders = await orderService.getUserOrders(userId);
-    }
+    const orders = await orderService.getOrders(role, userId, guestId);
 
     return res.status(StatusCodes.OK).json({
         success: true,
@@ -26,16 +16,9 @@ const getOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
     const {id} = req.params;
-    const {userId, isGuest, guestId} = req.user;
+    const {userId, guestId, role} = req.user;
 
-    let order;
-
-    if(isGuest){
-        order = await orderService.getGuestOrder(id, guestId);
-    }
-    else{
-        order = await orderService.getUserOrder(id, userId);
-    }
+    const order = await orderService.getOrder(id, role, userId, guestId);
 
     return res.status(StatusCodes.OK).json({
         success: true,

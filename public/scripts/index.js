@@ -1,4 +1,4 @@
-import { categories, loadCategories, queryCategories } from "./api/categories.js";
+import { loadCategories, queryCategories } from "./api/categories.js";
 import { showPendingToast } from "./utils/toast.js";
 import { loadCurrentUser } from "./api/auth.js";
 import { loadCart } from './api/cart.js';

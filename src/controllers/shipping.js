@@ -10,6 +10,16 @@ const getAllShippingOptions = async (req, res) => {
     });
 };
 
+const getShippingOption = async (req, res) => {
+    const {id} = req.params;
+    const shippingOption = await shippingService.getShippingOption(id);
+
+    return res.status(StatusCodes.OK).json({
+        success: true,
+        shippingOption
+    });
+};
+
 const createShippingOption = async (req, res) => {
     const {name, deliveryDays, priceCents} = req.body;
     
@@ -45,6 +55,7 @@ const deleteShippingOption = async (req, res) => {
 
 module.exports = {
     getAllShippingOptions,
+    getShippingOption,
     createShippingOption,
     updateShippingOption,
     deleteShippingOption

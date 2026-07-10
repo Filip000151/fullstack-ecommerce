@@ -34,7 +34,7 @@ const login = async (req, res) => {
         httpOnly: true,
         sameSite: 'lax',
         //secure: true,
-        maxAge: rememberMe ? 15 * 60 * 1000 : 2 * 60 * 60 * 1000
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
     });
 
     return res.status(StatusCodes.OK).json({
@@ -81,17 +81,10 @@ const refreshAccessToken = async (req, res) => {
 
     const tokens = await authService.refreshUserToken(refreshToken, deviceInfo);
 
-    res.cookie('refreshToken', tokens.refreshToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        //secure: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000
-    })
-
     res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         sameSite: 'lax',
-        maxAge: 15 * 60 * 1000
+        maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
     return res.status(StatusCodes.OK).json({

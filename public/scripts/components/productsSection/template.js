@@ -128,8 +128,8 @@ export function renderPagination(){
 
 export function renderProducts(){
     let html = '';
-    if(products.querriedProducts && products.querriedProducts.length > 0){
-        products.querriedProducts.forEach(product => {
+    if(products.list && products.list.length > 0){
+        products.list.forEach(product => {
             html += `
                 <div class="product-card">
                     <div class="image-container">

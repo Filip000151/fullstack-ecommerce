@@ -73,7 +73,7 @@ export function renderElement() {
 
     function renderCategoryOptions() {
         let html = '';
-        categories.categories.forEach((category) => {
+        categories.list.forEach((category) => {
             html += `
                     <option value="${category._id}" ${queryParams.category && queryParams.category === category._id ? "selected" : ""}>${category.name}</option>
                 `;
@@ -143,8 +143,8 @@ export function renderSearchDropdown(searchText){
 
     function renderSearchProducts(){
         let html = '';
-        if(products.querriedProducts.length > 0){
-            products.querriedProducts.forEach(product => {
+        if(products.list.length > 0){
+            products.list.forEach(product => {
                 html += `
                     <div class="search-product">
                         <div class="search-product-image-container">
@@ -189,6 +189,20 @@ export function renderProfileDropdown(){
                     <h4>Hello ${auth.currentUser.name}.</h4>
                     <div class="dropdown-auth-buttons">
                         <a href="/register"><button class="dropdown-auth-button">Register account</button></a>
+                        <button class="dropdown-auth-button js-logout-button">Logout</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    else if(auth.currentUser.role === 'admin'){
+        html = `
+            <div class="header-icon-dropdown-wrapper">
+                <div class="profile-dropdown">
+                    <h4>Hello ${auth.currentUser.name}.</h4>
+                    <div class="dropdown-auth-buttons">
+                        <a href="/register"><button class="dropdown-auth-button">Register account</button></a>
+                        <a href="/dashboard"><button class="dropdown-auth-button">Dashboard</button></a>
                         <button class="dropdown-auth-button js-logout-button">Logout</button>
                     </div>
                 </div>

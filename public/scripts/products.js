@@ -1,4 +1,4 @@
-import { categories, loadCategories, getCategoryInfo } from "./api/categories.js";
+import { loadCategories, getCategoryInfo } from "./api/categories.js";
 import {queryProducts} from './api/products.js';
 import { loadCurrentUser } from './api/auth.js';
 import { loadCart } from './api/cart.js';
