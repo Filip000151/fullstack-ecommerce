@@ -36,6 +36,10 @@ const errorHandler = (err, req, res, next) => {
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
     }
+    if(err.code === 'LIMIT_UNEXPECTED_FILE'){
+        customError.msg = 'Up to 8 files can be uploaded at once.';
+        customError.statusCode = StatusCodes.BAD_REQUEST;
+    }
 
     return res.status(customError.statusCode).json(customError);
 };

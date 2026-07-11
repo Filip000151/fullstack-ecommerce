@@ -64,6 +64,11 @@ class AuthService{
         if(isGuest) return {isGuest: true, user: null};
 
         const user = await User.findById(userId).select('-password');
+
+        if(!user){
+            throw new UnauthorizedError('User not found.', 'INVALID_TOKEN');
+        }
+
         return {isGuest: false, user};
     }
 

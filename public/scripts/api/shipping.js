@@ -49,4 +49,18 @@ export async function deleteShippingOption(shippingId, redirect){
     }
 }
 
+export async function updateShippingOption(shippingId, body){
+    const data = await apiClient.patch(`/api/shipping/${shippingId}`, body);
+
+    if(data.success){
+        shipping.current = data.shippingOption;
+        renderToast(data.msg);
+    }
+    else{
+        renderToast(data.msg, {success: false});
+    }
+
+    return data;
+}
+
 export default shipping;

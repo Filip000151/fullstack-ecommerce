@@ -19,6 +19,9 @@ export async function loadCurrentUser(){
             auth.currentUser = data.user;
         }
     }
+    else{
+        renderToast(data.msg, {success: false, redirect: '/'});
+    }
 
     return data;
 }

@@ -80,22 +80,13 @@ class ProductService{
     }
 
     async getProduct(productId){
-        const product = await Product.findOne({_id: productId, isDeleted: false}).populate('category', 'name');
+        const product = await Product.findOne({_id: productId, isDeleted: false}).populate('category', '_id name');
     
         if(!product){
             throw new NotFoundError(`No product found with id: ${productId}`);
         }
-    
-        const formatted = {
-            _id: product._id,
-            name: product.name,
-            priceCents: product.priceCents,
-            coverImage: product.coverImage,
-            images: product.images,
-            category: product.category
-        };
 
-        return formatted;
+        return product;
     }
     async createProduct(productData, files, userId){
         const imagePaths = files['images']?.map(image => {

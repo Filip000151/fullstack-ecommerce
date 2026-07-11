@@ -55,7 +55,7 @@ class CategoryService{
     async getCategory(categoryId, query){
         const withProducts = query.withProducts === 'true';
 
-        const category = await Category.findById(categoryId).select('-isDisplayed');
+        const category = await Category.findById(categoryId);
         if(withProducts){
             const products = await Product.find({category: categoryId, isDeleted: false}).select('-images -isFeatured -category -createdBy -isDeleted -deletedAt -createdAt -updatedAt');
             return {
@@ -86,12 +86,18 @@ class CategoryService{
                 returnDocument: 'after'
             }
         );
+        await category.updateProducts(data.productIds);
+        const products = await Product.find({category: categoryId, isDeleted: false})
+            .select('-images -isFeatured -category -createdBy -isDeleted -deletedAt -createdAt -updatedAt');
     
         if(!category){
             throw new NotFoundError('No category found with id: ' + categoryId);
         }
 
-        return category;
+        return {
+            ...category.toObject(),
+            products
+        };
     }
 
     async deleteCategory(categoryId){

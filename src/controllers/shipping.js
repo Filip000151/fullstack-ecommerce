@@ -38,7 +38,8 @@ const updateShippingOption = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Shipping option successfully updated'
+        msg: 'Shipping option successfully updated',
+        shippingOption
     });
 };
 

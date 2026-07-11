@@ -19,6 +19,17 @@ CategorySchema.methods.addProducts = async function(productIds){
     );
 };
 
+CategorySchema.methods.updateProducts = async function(productIds){
+    await Product.updateMany(
+        {category: this._id},
+        {$set: {category: null}}
+    );
+    await Product.updateMany(
+        {_id: {$in: productIds}},
+        {$set: {category: this._id}}
+    );
+}
+
 CategorySchema.methods.removeProducts = async function(){
     await Product.updateMany(
         {category: this._id},

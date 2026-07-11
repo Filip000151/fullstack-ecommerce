@@ -63,4 +63,18 @@ export async function deleteCategory(categoryId, redirect){
     return data;
 }
 
+export async function updateCategory(categoryId, body){
+    const data = await apiClient.patch(`/api/category/${categoryId}`, body);
+
+    if(data.success){
+        categories.current = data.category;
+        renderToast(data.msg);
+    }
+    else{
+        renderToast(data.msg, {success: false});
+    }
+
+    return data;
+}
+
 export default categories;

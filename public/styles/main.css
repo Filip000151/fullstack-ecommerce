@@ -88,7 +88,6 @@ button{
     right: 0;
     height: 5px;
     background-color: white;
-    border-radius: 0.5em;
 }
 .toast:hover{
     opacity: 0.8;

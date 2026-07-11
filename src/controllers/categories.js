@@ -41,7 +41,8 @@ const updateCategory = async (req, res) => {
 
     return res.status(StatusCodes.OK).json({
         success: true,
-        msg: 'Category updated'
+        msg: 'Category updated',
+        category
     });
 };
 

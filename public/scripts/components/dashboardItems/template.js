@@ -37,7 +37,7 @@ export async function createElement(dataType){
             ${renderItems()}
         </div>
         ${dataType !== 'orders' ? `
-        <button class="dashboard-new-button js-dashboard-new-button" data-item-type="${dataType}">New</button>
+        <button class="dashboard-new-button js-dashboard-new-button">New</button>
         ` : ''}
     `;
 
@@ -66,31 +66,30 @@ export async function createElement(dataType){
                 return 'Shipping Options'
         }
     }
-}
-
-export function renderItems(){
-    let html = '';
-    if(items.type === 'orders'){
-        items.data.list.forEach(item => {
-            const creationDate = convertDateToObject(item.createdAt);
-            html += `
-                <div class="dashboard-item js-dashboard-item" data-id="${item._id}">
-                    <p>${creationDate.dayNum}. ${creationDate.monthNum}. ${creationDate.year}.</p>
-                    <p>${item.status}</p>
-                </div>
-            `;
-        });
+    function renderItems(){
+        let html = '';
+        if(items.type === 'orders'){
+            items.data.list.forEach(item => {
+                const creationDate = convertDateToObject(item.createdAt);
+                html += `
+                    <div class="dashboard-item js-dashboard-item" data-id="${item._id}">
+                        <p>${creationDate.dayNum}. ${creationDate.monthNum}. ${creationDate.year}.</p>
+                        <p>${item.status}</p>
+                    </div>
+                `;
+            });
+        }
+        else{
+            items.data.list.forEach(item => {
+                html += `
+                    <div class="dashboard-item js-dashboard-item" data-id="${item._id}">
+                        <p>${item.name}</p>
+                    </div>
+                `;
+            });
+        }
+        return html;
     }
-    else{
-        items.data.list.forEach(item => {
-            html += `
-                <div class="dashboard-item js-dashboard-item" data-id="${item._id}">
-                    <p>${item.name}</p>
-                </div>
-            `;
-        });
-    }
-    return html;
 }
 
 export function renderItemViewWindow(){
@@ -125,8 +124,8 @@ export function renderItemViewWindow(){
                                 </div>
                             </div>
                             <div class="dashboard-item-crud-buttons">
-                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}" data-item-type="${items.type}">Delete</button>
-                                <button class="dashboard-item-crud-button">Update</button>
+                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}">Delete</button>
+                                <button class="dashboard-item-crud-button js-update-button">Update</button>
                             </div>
                         </div>
                         <div class="dashboard-item-right-section">
@@ -154,8 +153,8 @@ export function renderItemViewWindow(){
                                 ${renderCategoryProducts()}
                             </div>
                             <div class="dashboard-item-crud-buttons">
-                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}" data-item-type="${items.type}">Delete</button>
-                                <button class="dashboard-item-crud-button">Update</button>
+                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}">Delete</button>
+                                <button class="dashboard-item-crud-button js-update-button">Update</button>
                             </div>
                         </div>
                     </div>
@@ -213,8 +212,8 @@ export function renderItemViewWindow(){
                                 </div>
                             </div>
                             <div class="dashboard-item-crud-buttons">
-                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}" data-item-type="${items.type}">Delete</button>
-                                <button class="dashboard-item-crud-button">Update</button>
+                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}">Delete</button>
+                                <button class="dashboard-item-crud-button js-update-button">Update</button>
                             </div>
                         </div>
                     </div>
@@ -235,16 +234,22 @@ export function renderItemViewWindow(){
 
         function renderCategoryProducts(){
             let html = '';
-            item.products.forEach(product => {
-                html += `
-                    <div class="dashboard-list-item">
-                        <div class="dashboard-list-item-image-container">
-                            <img src="${product.coverImage}">
+            if(item.products.length > 0){
+                item.products.forEach(product => {
+                    html += `
+                        <div class="dashboard-list-item">
+                            <div class="dashboard-list-item-image-container">
+                                <img src="${product.coverImage}">
+                            </div>
+                            <p>${product.name}</p>
                         </div>
-                        <p>${product.name}</p>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
+            else{
+                html = 'This category has no products.';
+            }
+            
             return html;
         }
 
@@ -408,11 +413,11 @@ export async function renderCreateNewItemWindow(){
                 products.forEach(product => {
                     html += `
                         <div class="dashboard-list-item">
+                            <input class="js-product-input" type="checkbox" data-id=${product._id}>
                             <div class="dashboard-list-item-image-container">
                                 <img src="${product.coverImage}">
                             </div>
                             <p>${product.name}</p>
-                            <input class="js-product-input" type="checkbox" data-id=${product._id}>
                         </div>
                     `;
                 });
@@ -423,6 +428,215 @@ export async function renderCreateNewItemWindow(){
             
             return html;
         }
+    }
+}
+
+export async function renderUpdateItemWindow(){
+    const fieldsHtml = await renderFields();
+    const html = `
+        <div class="dashboard-item-content">
+            <button class="dashboard-item-close-button js-close-button">&#x2715;</button>
+            ${fieldsHtml}
+        </div>
+    `;
+
+    return html;
+
+    async function renderFields(){
+        const item = items.data.current;
+        switch(items.type){
+            case 'products':
+                const {categories} = await import('../../api/categories.js');
+                return `
+                    <h4>Update Product</h4>
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-left-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Name:</label>
+                                    <input class="js-name-input" type="text" placeholder="Enter name" value="${item.name}">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Price:</label>
+                                    <input class="js-price-input" type="number" placeholder="Enter price" value="${item.priceCents}">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Featured:</label>
+                                    <input class="js-featured-input" type="checkbox" ${item.isFeatured ? 'checked' : ''}>
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Category:</label>
+                                    <select class="js-category-input">
+                                        <option value="">Uncategorised</option>
+                                        ${renderCategories(categories)}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="dashboard-item-crud-buttons">
+                                <button class="dashboard-item-crud-button js-dashboard-cancel-button">Cancel</button>
+                                <button class="dashboard-item-crud-button js-dashboard-save-button" data-id="${item._id}">Save</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-item-right-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Cover Image:</label>
+                                    <input class="js-cover-image-upload" type="file" accept="image/*">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Images:</label>
+                                    <input class="js-images-upload" type="file" accept="image/*" multiple>
+                                </div>
+                            </div>
+                            <div class="dashboard-item-image-field">
+                                <p>Cover:</p>
+                                <div class="dashboard-item-cover-container js-dashboard-item-cover-container">
+                                    <img src=${item.coverImage}>
+                                </div>
+                            </div>
+                            <div class="dashboard-item-image-field">
+                                <p>Images:</p>
+                                <div class="dashboard-item-images-scroller js-dashboard-item-images-scroller">
+                                    ${renderProductImages(item.images)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            case 'shipping':
+                return `
+                    <h4>Update Shipping Option</h4>
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-left-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Name:</label>
+                                    <input class="js-name-input" type="text" placeholder="Enter name" value="${item.name}">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Delivery Days:</label>
+                                    <input class="js-delivery-days-input" type="number" placeholder="Enter number of days" value="${item.deliveryDays}">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Price:</label>
+                                    <input class="js-price-input" type="number" placeholder="Enter price" value="${item.priceCents}">
+                                </div>
+                            </div>
+                            <div class="dashboard-item-crud-buttons">
+                                <button class="dashboard-item-crud-button js-dashboard-cancel-button">Cancel</button>
+                                <button class="dashboard-item-crud-button js-dashboard-save-button" data-id="${item._id}">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            case 'categories':
+                const {products, queryProducts} = await import('../../api/products.js');
+                await queryProducts({category: 'uncategorised'});
+                return `
+                    <h4>Update Category</h4>
+                    <div class="dashboard-item-info">
+                        <div class="dashboard-item-left-section">
+                            <div class="dashboard-item-fields">
+                                <div class="dashboard-item-input">
+                                    <label>Name:</label>
+                                    <input class="js-name-input" type="text" placeholder="Enter name" value="${item.name}">
+                                </div>
+                                <div class="dashboard-item-input">
+                                    <label>Display on homepage:</label>
+                                    <input class="js-displayed-input" type="checkbox" ${item.isDisplayed ? 'checked' : ''}>
+                                </div>
+                            </div>
+                            <div class="dashboard-item-crud-buttons">
+                                <button class="dashboard-item-crud-button js-dashboard-cancel-button">Cancel</button>
+                                <button class="dashboard-item-crud-button js-dashboard-save-button" data-id="${item._id}">Save</button>
+                            </div>
+                        </div>
+                        <div class="dashboard-item-right-section">
+                            <div class="dashboard-item-list">
+                                ${renderProductList(products.list, item.products)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        function renderCategories(categories){
+            let html = '';
+            categories.list.forEach(category => {
+                html += `<option value="${category._id}" ${item.category && item.category._id === category._id ? 'selected' : ''}>${category.name}</option>`;
+            });
+            return html;
+        }
+
+        function renderProductList(products, categoryProducts){
+            let html = '';
+            if(products.length > 0 || categoryProducts.length > 0){
+                categoryProducts.forEach(product => {
+                    html += `
+                        <div class="dashboard-list-item">
+                            <input class="js-product-input" type="checkbox" data-id=${product._id} checked>
+                            <div class="dashboard-list-item-image-container">
+                                <img src="${product.coverImage}">
+                            </div>
+                            <p>${product.name}</p>
+                        </div>
+                    `;
+                });
+                products.forEach(product => {
+                    html += `
+                        <div class="dashboard-list-item">
+                            <input class="js-product-input" type="checkbox" data-id=${product._id}>
+                            <div class="dashboard-list-item-image-container">
+                                <img src="${product.coverImage}">
+                            </div>
+                            <p>${product.name}</p>
+                        </div>
+                    `;
+                });
+            }
+            else{
+                html = 'No products found.';
+            }
+            
+            return html;
+        }
+    }
+}
+
+export function renderProductImages(images){
+    let html = '';
+    images.forEach(image => {
+        html += `
+            <div class="dashboard-item-image-container">
+                <button class="dashboard-image-close-button js-dashboard-old-image-close-button" data-image-path="${image}">&#215;</button>
+                <img src="${image}" data-image-path="${image}" class="js-dashboard-image">
+            </div>
+        `
+    });
+    return html;
+}
+
+export function renderProductCoverImage(){
+    return `<img src="${items.data.current.coverImage}">`;
+}
+
+export function togglePopup(){
+    const dialog = document.querySelector('.dashboard-dialog');
+    if(dialog){
+        document.body.removeChild(dialog);
+    }
+    else{
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('dashboard-dialog');
+        dialog.innerHTML = `
+            <h4>Delete item?</h4>
+            <div class="dialog-buttons">
+                <button class="dialog-button js-dialog-no-button">No</button>
+                <button class="dialog-button js-dialog-yes-button">Yes</button>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        return dialog;
     }
 }
 

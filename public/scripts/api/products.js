@@ -47,6 +47,7 @@ export async function updateProduct(productId, body){
     const data = await apiClient.patch(`/api/products/${productId}`, body);
 
     if(data.success){
+        products.current = data.product;
         renderToast(data.msg);
     }
     else{
