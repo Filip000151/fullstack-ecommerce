@@ -208,6 +208,9 @@ class ProductService{
     
     async deleteFile(filePath){
         if(!filePath) return;
+        const normalizedPath = path.normalize(filePath);
+        const pathParts = normalizedPath.split(path.sep);
+        if(pathParts.includes('seeded')) return;
 
         const fullPath = path.join(__dirname, '..', '..', 'public', filePath);
 

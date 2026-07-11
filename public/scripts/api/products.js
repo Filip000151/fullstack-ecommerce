@@ -56,11 +56,11 @@ export async function updateProduct(productId, body){
     return data;
 }
 
-export async function deleteProduct(productId){
+export async function deleteProduct(productId, redirect){
     const data = await apiClient.delete(`/api/products/${productId}`);
 
     if(data.success){
-        renderToast(data.msg);
+        renderToast(data.msg, {redirect: redirect.redirect});
     }
     else{
         renderToast(data.msg, {success: false});

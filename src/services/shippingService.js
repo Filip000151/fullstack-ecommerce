@@ -3,7 +3,7 @@ const {NotFoundError} = require('../errors');
 
 class ShippingService{
     async getAllShippingOptions(){
-        const shippingOptions = await Shipping.find({isDeleted: false}).sort('priceCents');
+        const shippingOptions = await Shipping.find().sort('priceCents');
         
         const shippingOptionsFormatted = shippingOptions.map(option => {
             return {
@@ -38,7 +38,7 @@ class ShippingService{
 
     async updateShippingOption(shippingId, data){
         const shippingOption = await Shipping.findOneAndUpdate(
-            {_id: shippingId, isDeleted: false},
+            {_id: shippingId},
             data,
             {runValidators: true, returnDocument: 'after'}
         );
@@ -51,12 +51,10 @@ class ShippingService{
     }
 
     async deleteShippingOption(shippingId){
-        const shippingOption = await Shipping.findOne({_id: shippingId});
+        const shippingOption = await Shipping.findOneAndDelete({_id: shippingId});
         if(!shippingOption){
             throw new NotFoundError(`Shipping option with id ${shippingId} not found`);
         }
-    
-        await shippingOption.softDelete();
 
         return shippingOption;
     }

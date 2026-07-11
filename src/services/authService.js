@@ -78,10 +78,10 @@ class AuthService{
         });
 
         if(!storedToken){
-            throw new UnauthorizedError('Invalid or expired refresh token.');
+            throw new UnauthorizedError('Session expired.', 'INVALID_TOKEN');
         }
         if(storedToken.revoked === true){
-            throw new UnauthorizedError('Attempted account breach detected!', 'IDENTITY_THEFT');
+            throw new UnauthorizedError('Attempted account breach detected!', 'INVALID_TOKEN');
         }
 
         const user = await User.findById(storedToken.userId);

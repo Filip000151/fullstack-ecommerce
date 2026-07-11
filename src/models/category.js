@@ -19,4 +19,11 @@ CategorySchema.methods.addProducts = async function(productIds){
     );
 };
 
+CategorySchema.methods.removeProducts = async function(){
+    await Product.updateMany(
+        {category: this._id},
+        {$set: {category: null}}
+    );
+}
+
 module.exports = mongoose.model('Category', CategorySchema);

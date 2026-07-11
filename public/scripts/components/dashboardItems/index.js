@@ -30,21 +30,21 @@ async function importCrudOperations(dataType){
             };
             return;
         case 'categories':
-            const {getCategoryInfo, createCategory} = await import('../../api/categories.js');
+            const {getCategoryInfo, createCategory, deleteCategory} = await import('../../api/categories.js');
             itemController = {
                 create: createCategory,
                 read: getCategoryInfo,
                 update: null,
-                delete: null
+                delete: deleteCategory
             };
             return;
         case 'shipping':
-            const {loadShippingOption, createShippingOption} = await import('../../api/shipping.js');
+            const {loadShippingOption, createShippingOption, deleteShippingOption} = await import('../../api/shipping.js');
             itemController = {
                 create: createShippingOption,
                 read: loadShippingOption,
                 update: null,
-                delete: null
+                delete: deleteShippingOption
             };
             return;
     }
@@ -62,6 +62,12 @@ function setViewItemWindowEvent(){
 
             const closeButton = document.querySelector('.js-close-button');
             closeButton.addEventListener('click', closeItemWindow);
+
+            const deleteButton = document.querySelector('.js-delete-button');
+            deleteButton.addEventListener('click', async () => {
+                const {id, itemType} = deleteButton.dataset;
+                await itemController.delete(id, {redirect: `/dashboard/${itemType}`});
+            });
         });
     });
 }

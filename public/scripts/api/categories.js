@@ -50,4 +50,17 @@ export async function createCategory(body, redirect){
     return data;
 }
 
+export async function deleteCategory(categoryId, redirect){
+    const data = await apiClient.delete(`/api/category/${categoryId}`);
+
+    if(data.success){
+        renderToast(data.msg, {redirect: redirect.redirect});
+    }
+    else{
+        renderToast(data.msg, {success: false});
+    }
+
+    return data;
+}
+
 export default categories;

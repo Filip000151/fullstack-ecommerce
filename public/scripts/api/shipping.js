@@ -38,4 +38,15 @@ export async function createShippingOption(body, redirect){
     return data;
 }
 
+export async function deleteShippingOption(shippingId, redirect){
+    const data = await apiClient.delete(`/api/shipping/${shippingId}`);
+
+    if(data.success){
+        renderToast(data.msg, {redirect: redirect.redirect});
+    }
+    else{
+        renderToast(data.msg, {success: false});
+    }
+}
+
 export default shipping;

@@ -22,7 +22,10 @@ class CategoryService{
                         from: 'products',
                         let: {categoryProductsId: '$_id'},
                         pipeline: [
-                            {$match: {$expr: {$eq: ['$category', '$$categoryProductsId']}}},
+                            {$match: {
+                                $expr: {$eq: ['$category', '$$categoryProductsId']},
+                                isDeleted: false
+                            }},
                             {$project: {
                                 createdAt: 0,
                                 createdBy: 0,
@@ -54,7 +57,7 @@ class CategoryService{
 
         const category = await Category.findById(categoryId).select('-isDisplayed');
         if(withProducts){
-            const products = await Product.find({category: categoryId}).select('-images -isFeatured -category -createdBy -isDeleted -deletedAt -createdAt -updatedAt');
+            const products = await Product.find({category: categoryId, isDeleted: false}).select('-images -isFeatured -category -createdBy -isDeleted -deletedAt -createdAt -updatedAt');
             return {
                 ...category.toObject(),
                 products
@@ -92,11 +95,14 @@ class CategoryService{
     }
 
     async deleteCategory(categoryId){
-        const category = await Category.findOneAndDelete({_id: categoryId});
+        const category = await Category.findOne({_id: categoryId});
         
         if(!category){
             throw new NotFoundError('No category found with id: ' + categoryId);
         }
+
+        await category.removeProducts();
+        await category.deleteOne();
 
         return category;
     }

@@ -125,7 +125,7 @@ export function renderItemViewWindow(){
                                 </div>
                             </div>
                             <div class="dashboard-item-crud-buttons">
-                                <button class="dashboard-item-crud-button">Delete</button>
+                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}" data-item-type="${items.type}">Delete</button>
                                 <button class="dashboard-item-crud-button">Update</button>
                             </div>
                         </div>
@@ -154,7 +154,7 @@ export function renderItemViewWindow(){
                                 ${renderCategoryProducts()}
                             </div>
                             <div class="dashboard-item-crud-buttons">
-                                <button class="dashboard-item-crud-button">Delete</button>
+                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}" data-item-type="${items.type}">Delete</button>
                                 <button class="dashboard-item-crud-button">Update</button>
                             </div>
                         </div>
@@ -213,7 +213,7 @@ export function renderItemViewWindow(){
                                 </div>
                             </div>
                             <div class="dashboard-item-crud-buttons">
-                                <button class="dashboard-item-crud-button">Delete</button>
+                                <button class="dashboard-item-crud-button js-delete-button" data-id="${item._id}" data-item-type="${items.type}">Delete</button>
                                 <button class="dashboard-item-crud-button">Update</button>
                             </div>
                         </div>
