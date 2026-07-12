@@ -1,6 +1,6 @@
 import { queryProducts } from "../../api/products.js";
 import { addToCart } from '../../api/cart.js';
-import { createQueryString, updateUrlParameters } from "../../utils/query.js";
+import { updateUrlParameters } from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
 import { renderProducts, renderElement, renderPagination } from "./template.js";
 import renderHeaderComponent from '../header/index.js';
@@ -67,7 +67,8 @@ function setEvents(){
                     getProducts(pageNumber);
                     window.scrollTo({
                         top: 0,
-                        left: 0
+                        left: 0,
+                        behavior: 'smooth'
                     });
                 });
             });
@@ -92,11 +93,10 @@ function setEvents(){
         };
 
         updateUrlParameters(queryParams);
-        queryParams['limit'] = 9;
+        queryParams['limit'] = 15;
         queryParams['page'] = page;
 
-        const query = createQueryString(queryParams);
-        await queryProducts(query);
+        await queryProducts(queryParams);
 
         const productsGrid = document.querySelector('.products-grid');
         productsGrid.innerHTML = renderProducts();

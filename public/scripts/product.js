@@ -12,7 +12,7 @@ renderPage();
 
 async function renderPage(){
     apiClient.abortAllRequests();
-    document.title = products.product.name;
+    document.title = products.current.name;
     
     await loadCurrentUser();
     await Promise.all([

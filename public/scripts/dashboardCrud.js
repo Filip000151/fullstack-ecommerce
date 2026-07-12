@@ -23,7 +23,7 @@ async function renderPage(){
             const {loadCategories} = await import('./api/categories.js');
             await Promise.all([
                 loadCategories(),
-                queryProducts()
+                queryProducts({limit: 15})
             ]);
         },
         categories: async () => {

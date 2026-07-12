@@ -4,7 +4,7 @@ import { loadCurrentUser } from './api/auth.js';
 import { loadCart } from './api/cart.js';
 import apiClient from "./api/apiClient.js";
 
-import {getQueryParams, createQueryString} from "./utils/query.js";
+import {getQueryParams} from "./utils/query.js";
 
 import renderHeaderComponent from './components/header/index.js';
 import renderFooterComponent from "./components/footer/index.js";
@@ -17,14 +17,13 @@ async function renderPage(){
     
     const queryParams = {
         ...getQueryParams(),
-        limit: 9
+        limit: 15
     };
-    const query = createQueryString(queryParams);
     
     await loadCurrentUser();
     await Promise.all([
         loadCategories(),
-        queryProducts(query),
+        queryProducts(queryParams),
         loadCart()
     ]);
 

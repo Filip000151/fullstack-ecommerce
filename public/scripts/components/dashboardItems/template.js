@@ -88,6 +88,14 @@ export async function createElement(dataType){
                 `;
             });
         }
+
+        if(items.type === 'products' && items.data.pagination.hasNextPage){
+            html += `
+                <div class="dashboard-item-load-more js-load-more-button">
+                    <p>Load more...</p>
+                </div>
+            `;
+        }
         return html;
     }
 }
@@ -531,7 +539,7 @@ export async function renderUpdateItemWindow(){
                 `;
             case 'categories':
                 const {products, queryProducts} = await import('../../api/products.js');
-                await queryProducts({category: 'uncategorised'});
+                await queryProducts({category: 'uncategorised', limit: 10});
                 return `
                     <h4>Update Category</h4>
                     <div class="dashboard-item-info">
@@ -553,7 +561,7 @@ export async function renderUpdateItemWindow(){
                         </div>
                         <div class="dashboard-item-right-section">
                             <div class="dashboard-item-list">
-                                ${renderProductList(products.list, item.products)}
+                                ${renderProductList(products, item.products)}
                             </div>
                         </div>
                     </div>
@@ -570,7 +578,7 @@ export async function renderUpdateItemWindow(){
 
         function renderProductList(products, categoryProducts){
             let html = '';
-            if(products.length > 0 || categoryProducts.length > 0){
+            if(products.list.length > 0 || categoryProducts.length > 0){
                 categoryProducts.forEach(product => {
                     html += `
                         <div class="dashboard-list-item">
@@ -582,7 +590,7 @@ export async function renderUpdateItemWindow(){
                         </div>
                     `;
                 });
-                products.forEach(product => {
+                products.list.forEach(product => {
                     html += `
                         <div class="dashboard-list-item">
                             <input class="js-product-input" type="checkbox" data-id=${product._id}>
@@ -596,6 +604,10 @@ export async function renderUpdateItemWindow(){
             }
             else{
                 html = 'No products found.';
+            }
+
+            if(products.pagination.hasNextPage){
+                html += '<p class="dashboard-load-more-text js-load-more-text">Load more...</p>';
             }
             
             return html;
@@ -638,6 +650,46 @@ export function togglePopup(){
         document.body.appendChild(dialog);
         return dialog;
     }
+}
+
+export function renderMoreItems(){
+    const itemScroller = document.querySelector('.dashboard-item-scroller');
+    const loadMoreButton = document.querySelector('.js-load-more-button');
+    itemScroller.removeChild(loadMoreButton);
+    items.data.list.forEach(item => {
+        const dashboardItem = document.createElement('div');
+        dashboardItem.classList.add('dashboard-item');
+        dashboardItem.classList.add('js-dashboard-item');
+        dashboardItem.dataset.id = item._id;
+        dashboardItem.innerHTML = `<p>${item.name}</p>`;
+        itemScroller.appendChild(dashboardItem); 
+    });
+    if(items.data.pagination.hasNextPage){
+        const loadMoreButton = document.createElement('div');
+        loadMoreButton.classList.add('dashboard-item-load-more');
+        loadMoreButton.classList.add('js-load-more-button');
+        loadMoreButton.innerHTML = '<p>Load more...</p>';
+        itemScroller.appendChild(loadMoreButton);
+    }
+}
+
+export function addMoreUpdateItems(data){
+    let html = '';
+    data.list.forEach(item => {
+        html += `
+            <div class="dashboard-list-item">
+                <input class="js-product-input" type="checkbox" data-id=${item._id}>
+                <div class="dashboard-list-item-image-container">
+                    <img src="${item.coverImage}">
+                </div>
+                <p>${item.name}</p>
+            </div>
+        `;
+    });
+    if(data.pagination.hasNextPage){
+        html += '<p class="dashboard-load-more-text js-load-more-text">Load more...</p>';
+    }
+    return html;
 }
 
 export default createElement;

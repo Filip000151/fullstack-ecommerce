@@ -80,15 +80,39 @@
     cursor: pointer;
     transition: background-color 0.15s, color 0.15s;
 }
+.dashboard-item-load-more{
+    padding: 1em;
+    display: flex;
+    justify-content: space-around;
+    background-color: #846A6A;
+    color: #C6C7C4;
+    font-weight: bold;
+    user-select: none;
+    cursor: pointer;
+    transition: background-color 0.15s, opacity 0.15s;
+}
 .dashboard-item:hover{
     background-color: #846A6A;
     color: #C6C7C4;
 }
-.dashboard-item:first-child{
-    border-radius: 10px 10px 0 0;
+.dashboard-item-load-more:hover{
+    background-color: #353535;
 }
-.dashboard-item:last-child{
-    border-radius: 0 0 10px 10px;
+.dashboard-item-load-more:active{
+    opacity: 0.7;
+}
+
+.dashboard-load-more-text{
+    user-select: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.dashboard-load-more-text:hover{
+    opacity: 0.7;
+}
+.dashboard-load-more-text:active{
+    opacity: 0.5;
 }
 
 

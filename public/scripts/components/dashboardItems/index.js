@@ -1,4 +1,4 @@
-import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, togglePopup} from "./template.js";
+import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, togglePopup, renderMoreItems, addMoreUpdateItems} from "./template.js";
 
 let itemController;
 
@@ -6,13 +6,27 @@ export async function renderDashboardItemsComponent(dataType){
     await createElement(dataType);
     await importCrudOperations(dataType);
 
+    loadMoreEvent();
     setViewItemWindowEvent();
     setCreateNewItemEvent();
 }
 
+function loadMoreEvent(){
+    const loadMoreButton = document.querySelector('.js-load-more-button');
+    if(!loadMoreButton) return;
+
+    loadMoreButton.addEventListener('click', async () => {
+        itemController.page += 1;
+        await itemController.query({limit: 15, page: itemController.page});
+        renderMoreItems();
+        loadMoreEvent();
+        setViewItemWindowEvent();
+    });
+}
+
 async function importCrudOperations(dataType){
-    switch(dataType){
-        case 'orders':
+    const loader = {
+        orders: async () => {
             const {loadOrder, cancelOrder} = await import('../../api/orders.js');
             itemController = {
                 type: dataType,
@@ -21,28 +35,34 @@ async function importCrudOperations(dataType){
                 update: null,
                 delete: cancelOrder
             }
-            return;
-        case 'products':
-            const {loadProduct, createProduct, updateProduct, deleteProduct} = await import('../../api/products.js');
+        },
+        products: async () => {
+            const {loadProduct, createProduct, updateProduct, deleteProduct, queryProducts} = await import('../../api/products.js');
             itemController = {
                 type: dataType,
+                query: queryProducts,
+                page: 1,
                 create: createProduct,
                 read: loadProduct,
                 update: updateProduct,
                 delete: deleteProduct
             };
-            return;
-        case 'categories':
+        },
+        categories: async () => {
             const {getCategoryInfo, createCategory, deleteCategory, updateCategory} = await import('../../api/categories.js');
+            const {products, queryProducts} = await import('../../api/products.js');
             itemController = {
                 type: dataType,
+                query: queryProducts,
+                data: products,
+                page: 1,
                 create: createCategory,
                 read: getCategoryInfo,
                 update: updateCategory,
                 delete: deleteCategory
             };
-            return;
-        case 'shipping':
+        },
+        shipping: async () => {
             const {loadShippingOption, createShippingOption, deleteShippingOption, updateShippingOption} = await import('../../api/shipping.js');
             itemController = {
                 type: dataType,
@@ -51,16 +71,19 @@ async function importCrudOperations(dataType){
                 update: updateShippingOption,
                 delete: deleteShippingOption
             };
-            return;
+        }
     }
+    await loader[dataType]();
 }
 
 function setViewItemWindowEvent(){
     const dashboardItems = document.querySelectorAll('.js-dashboard-item');
     
     dashboardItems.forEach(item => {
-        item.addEventListener('click', async () => {
-            const {id} = item.dataset;
+        const clonedItem = item.cloneNode(true);
+        item.replaceWith(clonedItem);
+        clonedItem.addEventListener('click', async () => {
+            const {id} = clonedItem.dataset;
             await itemController.read(id);
 
             displayItem();
@@ -114,7 +137,23 @@ function setViewItemWindowEvent(){
                 if(data.success) displayItem();
             });
 
+            loadMoreUpdateItemsEvent();
+
             if(itemController.type === 'products') setProductImagePreviewEvent();
+
+            function loadMoreUpdateItemsEvent(){
+                const loadMoreText = document.querySelector('.js-load-more-text');
+                if(loadMoreText){
+                    loadMoreText.addEventListener('click', async () => {
+                        loadMoreText.remove();
+                        itemController.page += 1;
+                        await itemController.query({category: 'uncategorised', limit: 10, page: itemController.page});
+                        const itemList = document.querySelector('.dashboard-item-list');
+                        itemList.innerHTML += addMoreUpdateItems(itemController.data);
+                        loadMoreUpdateItemsEvent();
+                    });
+                }
+            }
         });
 
         function setProductImagePreviewEvent(){
