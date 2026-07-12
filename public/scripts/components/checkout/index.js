@@ -1,8 +1,9 @@
 import { cart, removeFromCart, addToCart, updateQuantity } from "../../api/cart.js";
-import { createOrder } from "../../api/orders.js";
+import orders, { createOrder } from "../../api/orders.js";
 import auth from '../../api/auth.js';
 import {createElement, renderProducts, renderOrderSummaryInfo} from "./template.js";
 import validateCheckoutInputs from "./validate.js";
+import debounce from "../../utils/debounce.js";
 
 
 export function renderCheckoutComponent(){
@@ -20,52 +21,41 @@ function setCartEvents(){
     const deleteButtons = document.querySelectorAll('.js-delete-cart-product-button');
     const cartQuantity = document.querySelector('.js-checkout-cart-quantity');
 
-    const cartProducts = document.querySelectorAll('.cart-product');
-    const elementTimers = new WeakMap();
+    const updateFunctions = new Map();
+    const cartProducts = document.querySelectorAll('.js-cart-product');
     cartProducts.forEach(cartProduct => {
-        elementTimers.set(cartProduct, null);
+        const {productId} = cartProduct.dataset;
+        const debouncedUpdate = debounce(async (newQuantity) => {
+            await updateQuantity(productId, newQuantity);
+            refreshCartUI();
+        }, 700);
+        updateFunctions.set(productId, debouncedUpdate);
     });
     
     incrementButtons.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const {productId} = btn.dataset;
-            const quantity = document.querySelector(`.js-cart-product-quantity-${productId}`);
-            const value = Number(quantity.textContent);
-            const cartProduct = document.querySelector(`.js-cart-product-${productId}`);
+        const {productId} = btn.dataset;
+        const quantityElement = document.querySelector(`.js-cart-product-quantity-${productId}`);
+
+        btn.addEventListener('click', () => {
+            const value = Number(quantityElement.textContent);
             if(value < 9){
-                quantity.textContent = value + 1;
-                const timeoutId = elementTimers.get(cartProduct); 
-                if(timeoutId) clearTimeout(timeoutId);
-                elementTimers.set(cartProduct, setTimeout(async () => {
-                    elementTimers.set(cartProduct, null);
-                    await updateQuantity(productId, value + 1);
-                    cartQuantity.innerText = `Your cart (${cart.totalItems})`;
-                    const orderSummary = document.querySelector('.js-order-summary-info');
-                    orderSummary.innerHTML = renderOrderSummaryInfo();
-                    setOrderEvents();
-                }, 700)); 
+                const newQuantity = value + 1;
+                quantityElement.textContent = newQuantity;
+                updateFunctions.get(productId)(newQuantity);
             }
         });
     });
 
     decrementButtons.forEach(btn => {
+        const {productId} = btn.dataset;
+        const quantityElement = document.querySelector(`.js-cart-product-quantity-${productId}`);
+
         btn.addEventListener('click', () => {
-            const {productId} = btn.dataset;
-            const quantity = document.querySelector(`.js-cart-product-quantity-${productId}`);
-            const value = Number(quantity.textContent);
-            const cartProduct = document.querySelector(`.js-cart-product-${productId}`);
+            const value = Number(quantityElement.textContent);
             if(value > 1){
-                quantity.textContent = value - 1;
-                const timeoutId = elementTimers.get(cartProduct); 
-                if(timeoutId) clearTimeout(timeoutId);
-                elementTimers.set(cartProduct, setTimeout(async () => {
-                    elementTimers.set(cartProduct, null);
-                    await updateQuantity(productId, value - 1);
-                    cartQuantity.innerText = `Your cart (${cart.totalItems})`;
-                    const orderSummary = document.querySelector('.js-order-summary-info');
-                    orderSummary.innerHTML = renderOrderSummaryInfo();
-                    setOrderEvents();
-                }, 700));
+                const newQuantity = value - 1;
+                quantityElement.textContent = newQuantity;
+                updateFunctions.get(productId)(newQuantity);
             }
         });
     });
@@ -74,15 +64,19 @@ function setCartEvents(){
         btn.addEventListener('click', async () => {
             const {productId} = btn.dataset;
             await removeFromCart(productId);
-            cartQuantity.innerText = `Your cart (${cart.totalItems})`;
-            const cartProducts = document.querySelector('.js-cart-products');
-            cartProducts.innerHTML = renderProducts();
-            setCartEvents();
-            const orderSummary = document.querySelector('.js-order-summary-info');
-            orderSummary.innerHTML = renderOrderSummaryInfo();
-            setOrderEvents();
+            refreshCartUI();
         });
     });
+
+    function refreshCartUI(){
+        cartQuantity.innerText = `Your cart (${cart.totalItems})`;
+        const cartProducts = document.querySelector('.js-cart-products');
+        cartProducts.innerHTML = renderProducts();
+        setCartEvents();
+        const orderSummary = document.querySelector('.js-order-summary-info');
+        orderSummary.innerHTML = renderOrderSummaryInfo();
+        setOrderEvents();
+    }
 }
 
 function setShippingEvents(){

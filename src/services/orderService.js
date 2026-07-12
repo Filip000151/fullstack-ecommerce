@@ -9,7 +9,8 @@ class OrderService {
     async createOrderFromCart(userId, deliveryAddress, shippingId){
         const cart = await Cart.findOne({userId})
             .populate('items.product');
-        const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
+
+        const shipping = await Shipping.findOne({_id: shippingId});
 
         if(!shipping){
             throw new NotFoundError('No shipping option found.');
@@ -74,7 +75,7 @@ class OrderService {
             throw new BadRequestError('Email is already registered. Please log in.');
         }
         
-        const shipping = await Shipping.findOne({_id: shippingId, isDeleted: false});
+        const shipping = await Shipping.findOne({_id: shippingId});
 
         if(!shipping){
             throw new NotFoundError('No shipping option found.');
@@ -142,7 +143,12 @@ class OrderService {
             queryObject.user = userId;
         }
         else if(role === 'admin'){
-            return await Order.findOne({...queryObject}).populate('user', 'name email');
+            const order = await Order.findOne({...queryObject}).populate('user', 'name email');
+            const progress = this.calculateProgress(order);
+            return {
+                ...order.toObject(),
+                progress
+            };
         }
 
         const order = await Order.findOne(queryObject);

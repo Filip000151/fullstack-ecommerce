@@ -1,5 +1,6 @@
 import createQueryString from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
+import debounce from "../../utils/debounce.js";
 import {renderElement, renderCartDropdown, renderSearchDropdown, renderProfileDropdown} from "./template.js";
 import { removeFromCart } from "../../api/cart.js";
 import { queryProducts } from "../../api/products.js";
@@ -29,17 +30,22 @@ function setDefaultQueryEvents(){
 
     const overlay = document.querySelector('.overlay');
 
-    searchBar.addEventListener('focus', querySearchProducts);
+    searchBar.addEventListener('focus', () => {
+        const dropdown = document.querySelector('.header-search-dropdown');
+        if(dropdown) return;
+        
+        querySearchProducts();
+    });
     categorySelection.addEventListener('change', querySearchProducts);
 
     searchButton.addEventListener('click', goToProducts);
+    const debouncedSearch = debounce(querySearchProducts, 500);
     searchBar.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') {
             goToProducts();
+            return;
         }
-        else{
-            querySearchProducts();
-        }
+        debouncedSearch();
     });
     categorySelection.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {

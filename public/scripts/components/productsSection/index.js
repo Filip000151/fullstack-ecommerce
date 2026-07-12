@@ -4,6 +4,7 @@ import { updateUrlParameters } from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
 import { renderProducts, renderElement, renderPagination } from "./template.js";
 import renderHeaderComponent from '../header/index.js';
+import debounce from "../../utils/debounce.js";
 
 export function renderProductsSectionComponent(){
     renderElement();
@@ -19,7 +20,9 @@ function setEvents(){
     function setHeaderEvents(){
         const searchBar = document.querySelector('.js-search-bar');
         const categorySelection = document.querySelector('.js-category-selection');
-        searchBar.addEventListener('keyup', getProducts);
+        const debouncedSearch = debounce(getProducts, 500);
+
+        searchBar.addEventListener('keyup', debouncedSearch);
         categorySelection.addEventListener('change', getProducts);
     }
     function setCartButtonEvents(){
@@ -44,6 +47,8 @@ function setEvents(){
         const sortSelection = document.querySelector('.js-sort-input');
         const filterInputFields = document.querySelectorAll('.js-filter-input');
 
+        const debouncedPriceFilter = debounce(getProducts, 500);
+
         sortSelection.addEventListener('change', getProducts);
         filterInputFields.forEach(inputField => inputField.addEventListener('keyup', () => {
             const {filterType} = inputField.dataset;
@@ -55,7 +60,7 @@ function setEvents(){
                 const maxPriceText = document.querySelector('.js-max-price-text');
                 maxPriceText.innerText = inputField.value.length === 0 ? 'Max' : `$${Number(inputField.value).toFixed(2)}`;
             }
-            getProducts();
+            debouncedPriceFilter();
         }));
     }
     function setPaginationEvents(){

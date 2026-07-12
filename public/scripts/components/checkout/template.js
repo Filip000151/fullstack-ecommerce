@@ -65,7 +65,7 @@ export function renderProducts(){
         cart.items.forEach(item => {
             let timeoutId = null;
             html += `
-                <div class="cart-product js-cart-product-${item.product._id}">
+                <div class="cart-product js-cart-product" data-product-id="${item.product._id}">
                     <div class="cart-product-image">
                         <img src="${item.product.coverImage}">
                     </div>

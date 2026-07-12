@@ -19,6 +19,8 @@ export async function createOrder(body = {}, redirect = {}){
         body.items = items;
     }
 
+    console.log(body);
+
     const data = await apiClient.post('/api/orders', body);
 
     if(data.success){
