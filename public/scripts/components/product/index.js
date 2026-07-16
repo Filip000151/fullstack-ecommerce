@@ -3,6 +3,7 @@ import {addToCart} from '../../api/cart.js';
 import createElement from "./template.js";
 import renderHeaderComponent from '../header/index.js';
 import renderToast from '../../utils/toast.js';
+import renderSpinner from '../../utils/spinner.js';
 
 export function renderProductComponent(){
     createElement();
@@ -114,6 +115,7 @@ function setCartEvents(){
     });
 
     addToCartButton.addEventListener('click', async () => {
+        const spinner = renderSpinner(document.body);
         const quantity = Number(document.querySelector('.js-product-quantity').textContent);
         const product = {
             _id: products.current._id,
@@ -122,6 +124,7 @@ function setCartEvents(){
             coverImage: products.current.coverImage
         };
         await addToCart(product, quantity);
+        spinner.remove();
         renderHeaderComponent();
     });
 }

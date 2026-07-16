@@ -26,13 +26,13 @@ export async function loadCurrentUser(){
     return data;
 }
 
-export async function registerUser(body = {}, redirect = {}){
+export async function registerUser(body = {}, options = {}){
     const data = await apiClient.post('/api/auth/register', {...body});
 
     if(data.success){
         renderToast(data.msg, {
             toastDuration: 5000, 
-            redirect: redirect.redirect
+            redirect: options.redirect
         });
     }
     else{

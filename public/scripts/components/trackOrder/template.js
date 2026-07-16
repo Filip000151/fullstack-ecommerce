@@ -36,11 +36,13 @@ export function createElement(){
                     <div class="track-order-line">
                         <p class="track-order-label">Delivery Address:</p>
                         <p class="track-order-label-info">${orders.current.deliveryAddress}</p>
-                    </div> 
-                    <div class="track-order-line">
-                        <p class="track-order-label">Email Address:</p>
-                        <p class="track-order-label-info">${orders.current.user ? orders.current.user.email : `${orders.current.guestEmail} (Guest)`}</p>
-                    </div>   
+                    </div>
+                    ${auth.isGuest ? `
+                        <div class="track-order-line">
+                            <p class="track-order-label">Email Address:</p>
+                            <p class="track-order-label-info">${orders.current.guestEmail}</p>
+                        </div>
+                    ` : ''}
                     <div class="track-order-line">
                         <p class="track-order-label">Order placed:</p>
                         <p class="track-order-label-info">${creationDate.dayNum}. ${creationDate.monthNum}. ${creationDate.year}.</p>

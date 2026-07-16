@@ -1,6 +1,7 @@
 import { cancelOrder } from "../../api/orders.js";
 import createElement from "./template.js";
 import renderToast from '../../utils/toast.js';
+import renderSpinner from '../../utils/spinner.js';
 
 export function renderTrackOrderComponent(){
     createElement();
@@ -18,8 +19,10 @@ function setCancelOrderEvent(){
 
         noButton.addEventListener('click', () => cancelOrderModal.style.visibility = 'hidden');
         yesButton.addEventListener('click', async () => {
+            const spinner = renderSpinner(document.body);
             const {orderId} = yesButton.dataset;
             await cancelOrder(orderId);
+            spinner.remove();
             renderToast('Order cancelled!', {toastDuration: 5000});
             renderTrackOrderComponent();
         });

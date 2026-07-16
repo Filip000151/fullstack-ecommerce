@@ -2,6 +2,7 @@ import createElement from "./template.js";
 import validateAuthInputs from "./validate.js";
 
 import { auth, registerUser, loginUser } from "../../api/auth.js";
+import renderSpinner from "../../utils/spinner.js";
 
 export function renderAuthSectionComponent(isRegister = false){
     createElement(isRegister);
@@ -36,12 +37,14 @@ function setLoginEvents(){
 
     async function setLoginEvent(){
         if(!validateAuthInputs()) return;
+        const spinner = renderSpinner(document.body);
         
         const email = document.querySelector('.js-email-input').value;
         const password = document.querySelector('.js-password-input').value;
         const rememberMe = rememberMeButton.classList.contains('remember-me-not-active') ? false : true;
 
         await loginUser({email, password, rememberMe}, {redirect: '/'});
+        spinner.remove();
     }
 }
 function setRegisterEvents(){
@@ -59,6 +62,8 @@ function setRegisterEvents(){
         const isRegister = true;
         if(!validateAuthInputs(isRegister)) return;
 
+        const spinner = renderSpinner(document.body);
+
         const name = document.querySelector('.js-name-input').value;
         const email = document.querySelector('.js-email-input').value;
         const password = document.querySelector('.js-password-input').value;
@@ -70,6 +75,8 @@ function setRegisterEvents(){
             {name, email, password, confirmPassword},
             {redirect}
         );
+
+        spinner.remove();
     }
 }
 

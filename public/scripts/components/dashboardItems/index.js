@@ -1,3 +1,4 @@
+import renderSpinner from "../../utils/spinner.js";
 import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, togglePopup, renderMoreItems, addMoreUpdateItems} from "./template.js";
 
 let itemController;
@@ -102,9 +103,11 @@ function setViewItemWindowEvent(){
             const modal = togglePopup();
             modal.showModal();
             document.querySelector('.js-dialog-yes-button').addEventListener('click', async () => {
-                await itemController.delete(id, {redirect: `/dashboard/${itemController.type}`});
                 modal.close();
+                const spinner = renderSpinner(document.body);
+                await itemController.delete(id, {redirect: `/dashboard/${itemController.type}`});
                 togglePopup();
+                spinner.remove();
             });
             document.querySelector('.js-dialog-no-button').addEventListener('click', () => {
                 modal.close();
@@ -131,9 +134,11 @@ function setViewItemWindowEvent(){
 
             const saveButton = document.querySelector('.js-dashboard-save-button');
             saveButton.addEventListener('click', async () => {
+                const spinner = renderSpinner(document.body);
                 const {id} = saveButton.dataset;
                 const body = getAppropriateFields();
                 const data = await itemController.update(id, body);
+                spinner.remove();
                 if(data.success) displayItem();
             });
 
@@ -303,8 +308,10 @@ function setCreateNewItemEvent(){
         
         const saveButton = document.querySelector('.js-dashboard-save-button');
         saveButton.addEventListener('click', async () => {
+            const spinner = renderSpinner(document.body);
             const body = getAppropriateFields();
             await itemController.create(body, {redirect: `/dashboard/${itemController.type}`});
+            spinner.remove();
         });
     });
 

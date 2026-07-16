@@ -4,12 +4,16 @@ import auth from '../../api/auth.js';
 import {createElement, renderProducts, renderOrderSummaryInfo} from "./template.js";
 import validateCheckoutInputs from "./validate.js";
 import debounce from "../../utils/debounce.js";
+import renderSpinner from '../../utils/spinner.js';
 
+
+let updateFunctions;
 
 export function renderCheckoutComponent(){
     createElement();
     const orderSummary = document.querySelector('.js-order-summary-info');
     orderSummary.innerHTML = renderOrderSummaryInfo();
+    updateFunctions = new Map();
     setCartEvents();
     setShippingEvents();
     setOrderEvents();
@@ -21,14 +25,13 @@ function setCartEvents(){
     const deleteButtons = document.querySelectorAll('.js-delete-cart-product-button');
     const cartQuantity = document.querySelector('.js-checkout-cart-quantity');
 
-    const updateFunctions = new Map();
     const cartProducts = document.querySelectorAll('.js-cart-product');
     cartProducts.forEach(cartProduct => {
         const {productId} = cartProduct.dataset;
         const debouncedUpdate = debounce(async (newQuantity) => {
             await updateQuantity(productId, newQuantity);
             refreshCartUI();
-        }, 700);
+        }, 500);
         updateFunctions.set(productId, debouncedUpdate);
     });
     
@@ -62,8 +65,11 @@ function setCartEvents(){
 
     deleteButtons.forEach(btn => {
         btn.addEventListener('click', async () => {
+            const spinner = renderSpinner(document.body);
             const {productId} = btn.dataset;
+            updateFunctions.get(productId).cancel();
             await removeFromCart(productId);
+            spinner.remove();
             refreshCartUI();
         });
     });
@@ -110,6 +116,10 @@ function setOrderEvents(){
     const makeOrderButton = document.querySelector('.js-make-order-button');
     if(makeOrderButton){
         makeOrderButton.addEventListener('click', async () => {
+            const spinner = renderSpinner(document.body);
+
+            if(hasPendingUpdates) await waitForUpdates();
+            
             if(!validateCheckoutInputs()){
                 const shippingSection = document.querySelector('.js-checkout-shipping-section');
                 if(shippingSection.style.visibility === 'hidden'){
@@ -118,6 +128,7 @@ function setOrderEvents(){
                     shippingButton.style.visibility = 'hidden';
                     shippingSection.scrollIntoView({behavior: 'smooth'});
                 }
+                spinner.remove();
                 return;
             }
             const shippingOption = document.querySelector('.radio-checked');
@@ -128,6 +139,19 @@ function setOrderEvents(){
             body.shippingId = shippingId;
             if(auth.isGuest) body.guestEmail = document.querySelector('.js-email-input').value.trim();
             await createOrder(body, {redirect: '/orders'});
+            spinner.remove();
+        });
+    }
+
+    function hasPendingUpdates(){
+        for(const [productId, debouncedUpdate] of updateFunctions){
+            if(debouncedUpdate.isPending) return true;
+        }
+        return false;
+    }
+    function waitForUpdates(){
+        return new Promise(resolve => {
+            setInterval(resolve, 500);
         });
     }
 }

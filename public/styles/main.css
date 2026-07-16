@@ -101,6 +101,34 @@ button{
     color: #EEF0F2;
 }
 
+.loader-overlay{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: #EEF0F2;
+    gap: 2em;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 1em;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    user-select: none;
+    padding: 1em;
+}
+.spinner{
+    width: 40px;
+    height: 40px;
+    border-top: 4px solid #EEF0F2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin{
+    to {transform: rotate(360deg);}
+}
+
 @media (max-width: 1536px){
     .container{
         max-width: 1280px;

@@ -5,6 +5,7 @@ import renderToast from "../../utils/toast.js";
 import { renderProducts, renderElement, renderPagination } from "./template.js";
 import renderHeaderComponent from '../header/index.js';
 import debounce from "../../utils/debounce.js";
+import renderSpinner from "../../utils/spinner.js";
 
 export function renderProductsSectionComponent(){
     renderElement();
@@ -29,6 +30,7 @@ function setEvents(){
         const addButons = document.querySelectorAll('.js-add-to-cart');
         addButons.forEach(btn => {
             btn.addEventListener('click', async () => {
+                const spinner = renderSpinner(document.body);
                 const {productId:_id, productName:name, productPrice:priceCents, productImage:coverImage} = btn.dataset;
                 const quantity = Number(document.querySelector(`.js-quantity-input-${_id}`).value);
                 const product = {
@@ -38,6 +40,7 @@ function setEvents(){
                     coverImage
                 };
                 await addToCart(product, quantity);
+                spinner.remove();
                 renderHeaderComponent(setHeaderEvents);
                 setHeaderEvents();
             });

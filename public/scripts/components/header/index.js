@@ -1,6 +1,7 @@
 import createQueryString from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
 import debounce from "../../utils/debounce.js";
+import renderSpinner from '../../utils/spinner.js';
 import {renderElement, renderCartDropdown, renderSearchDropdown, renderProfileDropdown} from "./template.js";
 import { removeFromCart } from "../../api/cart.js";
 import { queryProducts } from "../../api/products.js";
@@ -104,8 +105,10 @@ function setCartEvents(){
         const removeButtons = document.querySelectorAll('.js-header-remove-product-button');
         removeButtons.forEach(btn => {
             btn.addEventListener('click', async () => {
+                const spinner = renderSpinner(document.body);
                 const {productId} = btn.dataset;
                 await removeFromCart(productId);
+                spinner.remove();
                 renderHeaderComponent(queryEvent);
                 dropdownHandler().renderDropdown('header-icon-dropdown', renderCartDropdown());
                 setProductRemoveButtonEvents();

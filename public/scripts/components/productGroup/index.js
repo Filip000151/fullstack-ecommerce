@@ -1,5 +1,6 @@
 import {addToCart} from '../../api/cart.js';
 import renderToast from '../../utils/toast.js';
+import renderSpinner from '../../utils/spinner.js';
 
 import renderElement from './template.js';
 import renderHeaderComponent from '../header/index.js';
@@ -46,6 +47,7 @@ function setEvents(groupId){
     const addButtons = document.querySelectorAll(`.js-add-to-cart-${groupId}`);
     addButtons.forEach(btn => {
         btn.addEventListener('click', async () => {
+            const spinner = renderSpinner(document.body);
             const {productId:_id, productName:name, productPrice:priceCents, productImage:coverImage} = btn.dataset;
             const quantity = Number(document.querySelector(`.js-quantity-input-${_id}`).value);
             const product = {
@@ -55,6 +57,7 @@ function setEvents(groupId){
                 coverImage
             };
             await addToCart(product, quantity);
+            spinner.remove();
             renderHeaderComponent();
         });
     });
