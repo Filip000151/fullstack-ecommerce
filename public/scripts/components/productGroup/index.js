@@ -11,37 +11,29 @@ export function renderProductGroupComponent(groupId, title, products){
 }
 
 function setEvents(groupId){
-    let counter = 0;
-    const visibleCards = 4;
     const productCards = document.querySelectorAll(`.js-group-product-${groupId}`);
-    const scroller = document.querySelector(`.js-product-scroller-${groupId}`);
-    const scrollLimit = Math.floor(productCards.length / visibleCards);
+    const limit = Math.ceil(productCards.length / 4) - 1;
+    let counter = 0;
 
     const nextButton = document.querySelector(`.js-next-button-${groupId}`);
     const prevButton = document.querySelector(`.js-prev-button-${groupId}`);
+    const productContainer = document.querySelector(`.js-product-container-${groupId}`);
 
-    if(counter === scrollLimit)
-        nextButton.style.visibility = 'hidden';
-    if(counter === 0)
-        prevButton.style.visibility = 'hidden';
+    toggleButtons();
 
     nextButton.addEventListener('click', () => {
-        if(counter < scrollLimit){
+        if(counter < limit){
             counter++;
-            scroller.style.transform = `translateX(-${counter * 100}%)`;
-            prevButton.style.visibility = 'visible';
+            productContainer.style.transform = `translateX(-${counter * 1408}px)`;
+            toggleButtons();
         }
-        if(counter === scrollLimit)
-            nextButton.style.visibility = 'hidden';
     });
     prevButton.addEventListener('click', () => {
         if(counter > 0){
             counter--;
-            scroller.style.transform = `translateX(-${counter * 100}%)`;
-            nextButton.style.visibility = 'visible';
+            productContainer.style.transform = `translateX(-${counter * 1408}px)`;
+            toggleButtons();
         }
-        if(counter === 0)
-            prevButton.style.visibility = 'hidden';
     });
 
     const addButtons = document.querySelectorAll(`.js-add-to-cart-${groupId}`);
@@ -61,6 +53,11 @@ function setEvents(groupId){
             renderHeaderComponent();
         });
     });
+
+    function toggleButtons(){
+        prevButton.style.display = counter > 0 ? 'block' : 'none';
+        nextButton.style.display = counter < limit ? 'block' : 'none';
+    }
 }
 
 export default renderProductGroupComponent;

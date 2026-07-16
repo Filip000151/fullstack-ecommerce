@@ -6,8 +6,10 @@ export function renderElement(groupId, title, products){
         <h3>${title}</h3>
         <button class="prev-button js-prev-button-${groupId}">&lt;</button>
         <button class="next-button js-next-button-${groupId}">&gt;</button>
-        <div class="product-scroller js-product-scroller-${groupId}">
-            ${productsHTML}
+        <div class="product-scroller">
+            <div class="product-group-container js-product-container-${groupId}">
+                ${productsHTML}
+            </div>
         </div>
     `;
 

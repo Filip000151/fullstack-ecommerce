@@ -174,6 +174,8 @@ class ProductService{
                 this.deleteFile(imagePath);
             }
 
+            await product.populate('category', '_id name');
+
             return product;
         }
         catch(error){
