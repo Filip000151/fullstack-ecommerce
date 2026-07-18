@@ -1,6 +1,6 @@
 export function createElement(){
     const html = `
-        <a href="/">
+        <a href="/" data-navigate>
             <img src="images/logo.png">
         </a>
     `;

@@ -114,7 +114,7 @@
     padding: 0 1em;
     padding-right: 3em;
 }
-.product-name{
+.product .product-name{
     font-size: 1.3rem;
     margin: 0;
     margin-bottom: 1em;
@@ -158,7 +158,7 @@
 .product-button:active{
     transform: scale(0.9);
 }
-.primary-button{
+.product .primary-button{
     flex: 1;
 }
 .product-quantity-number{

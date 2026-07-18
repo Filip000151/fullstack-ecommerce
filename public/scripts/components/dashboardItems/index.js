@@ -272,7 +272,8 @@ function setViewItemWindowEvent(){
                 case 'products':
                     const formData = new FormData();
                     formData.append('name', document.querySelector('.js-name-input').value);
-                    formData.append('priceCents', document.querySelector('.js-price-input').value);
+                    const priceCents = Math.round(Number(document.querySelector('.js-price-input').value) * 100);
+                    formData.append('priceCents', priceCents);
                     const isFeatured = document.querySelector('.js-featured-input').checked ? 'true' : 'false';
                     formData.append('isFeatured', isFeatured);
                     const categoryId = document.querySelector('.js-category-input').value;
@@ -338,7 +339,8 @@ function setCreateNewItemEvent(){
             case 'products':
                 const formData = new FormData();
                 formData.append('name', document.querySelector('.js-name-input').value);
-                formData.append('priceCents', document.querySelector('.js-price-input').value);
+                const priceCents = Math.round(Number(document.querySelector('.js-price-input').value) * 100);
+                formData.append('priceCents', priceCents);
                 const isFeatured = document.querySelector('.js-featured-input').checked ? 'true' : 'false';
                 formData.append('isFeatured', isFeatured);
                 const categoryId = document.querySelector('.js-category-input').value;

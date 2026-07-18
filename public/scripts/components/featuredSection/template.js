@@ -29,7 +29,7 @@ export function createElement(){
         let html = '';
         products.list.forEach(product => {
             html += `
-                <a href="/products/${product._id}" class="featured-product-image js-featured-product">
+                <a href="/products/${product._id}" class="featured-product-image js-featured-product" data-navigate>
                     <img src="${product.coverImage}">
                     <p>${product.name}</p>
                 </a>

@@ -2,12 +2,12 @@ import {renderElementSpinner} from '../../utils/spinner.js';
 
 export function createElement(){
     const html = `
-        <a href="/"><img src="images/logo.png" alt=""></a>
+        <a href="/" data-navigate><img src="images/logo.png" alt=""></a>
         <div class="dashboard-links">
-            <a href="/dashboard/orders"><button class="dashboard-button">Orders</button></a>
-            <a href="/dashboard/products"><button class="dashboard-button">Products</button></a>
-            <a href="/dashboard/categories"><button class="dashboard-button">Categories</button></a>
-            <a href="/dashboard/shipping"><button class="dashboard-button">Shipping options</button></a>
+            <a href="/dashboard/orders" data-navigate><button class="dashboard-button">Orders</button></a>
+            <a href="/dashboard/products" data-navigate><button class="dashboard-button">Products</button></a>
+            <a href="/dashboard/categories" data-navigate><button class="dashboard-button">Categories</button></a>
+            <a href="/dashboard/shipping" data-navigate><button class="dashboard-button">Shipping options</button></a>
         </div>
     `;
 

@@ -14,7 +14,7 @@ export function renderElement() {
 
     const headerInnerHTML = `
         <div class="header">
-            <a href="/">
+            <a href="/" data-navigate>
                 <img src="images/logo.png" class="header-logo">
             </a>
             <div class="search-section">
@@ -92,7 +92,7 @@ export function renderCartDropdown(){
                         ${renderCartProducts()}
                     </div>
                 </div>
-                <a href="/checkout" class="checkout-button-wrapper">
+                <a href="/checkout" class="checkout-button-wrapper" data-navigate>
                     <button class="checkout-button">Go to checkout &rarr;</button>
                 </a>
             </div>
@@ -110,7 +110,7 @@ export function renderCartDropdown(){
                     </div>
                     <div class="header-cart-product-info">
                         <div class="header-cart-product-upper-section">
-                            <a href="/products/${item.product._id}" class="header-cart-product-name">${item.product.name}</a>
+                            <a href="/products/${item.product._id}" class="header-cart-product-name" data-navigate>${item.product.name}</a>
                             <p class="header-product-price">$${formatCurrency(item.product.priceCents)}</p>
                         </div>
                         <div class="header-cart-product-lower-section">
@@ -151,7 +151,7 @@ export function renderSearchDropdown(searchText){
                             <img src="${product.coverImage}">
                         </div>
                         <div class="search-product-info">
-                            <a href="/products/${product._id}" class="search-product-name">${product.name}</a>
+                            <a href="/products/${product._id}" class="search-product-name" data-navigate>${product.name}</a>
                             <p class="search-product-price">$${formatCurrency(product.priceCents)}</p>
                         </div>
                     </div>
@@ -175,8 +175,8 @@ export function renderProfileDropdown(){
                 <div class="profile-dropdown">
                     <h4>You are not logged in.</h4>
                     <div class="dropdown-auth-buttons">
-                        <a href="/login"><button class="dropdown-auth-button">Login</button></a>
-                        <a href="/register"><button class="dropdown-auth-button">Register</button></a>
+                        <a href="/login" data-navigate><button class="dropdown-auth-button">Login</button></a>
+                        <a href="/register" data-navigate><button class="dropdown-auth-button">Register</button></a>
                     </div>
                 </div>
             </div>
@@ -188,7 +188,7 @@ export function renderProfileDropdown(){
                 <div class="profile-dropdown">
                     <h4>Hello ${auth.currentUser.name}.</h4>
                     <div class="dropdown-auth-buttons">
-                        <a href="/register"><button class="dropdown-auth-button">Register account</button></a>
+                        <a href="/register" data-navigate><button class="dropdown-auth-button">Register account</button></a>
                         <button class="dropdown-auth-button js-logout-button">Logout</button>
                     </div>
                 </div>
@@ -201,8 +201,8 @@ export function renderProfileDropdown(){
                 <div class="profile-dropdown">
                     <h4>Hello ${auth.currentUser.name}.</h4>
                     <div class="dropdown-auth-buttons">
-                        <a href="/register"><button class="dropdown-auth-button">Register account</button></a>
-                        <a href="/dashboard"><button class="dropdown-auth-button">Dashboard</button></a>
+                        <a href="/register" data-navigate><button class="dropdown-auth-button">Register account</button></a>
+                        <a href="/dashboard" data-navigate><button class="dropdown-auth-button">Dashboard</button></a>
                         <button class="dropdown-auth-button js-logout-button">Logout</button>
                     </div>
                 </div>

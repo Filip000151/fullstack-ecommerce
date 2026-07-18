@@ -83,7 +83,7 @@ function setDefaultQueryEvents(){
                 name: searchBar.value,
             };
             const query = createQueryString(params);
-            window.location.href = `/products${query}`;
+            window.router.navigate(`/products${query}`);
     }
 }
 
@@ -137,7 +137,7 @@ function setOrdersEvent(){
     }
     else{
         ordersButton.addEventListener('click', () => {
-            window.location.href = '/orders';
+            window.router.navigate('/orders');
         });
     }
 }
@@ -238,7 +238,7 @@ function createDropdownHandler(){
                 }
             },
             async closeDropdown(){
-                if(!currentDropdown) return;
+                if(!currentDropdown || !document.contains(currentDropdown.dropdown)) return;
                 if(currentDropdown.options.asyncFunc){
                     apiClient.abortAllRequests();
                 }

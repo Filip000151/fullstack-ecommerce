@@ -70,7 +70,7 @@ export function renderProducts(){
                         <img src="${item.product.coverImage}">
                     </div>
                     <div class="cart-product-info">
-                        <a href="/products/${item.product._id}" class="cart-product-name">${item.product.name}</a>
+                        <p class="cart-product-name">${item.product.name}</p>
                         <div class="cart-product-price">$${formatCurrency(item.product.priceCents)}</div>
                         <div class="cart-product-buttons">
                             <div class="cart-product-quantity">
@@ -93,7 +93,7 @@ export function renderProducts(){
     else{
         html = `
             <p class="checkout-empty-cart-text" style="justify-content: end">Your cart is empty...</p>
-            <p class="checkout-empty-cart-text" style="justify-content: start"><a href="/products">Browse products here</a></p>
+            <p class="checkout-empty-cart-text" style="justify-content: start"><a href="/products" data-navigate>Browse products here</a></p>
         `;
     }
     return html;

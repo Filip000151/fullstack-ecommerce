@@ -8,20 +8,11 @@ export function renderToast(text, options = {}){
         ...options
     };
 
+    showToast(text, settings);
     if(settings.redirect){
-        sessionStorage.setItem('toastInfo', JSON.stringify({
-            text, 
-            settings: {
-                success: settings.success, 
-                toastDuration: settings.toastDuration
-            }
-        }));
-
-        window.location.href = settings.redirect;
+        window.router.navigate(settings.redirect);
         return;
     }
-
-    showToast(text, settings);
 }
 
 function showToast(text, settings){
@@ -76,20 +67,6 @@ function showToast(text, settings){
     }, settings.toastDuration);
 
     toastTimers.set(toast, {intervalId, timeoutId});
-}
-
-export function showPendingToast(){
-    document.addEventListener('DOMContentLoaded', () => {
-        const toastInfo = JSON.parse(sessionStorage.getItem('toastInfo'));
-        if(!toastInfo) return;
-
-        const settings = toastInfo.settings;
-        const text = toastInfo.text;
-
-        sessionStorage.removeItem('toastInfo');
-
-        showToast(text, settings);
-    });
 }
 
 async function removeToast(toast){

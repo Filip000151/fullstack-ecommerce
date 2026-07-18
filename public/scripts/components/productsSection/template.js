@@ -135,7 +135,7 @@ export function renderProducts(){
                     <div class="image-container">
                         <img src="${product.coverImage}">
                     </div>
-                    <a href="/products/${product._id}" class="product-name">${product.name}</a>
+                    <a href="/products/${product._id}" class="product-name" data-navigate>${product.name}</a>
                     <div class="product-price-section">
                         <p class="product-price">$${formatCurrency(product.priceCents)}</p>
                         <button class="primary-button js-add-to-cart" data-product-id="${product._id}" data-product-name="${product.name}" data-product-price="${product.priceCents}" data-product-image="${product.coverImage}">Add to cart</button>

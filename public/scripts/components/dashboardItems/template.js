@@ -32,7 +32,7 @@ async function importData(dataType){
 export async function createElement(dataType){
     await importData(dataType);
     const html = `
-        <a href="/dashboard" class="dashboard-back-link">Back</a>
+        <a href="/dashboard" class="dashboard-back-link" data-navigate>Back</a>
         <h4>${getTitle()}</h4>
         <div class="dashboard-item-scroller">
             ${renderItems()}

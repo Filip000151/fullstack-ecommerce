@@ -46,7 +46,7 @@ export function createElement(isRegister){
                     </svg>
                 </div>
                 <button class="auth-button js-login-button">Log in</button>
-                <p>Don't have an account? <a href="/register">Register here</a></p>
+                <p>Don't have an account? <a href="/register" data-navigate>Register here</a></p>
             </div>
         `;
 
@@ -78,7 +78,7 @@ export function createElement(isRegister){
 
             <div class="auth-lower-section">
                 <button class="auth-button js-register-button">Register</button>
-                <p>Already have an account? <a href="/login">Log in here</a></p>
+                <p>Already have an account? <a href="/login" data-navigate>Log in here</a></p>
             </div>
         `;
         return html;

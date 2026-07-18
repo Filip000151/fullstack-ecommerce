@@ -60,7 +60,7 @@ export function createElement(){
                             ${renderOrderProducts(order)}
                         </div>
                         <div class="track-order-wrapper">
-                            <a href="/orders/${order._id}">
+                            <a href="/orders/${order._id}" data-navigate>
                                 <button class="track-order-button">Track Order</button>
                             </a>
                         </div>

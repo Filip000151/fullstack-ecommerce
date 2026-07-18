@@ -1,17 +1,17 @@
 export function renderElement(){
     const footerInnerHtml = `
         <div class="footer-upper-section">
-            <a href="/">
+            <a href="/" data-navigate>
                 <img class="footer-logo" src="images/logo.png" alt="">
             </a>
             <div class="footer-link-section">
                 <div class="footer-link-group">
                     <h4>Navigation</h4>
                     <ul class="footer-links">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/products">Products</a></li>
-                        <li><a href="/checkout">Checkout</a></li>
-                        <li><a href="/orders">Orders</a></li>
+                        <li><a href="/" data-navigate>Home</a></li>
+                        <li><a href="/products" data-navigate>Products</a></li>
+                        <li><a href="/checkout" data-navigate>Checkout</a></li>
+                        <li><a href="/orders" data-navigate>Orders</a></li>
                     </ul>
                 </div>
                 <div class="footer-link-group">
