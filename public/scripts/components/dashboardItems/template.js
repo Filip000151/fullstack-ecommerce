@@ -1,5 +1,6 @@
 import convertDateToObject from '../../utils/dates.js';
 import formatCurrency from '../../utils/money.js';
+import { renderElementSpinner } from '../../utils/spinner.js';
 
 const items = {
     type: null,
@@ -139,9 +140,10 @@ export function renderItemViewWindow(){
                         <div class="dashboard-item-right-section">
                             <div class="dashboard-item-image-field">
                                 <p>Cover:</p>
-                                <div class="dashboard-item-cover-container">
+                                <div class="dashboard-item-cover-container js-dashboard-item-image-container" style="display: none">
                                     <img src="${item.coverImage}">
                                 </div>
+                                <div class="dashboard-item-cover-container skeleton" style="height: 300px; width: 300px;"></div>
                             </div>
                             <div class="dashboard-item-image-field">
                                 <p>Images:</p>
@@ -232,9 +234,10 @@ export function renderItemViewWindow(){
             let html = '';
             item.images.forEach(image => {
                 html += `
-                    <div class="dashboard-item-image-container">
+                    <div class="dashboard-item-image-container js-dashboard-item-image-container" style="display: none;">
                         <img src="${image}">
                     </div>
+                    <div class="dashboard-item-image-container skeleton" style="height: 100px; width: 100px;"></div>
                 `;
             });
             return html;
@@ -280,6 +283,19 @@ export function renderItemViewWindow(){
             return html;
         }
     }
+}
+
+export function renderItemWindowLoading(){
+    const html = `
+        <div class="dashboard-item-content">
+            <div class="dashboard-item-close-button skeleton"></div>
+            <div style="display: flex; justify-content: center;">
+                <div class="skeleton" style="width: 100px; height: 20px;"></div>
+            </div>
+            <div class="dashboard-item-info js-dashboard-item-info" style="position: relative; height: 500px;"></div>
+        </div>
+    `;
+    return html;
 }
 
 export async function renderCreateNewItemWindow(){
@@ -654,8 +670,6 @@ export function togglePopup(){
 
 export function renderMoreItems(){
     const itemScroller = document.querySelector('.dashboard-item-scroller');
-    const loadMoreButton = document.querySelector('.js-load-more-button');
-    itemScroller.removeChild(loadMoreButton);
     items.data.list.forEach(item => {
         const dashboardItem = document.createElement('div');
         dashboardItem.classList.add('dashboard-item');
@@ -671,6 +685,15 @@ export function renderMoreItems(){
         loadMoreButton.innerHTML = '<p>Load more...</p>';
         itemScroller.appendChild(loadMoreButton);
     }
+}
+
+export function renderMoreItemsLoading(){
+    const itemScroller = document.querySelector('.dashboard-item-scroller');
+    const loadMoreButton = document.querySelector('.js-load-more-button');
+    loadMoreButton.style.pointerEvents = 'none';
+    loadMoreButton.style.position = 'relative';
+    renderElementSpinner(loadMoreButton);
+    return loadMoreButton;
 }
 
 export function addMoreUpdateItems(data){
@@ -690,6 +713,22 @@ export function addMoreUpdateItems(data){
         html += '<p class="dashboard-load-more-text js-load-more-text">Load more...</p>';
     }
     return html;
+}
+
+export function renderDashboardItemsSkeleton(){
+    const dashboardItemsSkeleton = document.createElement('div');
+    dashboardItemsSkeleton.classList.add('dashboard-items');
+    const html = `
+        <div class="dashboard-back-link skeleton" style="width: 50px; height: 20px;"></div>
+        <div class="skeleton" style="width: 100px; height: 20px; margin: 1em 0;"></div>
+        <div class="dashboard-item-scroller" style="position: relative; min-height: 700px;"></div>
+        <div class="dashboard-new-button skeleton" style="width: 100px; height: 20px;"></div>
+    `;
+    dashboardItemsSkeleton.innerHTML = html;
+    renderElementSpinner(dashboardItemsSkeleton.children[2]);
+    const container = document.querySelector('.container');
+    container.appendChild(dashboardItemsSkeleton);
+    return dashboardItemsSkeleton;
 }
 
 export default createElement;

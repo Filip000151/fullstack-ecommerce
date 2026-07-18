@@ -1,5 +1,5 @@
-import renderSpinner from "../../utils/spinner.js";
-import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, togglePopup, renderMoreItems, addMoreUpdateItems} from "./template.js";
+import renderPageSpinner, { renderElementSpinner } from "../../utils/spinner.js";
+import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, togglePopup, renderMoreItems, addMoreUpdateItems, renderMoreItemsLoading, renderItemWindowLoading} from "./template.js";
 
 let itemController;
 
@@ -17,8 +17,10 @@ function loadMoreEvent(){
     if(!loadMoreButton) return;
 
     loadMoreButton.addEventListener('click', async () => {
+        const spinner = renderMoreItemsLoading();
         itemController.page += 1;
         await itemController.query({limit: 15, page: itemController.page});
+        spinner.remove();
         renderMoreItems();
         loadMoreEvent();
         setViewItemWindowEvent();
@@ -85,14 +87,30 @@ function setViewItemWindowEvent(){
         item.replaceWith(clonedItem);
         clonedItem.addEventListener('click', async () => {
             const {id} = clonedItem.dataset;
-            await itemController.read(id);
-
-            displayItem();
+            displayItem(async () => {
+                await itemController.read(id);
+            });
         });
     });
 
-    function displayItem(){
+    async function displayItem(asyncFunc){
+        openItemWindow(renderItemWindowLoading());
+        if(asyncFunc){
+            const itemInfo = document.querySelector('.js-dashboard-item-info');
+            renderElementSpinner(itemInfo);
+            await asyncFunc();
+        }
         openItemWindow(renderItemViewWindow());
+
+        const images = document.querySelectorAll('.js-dashboard-item-image-container');
+        images.forEach(image => {
+            const img = image.children[0];
+            img.decode().then(() => {
+                const skeletonElements = document.querySelectorAll('.skeleton');
+                if(skeletonElements) skeletonElements.forEach(element => element.remove());
+                image.style.display = 'block';
+            });
+        });
 
         const closeButton = document.querySelector('.js-close-button');
         closeButton.addEventListener('click', closeItemWindow);
@@ -104,7 +122,7 @@ function setViewItemWindowEvent(){
             modal.showModal();
             document.querySelector('.js-dialog-yes-button').addEventListener('click', async () => {
                 modal.close();
-                const spinner = renderSpinner(document.body);
+                const spinner = renderPageSpinner();
                 await itemController.delete(id, {redirect: `/dashboard/${itemController.type}`});
                 togglePopup();
                 spinner.remove();
@@ -130,11 +148,11 @@ function setViewItemWindowEvent(){
             closeButton.addEventListener('click', closeItemWindow);
 
             const cancelButton = document.querySelector('.js-dashboard-cancel-button');
-            cancelButton.addEventListener('click', displayItem);
+            cancelButton.addEventListener('click', () => displayItem());
 
             const saveButton = document.querySelector('.js-dashboard-save-button');
             saveButton.addEventListener('click', async () => {
-                const spinner = renderSpinner(document.body);
+                const spinner = renderPageSpinner();
                 const {id} = saveButton.dataset;
                 const body = getAppropriateFields();
                 const data = await itemController.update(id, body);
@@ -308,7 +326,7 @@ function setCreateNewItemEvent(){
         
         const saveButton = document.querySelector('.js-dashboard-save-button');
         saveButton.addEventListener('click', async () => {
-            const spinner = renderSpinner(document.body);
+            const spinner = renderPageSpinner();
             const body = getAppropriateFields();
             await itemController.create(body, {redirect: `/dashboard/${itemController.type}`});
             spinner.remove();

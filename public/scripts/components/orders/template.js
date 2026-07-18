@@ -2,6 +2,7 @@ import orders from '../../api/orders.js';
 import auth from '../../api/auth.js';
 import formatCurrency from '../../utils/money.js';
 import convertDateToObject from '../../utils/dates.js';
+import renderSpinner, { renderElementSpinner } from '../../utils/spinner.js';
 
 export function createElement(){
     const html = `
@@ -94,6 +95,23 @@ export function createElement(){
 
         return html;
     }
+}
+
+export function renderOrdersSkeleton(){
+    const ordersSkeleton = document.createElement('section');
+    ordersSkeleton.classList.add('your-orders-section');
+    const html = `
+        <div style="display: flex; justify-content: center;">
+            <div class="skeleton" style="width: 150px; height: 25px;"></div>
+        </div>
+        <div class="orders-section" style="min-height: 300px;"></div>
+    `;
+    ordersSkeleton.innerHTML = html;
+    ordersSkeleton.children[1].style.position = 'relative';
+    renderElementSpinner(ordersSkeleton.children[1]);
+    const container = document.querySelector('.container');
+    container.appendChild(ordersSkeleton);
+    return ordersSkeleton;
 }
 
 export default createElement;

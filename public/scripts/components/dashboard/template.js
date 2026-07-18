@@ -1,3 +1,5 @@
+import {renderElementSpinner} from '../../utils/spinner.js';
+
 export function createElement(){
     const html = `
         <a href="/"><img src="images/logo.png" alt=""></a>
@@ -21,6 +23,19 @@ export function createElement(){
         const container = document.querySelector('.container');
         container.appendChild(dashboard);
     }
+}
+
+export function renderDashboardSkeleton(){
+    const dashboardSkeleton = document.createElement('div');
+    dashboardSkeleton.classList.add('dashboard');
+    const html = `
+        <div style="position: relative; width: 100%; height: 100%;"></div>
+    `;
+    dashboardSkeleton.innerHTML = html;
+    renderElementSpinner(dashboardSkeleton.children[0]);
+    const container = document.querySelector('.container');
+    container.appendChild(dashboardSkeleton);
+    return dashboardSkeleton;
 }
 
 export default createElement;

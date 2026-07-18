@@ -61,4 +61,22 @@ export function renderElement(groupId, title, products){
     }
 }
 
+export function renderProductGroupSkeleton(){
+    const productGroupSkeleton = document.createElement('section');
+    productGroupSkeleton.classList.add('product-group');
+    const html = `
+        <div class="skeleton" style="width: 200px; height: 32px; margin: 2em 0;"></div>
+        <div class="product-group-container">
+            <div class="product-card skeleton"></div>
+            <div class="product-card skeleton"></div>
+            <div class="product-card skeleton"></div>
+            <div class="product-card skeleton"></div>
+        </div>
+    `;
+    productGroupSkeleton.innerHTML = html;
+    const container = document.querySelector('.container');
+    container.appendChild(productGroupSkeleton);
+    return productGroupSkeleton;
+}
+
 export default renderElement;

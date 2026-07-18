@@ -16,4 +16,15 @@ export function createElement(){
     }
 }
 
+export function renderEmptyHeaderSkeleton(){
+    const emptyHeaderSkeleton = document.createElement('header');
+    emptyHeaderSkeleton.classList.add('empty-header');
+    const html = `
+        <div class="skeleton" style="width: 180px; height: 50px;"></div>
+    `;
+    emptyHeaderSkeleton.innerHTML = html;
+    document.body.appendChild(emptyHeaderSkeleton);
+    return emptyHeaderSkeleton;
+}
+
 export default createElement;

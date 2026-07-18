@@ -2,6 +2,7 @@ import orders from '../../api/orders.js';
 import auth from '../../api/auth.js';
 import formatCurrency from '../../utils/money.js';
 import convertDateToObject from '../../utils/dates.js';
+import { renderElementSpinner } from '../../utils/spinner.js';
 
 export function createElement(){
     const deliveryDate = convertDateToObject(orders.current.deliveryDate);
@@ -41,6 +42,12 @@ export function createElement(){
                         <div class="track-order-line">
                             <p class="track-order-label">Email Address:</p>
                             <p class="track-order-label-info">${orders.current.guestEmail}</p>
+                        </div>
+                    ` : ''}
+                    ${auth.currentUser && auth.currentUser.role === 'admin' ? `
+                        <div class="track-order-line">
+                            <p class="track-order-label">Email Address:</p>
+                            <p class="track-order-label-info">${orders.current.user ? orders.current.user.email : orders.current.guestEmail}</p>
                         </div>
                     ` : ''}
                     <div class="track-order-line">
@@ -149,6 +156,49 @@ export function createElement(){
         });
         return total;
     }
+}
+
+export function renderTrackOrderSkeleton(){
+    const trackOrderSkeleton = document.createElement('section');
+    trackOrderSkeleton.classList.add('track-order-section');
+    const html = `
+        <div style="display: flex; justify-content: center; margin: 2em 0;">
+            <div class="skeleton" style="width: 300px; height: 30px;"></div>
+        </div>
+        <div class="status-wrapper">
+            <div class="status-info">
+                <div class="current-status">
+                    <div class="skeleton" style="width: 120px; height: 30px;"></div>
+                    <div class="skeleton" style="width: 120px; height: 30px;"></div>
+                    <div class="skeleton" style="width: 120px; height: 30px;"></div>
+                    <div class="skeleton" style="width: 120px; height: 30px;"></div>
+                </div>
+                <div class="status-bar skeleton"></div>
+            </div>
+        </div>
+        <div class="track-order-details">
+            <div class="track-order-products" style="position: relative;"></div>
+            <div class="track-order-info">
+                <div>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <hr>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                    <hr>
+                    <div class="track-order-line skeleton" style="height: 30px;"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    trackOrderSkeleton.innerHTML = html;
+    renderElementSpinner(trackOrderSkeleton.children[2].children[0]);
+    const container = document.querySelector('.container');
+    container.appendChild(trackOrderSkeleton);
+    return trackOrderSkeleton;
 }
 
 export default createElement;

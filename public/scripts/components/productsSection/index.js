@@ -2,10 +2,10 @@ import { queryProducts } from "../../api/products.js";
 import { addToCart } from '../../api/cart.js';
 import { updateUrlParameters } from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
-import { renderProducts, renderElement, renderPagination } from "./template.js";
+import { renderProducts, renderElement, renderPagination, renderProductsSkeleton } from "./template.js";
 import renderHeaderComponent from '../header/index.js';
 import debounce from "../../utils/debounce.js";
-import renderSpinner from "../../utils/spinner.js";
+import renderPageSpinner from "../../utils/spinner.js";
 
 export function renderProductsSectionComponent(){
     renderElement();
@@ -30,7 +30,7 @@ function setEvents(){
         const addButons = document.querySelectorAll('.js-add-to-cart');
         addButons.forEach(btn => {
             btn.addEventListener('click', async () => {
-                const spinner = renderSpinner(document.body);
+                const spinner = renderPageSpinner();
                 const {productId:_id, productName:name, productPrice:priceCents, productImage:coverImage} = btn.dataset;
                 const quantity = Number(document.querySelector(`.js-quantity-input-${_id}`).value);
                 const product = {
@@ -83,6 +83,9 @@ function setEvents(){
         }
     }
     async function getProducts(page = 1){
+        const productsGrid = document.querySelector('.products-grid');
+        productsGrid.innerHTML = renderProductsSkeleton();
+
         const category = document.querySelector('.js-category-selection').value;
         const name = document.querySelector('.js-search-bar').value;
         const sort = document.querySelector('.js-sort-input').value;
@@ -106,7 +109,6 @@ function setEvents(){
 
         await queryProducts(queryParams);
 
-        const productsGrid = document.querySelector('.products-grid');
         productsGrid.innerHTML = renderProducts();
         setCartButtonEvents();
 

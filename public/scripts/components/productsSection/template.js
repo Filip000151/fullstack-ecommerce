@@ -166,4 +166,42 @@ export function renderProducts(){
     return html;
 }
 
+export function renderProductSectionSkeleton(){
+    const productSection = document.createElement('section');
+    productSection.classList.add('products-section');
+    const html = `
+        <div class="sort-section">
+            <div class="sort-filter skeleton" style="width: 200px; height: 40px;"></div>
+        </div>
+        <div class="product-filter-section">
+            <div class="filters">
+                <div class="filter-section skeleton" style="width: 400px; height: 150px;"></div>
+            </div>
+            <div class="products-grid">
+                ${renderProductsSkeleton()}
+            </div>
+        </div>
+        <div class="pagination">
+            <ul class="page-list skeleton" style="width: 300px; height: 50px;"></ul>
+        </div>
+    `;
+    productSection.innerHTML = html;
+    const container = document.querySelector('.container');
+    container.appendChild(productSection);
+    return productSection;
+}
+
+export function renderProductsSkeleton(){
+    const html = `
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton"></div>
+    `;
+
+    return html;
+}
+
 export default renderElement;

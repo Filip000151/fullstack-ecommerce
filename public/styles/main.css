@@ -116,7 +116,17 @@ button{
     inset: 0;
     z-index: 110;
     user-select: none;
+}
+.loader-element-overlay{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #EEF0F2;
     padding: 1em;
+    position: absolute;
+    inset: 0;
+    z-index: 110;
+    user-select: none;
 }
 .spinner{
     width: 40px;
@@ -127,6 +137,21 @@ button{
 }
 @keyframes spin{
     to {transform: rotate(360deg);}
+}
+
+.skeleton{
+    animation: skeleton-loading 1s linear infinite alternate;
+    opacity: 0.7;
+    border-radius: 10px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: hsl(200, 20%, 70%);
+    }
+    100% {
+        background-color: hsl(200, 20%, 95%);
+    }
 }
 
 @media (max-width: 1536px){

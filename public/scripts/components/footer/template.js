@@ -68,4 +68,47 @@ export function renderElement(){
     }
 }
 
+export function renderFooterSkeleton(){
+    const footerSkeleton = document.createElement('footer');
+    const html = `
+        <div class="footer-upper-section">
+            <div class="footer-logo skeleton"></div>
+            <div class="footer-link-section">
+                <div class="footer-link-group">
+                    <div class="skeleton" style="width: 100px; height: 25px; margin-bottom: 10px"></div>
+                    <ul class="footer-links" style="gap: 0.5em;">
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                    </ul>
+                </div>
+                <div class="footer-link-group">
+                    <div class="skeleton" style="width: 100px; height: 25px; margin-bottom: 10px"></div>
+                    <ul class="footer-links" style="gap: 0.5em;">
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                        <div class="skeleton" style="width: 70px; height: 15px;"></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="footer-lower-section">
+            <div class="social-icons">
+                <div class="social-icon skeleton" style="width: 45px; height: 45px;"></div>
+                <div class="social-icon skeleton" style="width: 45px; height: 45px;"></div>
+                <div class="social-icon skeleton" style="width: 45px; height: 45px;"></div>
+                <div class="social-icon skeleton" style="width: 45px; height: 45px;"></div>
+            </div>
+            <div class="skeleton" style="width: 300px; height: 15px;"></div>
+        </div>
+    `;
+    footerSkeleton.innerHTML = html;
+    footerSkeleton.classList.add('footer');
+    document.body.appendChild(footerSkeleton);
+    return footerSkeleton;
+}
+
 export default renderElement;

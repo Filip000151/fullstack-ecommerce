@@ -4,7 +4,7 @@ import auth from '../../api/auth.js';
 import {createElement, renderProducts, renderOrderSummaryInfo} from "./template.js";
 import validateCheckoutInputs from "./validate.js";
 import debounce from "../../utils/debounce.js";
-import renderSpinner from '../../utils/spinner.js';
+import renderPageSpinner from '../../utils/spinner.js';
 
 
 let updateFunctions;
@@ -65,7 +65,7 @@ function setCartEvents(){
 
     deleteButtons.forEach(btn => {
         btn.addEventListener('click', async () => {
-            const spinner = renderSpinner(document.body);
+            const spinner = renderPageSpinner();
             const {productId} = btn.dataset;
             updateFunctions.get(productId).cancel();
             await removeFromCart(productId);
@@ -116,7 +116,7 @@ function setOrderEvents(){
     const makeOrderButton = document.querySelector('.js-make-order-button');
     if(makeOrderButton){
         makeOrderButton.addEventListener('click', async () => {
-            const spinner = renderSpinner(document.body);
+            const spinner = renderPageSpinner();
 
             if(hasPendingUpdates) await waitForUpdates();
             

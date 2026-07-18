@@ -1,3 +1,5 @@
+import { renderElementSpinner } from "../../utils/spinner.js";
+
 export function createElement(isRegister){
     let html = '';
 
@@ -81,6 +83,22 @@ export function createElement(isRegister){
         `;
         return html;
     }
+}
+
+export function renderAuthSectionSkeleton(){
+    const authSectionSkeleton = document.createElement('section');
+    authSectionSkeleton.classList.add('auth-section');
+    const html = `
+        <div style="display: flex; justify-content: center;">
+            <div class="skeleton" style="width: 100px; height: 30px;"></div>
+        </div>
+        <div style="height: 360px; width: 280px; position: relative;"></div>
+    `;
+    authSectionSkeleton.innerHTML = html;
+    renderElementSpinner(authSectionSkeleton.children[1]);
+    const container = document.querySelector('.container');
+    container.appendChild(authSectionSkeleton);
+    return authSectionSkeleton;
 }
 
 export default createElement;

@@ -6,11 +6,19 @@ import apiClient from "./api/apiClient.js";
 import renderEmptyHeaderComponent from './components/emptyHeader/index.js';
 import renderCheckoutComponent from './components/checkout/index.js';
 import renderFooterComponent from './components/footer/index.js';
+import { renderEmptyHeaderSkeleton } from './components/emptyHeader/template.js';
+import { renderCheckoutSkeleton } from './components/checkout/template.js';
+import { renderFooterSkeleton } from './components/footer/template.js';
 
 renderPage();
 
 async function renderPage(){
     apiClient.abortAllRequests();
+
+    renderEmptyHeaderSkeleton();
+    renderCheckoutSkeleton();
+    renderFooterSkeleton();
+
     await loadCurrentUser();
     await Promise.all([
         loadShippingOptions(),

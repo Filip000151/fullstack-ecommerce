@@ -2,7 +2,7 @@ import createElement from "./template.js";
 import validateAuthInputs from "./validate.js";
 
 import { auth, registerUser, loginUser } from "../../api/auth.js";
-import renderSpinner from "../../utils/spinner.js";
+import renderPageSpinner from "../../utils/spinner.js";
 
 export function renderAuthSectionComponent(isRegister = false){
     createElement(isRegister);
@@ -37,7 +37,7 @@ function setLoginEvents(){
 
     async function setLoginEvent(){
         if(!validateAuthInputs()) return;
-        const spinner = renderSpinner(document.body);
+        const spinner = renderPageSpinner();
         
         const email = document.querySelector('.js-email-input').value;
         const password = document.querySelector('.js-password-input').value;
@@ -62,7 +62,7 @@ function setRegisterEvents(){
         const isRegister = true;
         if(!validateAuthInputs(isRegister)) return;
 
-        const spinner = renderSpinner(document.body);
+        const spinner = renderPageSpinner();
 
         const name = document.querySelector('.js-name-input').value;
         const email = document.querySelector('.js-email-input').value;

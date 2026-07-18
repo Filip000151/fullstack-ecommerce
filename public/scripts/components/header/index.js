@@ -1,11 +1,12 @@
 import createQueryString from "../../utils/query.js";
 import renderToast from "../../utils/toast.js";
 import debounce from "../../utils/debounce.js";
-import renderSpinner from '../../utils/spinner.js';
-import {renderElement, renderCartDropdown, renderSearchDropdown, renderProfileDropdown} from "./template.js";
+import renderPageSpinner from '../../utils/spinner.js';
+import {renderElement, renderCartDropdown, renderSearchDropdown, renderProfileDropdown, renderSearchDropdownSkeleton} from "./template.js";
 import { removeFromCart } from "../../api/cart.js";
 import { queryProducts } from "../../api/products.js";
 import { logoutUser } from "../../api/auth.js";
+import apiClient from "../../api/apiClient.js";
 
 const dropdownHandler = createDropdownHandler();
 let queryEvent;
@@ -67,9 +68,14 @@ function setDefaultQueryEvents(){
             
             searchText = 'Search results';
         }
-        await queryProducts(params);
 
-        dropdownHandler().renderDropdown('header-search-dropdown', renderSearchDropdown(searchText));
+        dropdownHandler().renderDropdown('header-search-dropdown', {
+            asyncFunc: async () => {
+                await queryProducts(params);
+                return renderSearchDropdown(searchText);   
+            },
+            loadingHtml: renderSearchDropdownSkeleton()
+        });
     }
     function goToProducts() {
             const params = {
@@ -91,9 +97,12 @@ function setCartEvents(){
             dropdownHandler().closeDropdown();
         }
         else{
-            dropdownHandler().renderDropdown('header-icon-dropdown js-cart-dropdown', renderCartDropdown(), () => {
-                const cartButton = document.querySelector('.js-cart-button');
-                cartButton.classList.remove('icon-button-active');
+            dropdownHandler().renderDropdown('header-icon-dropdown js-cart-dropdown', {
+                html: renderCartDropdown(), 
+                closingFunc: () => {
+                    const cartButton = document.querySelector('.js-cart-button');
+                    cartButton.classList.remove('icon-button-active');
+                }
             });
             cartButton.classList.add('icon-button-active');
             setProductRemoveButtonEvents();
@@ -105,12 +114,12 @@ function setCartEvents(){
         const removeButtons = document.querySelectorAll('.js-header-remove-product-button');
         removeButtons.forEach(btn => {
             btn.addEventListener('click', async () => {
-                const spinner = renderSpinner(document.body);
+                const spinner = renderPageSpinner();
                 const {productId} = btn.dataset;
                 await removeFromCart(productId);
                 spinner.remove();
                 renderHeaderComponent(queryEvent);
-                dropdownHandler().renderDropdown('header-icon-dropdown', renderCartDropdown());
+                dropdownHandler().renderDropdown('header-icon-dropdown', {html: renderCartDropdown()});
                 setProductRemoveButtonEvents();
                 const cartButton = document.querySelector('.js-cart-button');
                 cartButton.classList.add('icon-button-active');
@@ -142,9 +151,12 @@ function setProfileEvents(){
             dropdownHandler().closeDropdown();
         }
         else{
-            dropdownHandler().renderDropdown('header-icon-dropdown js-profile-dropdown', renderProfileDropdown(), () => {
-                const profileButton = document.querySelector('.js-profile-button');
-                profileButton.classList.remove('icon-button-active');
+            dropdownHandler().renderDropdown('header-icon-dropdown js-profile-dropdown', {
+                html: renderProfileDropdown(),
+                closingFunc: () => {
+                    const profileButton = document.querySelector('.js-profile-button');
+                    profileButton.classList.remove('icon-button-active');
+                }
             });
             profileButton.classList.add('icon-button-active');
             setLogoutEvent();
@@ -166,15 +178,21 @@ function createDropdownHandler(){
 
     function handleDropdown(){
         return {
-            renderDropdown(className, html = '', closingFunc){
+            async renderDropdown(className, options = {html: '', closingFunc: undefined, asyncFunc: undefined, loadingHtml: ''}){
                 const classes = className.trim().split(' ');
 
                 let dropdown = document.querySelector(`.${className.trim()}`);
                 if(dropdown){
-                    dropdown.innerHTML = html;
                     currentDropdown.dropdown = dropdown;
                     const overlay = document.querySelector('.overlay');
                     overlay.style.visibility = 'visible';
+                    if(currentDropdown.options.asyncFunc){
+                        dropdown.innerHTML = options.loadingHtml;
+                        const html = await options.asyncFunc();
+                        dropdown.innerHTML = html;
+                        return;
+                    }
+                    dropdown.innerHTML = options.html;
                     return;
                 }
 
@@ -190,7 +208,19 @@ function createDropdownHandler(){
                 for(const singleClass of classes){
                     dropdown.classList.add(singleClass);
                 }
-                dropdown.innerHTML = html;
+
+                currentDropdown = {
+                    dropdown,
+                    options
+                };
+
+                if(options.asyncFunc){
+                    dropdown.innerHTML = options.loadingHtml;
+                }
+                else{
+                    dropdown.innerHTML = options.html;
+                }
+                
                 document.body.appendChild(dropdown);
 
                 const height = dropdown.offsetHeight;
@@ -202,16 +232,18 @@ function createDropdownHandler(){
                     easing: 'ease-in'
                 });
 
-                currentDropdown = {
-                    dropdown,
-                    closingFunc
-                };
+                if(options.asyncFunc){
+                    const html = await options.asyncFunc();
+                    dropdown.innerHTML = html;
+                }
             },
             async closeDropdown(){
                 if(!currentDropdown) return;
-
-                if(currentDropdown.closingFunc){
-                    currentDropdown.closingFunc();
+                if(currentDropdown.options.asyncFunc){
+                    apiClient.abortAllRequests();
+                }
+                if(currentDropdown.options.closingFunc){
+                    currentDropdown.options.closingFunc();
                 }
                 const height = currentDropdown.dropdown.offsetHeight;
                 const slideOutAnimation = currentDropdown.dropdown.animate([

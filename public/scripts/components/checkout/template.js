@@ -172,4 +172,40 @@ export function renderOrderSummaryInfo(){
     }
 }
 
+export function renderCheckoutSkeleton(){
+    const checkoutSkeleton = document.createElement('section');
+    checkoutSkeleton.classList.add('checkout');
+    const html = `
+        <div class="buyer-details">
+            <div class="cart-details">
+                <div class="skeleton" style="width: 150px; height: 30px; margin: 2em;"></div>
+                <div class="cart-products">
+                    <div class="cart-product skeleton" style="height: 120px;"></div>
+                    <div class="cart-product skeleton" style="height: 120px;"></div>
+                    <div class="cart-product skeleton" style="height: 120px;"></div>
+                    <div class="cart-product skeleton" style="height: 120px;"></div>
+                </div>
+                <hr>
+                <div class="shipping-button-wrapper">
+                    <div class="skeleton" style="width: 240px; height: 60px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="order-summary-info">
+            <div class="skeleton" style="width: 200px; height: 30px; margin: 2em;"></div>
+            <div class="checkout-price skeleton" style="height: 10px; margin: 0.5em 0;"></div>
+            <div class="checkout-price skeleton" style="height: 10px; margin: 0.5em 0;"></div>
+            <hr>
+            <div class="checkout-total-price skeleton" style="height: 10px; margin: 0.5em 0;"></div>
+            <div class="order-button-wrapper">
+                <div class="skeleton" style="width: 180px; height: 40px; margin: 0.5em 0;"></div>
+            </div>
+        </div>
+    `;
+    checkoutSkeleton.innerHTML = html;
+    const container = document.querySelector('.container');
+    container.appendChild(checkoutSkeleton);
+    return checkoutSkeleton;
+}
+
 export default createElement;

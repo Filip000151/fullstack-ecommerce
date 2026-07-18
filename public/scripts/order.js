@@ -7,12 +7,19 @@ import apiClient from "./api/apiClient.js";
 import renderHeaderComponent from './components/header/index.js';
 import renderFooterComponent from './components/footer/index.js';
 import renderTrackOrderComponent from './components/trackOrder/index.js';
+import { renderHeaderSkeleton } from './components/header/template.js';
+import { renderTrackOrderSkeleton } from './components/trackOrder/template.js';
+import { renderFooterSkeleton } from './components/footer/template.js';
 
 renderPage();
 
 async function renderPage(){
     apiClient.abortAllRequests();
     const orderId = window.location.pathname.split('/')[2];
+
+    renderHeaderSkeleton();
+    renderTrackOrderSkeleton();
+    renderFooterSkeleton();
     
     await loadCurrentUser();
     await Promise.all([

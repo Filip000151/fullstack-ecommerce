@@ -65,4 +65,34 @@ export function createElement(){
     }
 }
 
+export function renderProductSkeleton(){
+    const productSkeleton = document.createElement('section');
+    productSkeleton.classList.add('product');
+    const html = `
+        <div class="left-section">
+            <div class="product-images-section">
+                <div class="product-image-display skeleton"></div>
+                <div class="product-images">
+                    <div class="product-image-scroller">
+                        <div class="product-image skeleton"></div>
+                        <div class="product-image skeleton"></div>
+                        <div class="product-image skeleton"></div>
+                        <div class="product-image skeleton"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="skeleton" style="width: 200px; height: 30px; margin: 1em"></div>
+            <div class="skeleton" style="width: 200px; height: 30px; margin: 1em"></div>
+            <div class="skeleton" style="width: 200px; height: 30px; margin: 1em"></div>
+            <div class="skeleton" style="width: 300px; height: 50px; margin: 1em"></div>
+        </div>
+    `;
+    productSkeleton.innerHTML = html;
+    const container = document.querySelector('.container');
+    container.appendChild(productSkeleton);
+    return productSkeleton;
+}
+
 export default createElement;

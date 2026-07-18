@@ -39,4 +39,20 @@ export function createElement(){
     }
 }
 
+export function renderFeaturedSectionSkeleton(){
+    const featuredSectionSkeleton = document.createElement('section');
+    featuredSectionSkeleton.classList.add('featured-section');
+    const html = `
+        <div class="skeleton skeleton-text" style="text-align: center; width: 200px; height: 32px; margin: 2em 0;"></div>
+        <div class="featured-products-container">
+            <div class="featured-product-image skeleton" style="height: 600px;"></div>
+            <div class="featured-product-image skeleton" style="height: 600px;"></div>
+        </div>
+    `;
+    featuredSectionSkeleton.innerHTML = html;
+    const container = document.querySelector('.container');
+    container.appendChild(featuredSectionSkeleton);
+    return featuredSectionSkeleton;
+}
+
 export default createElement;

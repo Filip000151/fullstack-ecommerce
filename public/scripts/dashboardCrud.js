@@ -1,11 +1,15 @@
 import { auth, loadCurrentUser } from "./api/auth.js";
 import renderDashboardItemsComponent from "./components/dashboardItems/index.js";
+import { renderDashboardItemsSkeleton } from "./components/dashboardItems/template.js";
 import { showPendingToast } from "./utils/toast.js";
 
 renderPage();
 
 async function renderPage(){
     showPendingToast();
+
+    renderDashboardItemsSkeleton();
+
     await loadCurrentUser();
 
     if(auth.isGuest || auth.currentUser.role !== 'admin'){

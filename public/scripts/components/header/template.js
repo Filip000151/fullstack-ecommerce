@@ -212,6 +212,41 @@ export function renderProfileDropdown(){
     return html;
 }
 
+export function renderHeaderSkeleton(){
+    const headerSkeleton = document.createElement('header');
+    const html = `
+        <div class="header">
+            <div class="header-logo skeleton"></div>
+            <div class="search-section skeleton" style="height: 30px; width: 300px"></div>
+            <div class="header-icons skeleton" style="height: 30px;"></div>
+        </div>
+    `;
+    headerSkeleton.innerHTML = html;
+    headerSkeleton.classList.add('header-wrapper');
+    document.body.appendChild(headerSkeleton);
+    return headerSkeleton;
+}
+
+export function renderSearchDropdownSkeleton(){
+    const html = `
+        <div class="search-dropdown">
+            <div style="display: flex; justify-content: center;">
+                <div class="skeleton" style="width: 150px; height: 30px; margin: 1em;"></div>
+            </div>
+            <hr>
+            <div class="product-search-results-wrapper">
+                <div class="product-search-results">
+                    <div class="search-product skeleton" style="height: 80px;"></div>
+                    <div class="search-product skeleton"></div>
+                    <div class="search-product skeleton"></div>
+                    <div class="search-product skeleton"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    return html;
+}
+
 
 
 export default renderElement;
