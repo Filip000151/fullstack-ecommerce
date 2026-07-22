@@ -25,16 +25,18 @@ const login = async (req, res) => {
         res.cookie('refreshToken', tokens.refreshToken, {
             httpOnly: true,
             sameSite: 'lax',
-            //secure: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            path: '/'
         });
     }
 
     res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
         sameSite: 'lax',
-        //secure: true,
-        maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
+        path: '/'
     });
 
     return res.status(StatusCodes.OK).json({
@@ -83,8 +85,10 @@ const refreshAccessToken = async (req, res) => {
 
     res.cookie('accessToken', tokens.accessToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/'
     });
 
     return res.status(StatusCodes.OK).json({
@@ -104,8 +108,10 @@ const requestGuestId = async (req, res) => {
 
     res.cookie('guestId', guestId, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/'
     });
 
     res.status(StatusCodes.OK).json({

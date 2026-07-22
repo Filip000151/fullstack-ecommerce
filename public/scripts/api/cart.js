@@ -70,7 +70,6 @@ export async function updateQuantity(productId, quantity){
 }
 
 export async function removeFromCart(productId){
-    console.log(cart);
     if(auth.isGuest){
         const item = cart.items.find(item => item.product._id === productId);
         cart.totalItems -= item.quantity;

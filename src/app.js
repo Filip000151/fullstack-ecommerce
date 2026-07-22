@@ -1,6 +1,10 @@
 require('dotenv').config();
 require('express-async-errors');
 
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimiter = require('express-rate-limit');
+
 const express = require('express');
 const app = express();
 
@@ -21,8 +25,20 @@ const authMiddleware = require('./middleware/authenticate');
 
 const scheduler = require('./services/scheduler');
 
+// app.set('trust proxy', 1);
+// app.use(rateLimiter({
+//     windowMs: 15 * 60 * 1000,
+//     max: 100,
+//     message: 'Too many requests from this IP, please try again later.',
+//     standardHeaders: true,
+//     legacyHeaders: false
+// }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
+app.use(xss());
+
+
 
 app.use('/api/auth', authRouter);
 app.use('/api/products', authMiddleware, productsRouter);

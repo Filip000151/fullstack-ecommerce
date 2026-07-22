@@ -10,6 +10,7 @@ import renderTrackOrderComponent from '../components/trackOrder/index.js';
 import { renderHeaderSkeleton } from '../components/header/template.js';
 import { renderTrackOrderSkeleton } from '../components/trackOrder/template.js';
 import { renderFooterSkeleton } from '../components/footer/template.js';
+import renderNotFoundComponent from '../components/NotFoundSection/index.js';
 
 export default async function renderPage(params){
     apiClient.abortAllRequests();
@@ -18,16 +19,23 @@ export default async function renderPage(params){
     container.classList.add('container');
     document.body.appendChild(container);
 
-    renderHeaderSkeleton();
-    renderTrackOrderSkeleton();
-    renderFooterSkeleton();
+    const headerSkeleton = renderHeaderSkeleton();
+    const trackOrderSkeleton = renderTrackOrderSkeleton();
+    const footerSkeleton = renderFooterSkeleton();
     
     await loadCurrentUser();
-    await Promise.all([
+    const [order, categories, cart] = await Promise.all([
         loadOrder(params.id),
         loadCategories(),
         loadCart()
     ]);
+    if(!order.success){
+        headerSkeleton.remove();
+        trackOrderSkeleton.remove();
+        footerSkeleton.remove();
+        renderNotFoundComponent();
+        return;
+    }
 
     renderHeaderComponent();
     renderFooterComponent();

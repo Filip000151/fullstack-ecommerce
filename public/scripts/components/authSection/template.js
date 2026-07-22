@@ -1,4 +1,5 @@
 import { renderElementSpinner } from "../../utils/spinner.js";
+import auth from '../../api/auth.js';
 
 export function createElement(isRegister){
     let html = '';
@@ -75,6 +76,12 @@ export function createElement(isRegister){
                 <input type="password" class="auth-input js-confirm-password-input">
                 <span class="auth-error-validation js-confirm-password-error"></span>
             </div>
+            ${auth.currentUser && auth.currentUser.role === 'admin' ? `
+            <div class="auth-input-section">
+                <label for="">Make user admin?</label>
+                <input type="checkbox" class="auth-input js-admin-input">
+            </div>    
+            ` : ''}
 
             <div class="auth-lower-section">
                 <button class="auth-button js-register-button">Register</button>

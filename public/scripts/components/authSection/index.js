@@ -68,11 +68,16 @@ function setRegisterEvents(){
         const email = document.querySelector('.js-email-input').value;
         const password = document.querySelector('.js-password-input').value;
         const confirmPassword = document.querySelector('.js-confirm-password-input').value;
+        let role;
+        const adminInput = document.querySelector('.js-admin-input');
+        if(adminInput){
+            role = adminInput.checked ? 'admin' : 'client';
+        }
 
         const redirect = auth.isGuest ? '/login' : '/';
 
         await registerUser(
-            {name, email, password, confirmPassword},
+            {name, email, password, confirmPassword, role},
             {redirect}
         );
 

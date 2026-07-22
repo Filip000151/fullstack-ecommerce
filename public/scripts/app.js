@@ -1,5 +1,5 @@
 import Router from './router/index.js';
-import { routes } from './router/routes.js';
+import routes from './router/routes.js';
 
 const router = new Router(routes);
 window.router = router;

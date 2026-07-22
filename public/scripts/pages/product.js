@@ -10,6 +10,7 @@ import renderFooterComponent from '../components/footer/index.js';
 import { renderHeaderSkeleton } from '../components/header/template.js';
 import { renderProductSkeleton } from '../components/product/template.js';
 import { renderFooterSkeleton } from '../components/footer/template.js';
+import renderNotFoundComponent from '../components/NotFoundSection/index.js';
 
 export default async function renderPage(params){
     apiClient.abortAllRequests();
@@ -18,16 +19,23 @@ export default async function renderPage(params){
     container.classList.add('container');
     document.body.appendChild(container);
 
-    renderHeaderSkeleton();
-    renderProductSkeleton();
-    renderFooterSkeleton();
+    const headerSkeleton = renderHeaderSkeleton();
+    const productSkeleton = renderProductSkeleton();
+    const footerSkeleton = renderFooterSkeleton();
     
     await loadCurrentUser();
-    await Promise.all([
+    const [categories, cart, product] = await Promise.all([
         loadCategories(),
         loadCart(),
         loadProduct(params.id)
     ]);
+    if(!product.success){
+        headerSkeleton.remove();
+        productSkeleton.remove();
+        footerSkeleton.remove();
+        renderNotFoundComponent();
+        return;
+    }
 
     renderHeaderComponent();
     renderProductComponent();

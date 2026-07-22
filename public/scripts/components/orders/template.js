@@ -69,7 +69,7 @@ export function createElement(){
             });
         }
         else{
-            html += `<p class="no-orders-text">No orders created. <a href="/products">Browse products here</a></p>`
+            html += `<p class="no-orders-text">No orders created. <a href="/products" data-navigate>Browse products here</a></p>`
         }
 
         return html;

@@ -24,7 +24,9 @@ export function createElement(){
         <div class="right-section">
             <h4 class="product-name">${products.current.name}</h4>
             <p class="product-price">$${formatCurrency(products.current.priceCents)}</p>
+            ${products.current.category ? `
             <p class="product-category">Category: <a href="/products?category=${products.current.category._id}" data-navigate>${products.current.category.name}</a></p>
+            ` : ''}
             <div class="product-add-to-cart-section">
                 <button class="product-button js-decrement-button">-</button>
                 <span class="product-quantity-number js-product-quantity">1</span>
