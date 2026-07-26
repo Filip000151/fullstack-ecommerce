@@ -17,13 +17,12 @@ const orderRouter = require('./routes/orders');
 const cartRouter = require('./routes/cart');
 const shippingRouter = require('./routes/shipping');
 const staticRouter = require('./routes/static');
+const cronRouter = require('./routes/cron');
 
 const cookieParser = require('cookie-parser');
 const errorHandlerMiddleware = require('./middleware/errorHandler');
 const notFoundMiddleware = require('./middleware/notFound');
 const authMiddleware = require('./middleware/authenticate');
-
-const scheduler = require('./services/scheduler');
 
 app.set('trust proxy', 1);
 app.use(rateLimiter({
@@ -39,7 +38,7 @@ app.use(helmet());
 app.use(xss());
 
 
-
+app.use('/cron', cronRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/products', authMiddleware, productsRouter);
 app.use('/api/category', authMiddleware, categoryRouter);
@@ -59,7 +58,6 @@ const start = async () => {
         await connectDB(process.env.MONGO_URI);
         app.listen(port, () => {
             console.log(`Listening on port ${port}...`);
-            scheduler.start();
         });
     } catch (error) {
         console.log(error);
