@@ -38,12 +38,13 @@ const start = async () => {
         await Category.create(jsonCategories);
     
         const categories = await Category.find({});
-
+        
+        let categoryIndex = 0;
         for(let i = 0; i < jsonProducts.length; i++){
-            if(i < 9)
-                jsonProducts[i].category = categories[0]._id;
-            else
-                jsonProducts[i].category = categories[1]._id;
+            if(i === 7 || i === 13 || i === 19 || i === 25 || i === 30){
+                categoryIndex++;
+            }
+            jsonProducts[i].category = categories[categoryIndex]._id;
         }
 
         const products = jsonProducts.map(product => {

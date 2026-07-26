@@ -25,14 +25,14 @@ const authMiddleware = require('./middleware/authenticate');
 
 const scheduler = require('./services/scheduler');
 
-// app.set('trust proxy', 1);
-// app.use(rateLimiter({
-//     windowMs: 15 * 60 * 1000,
-//     max: 100,
-//     message: 'Too many requests from this IP, please try again later.',
-//     standardHeaders: true,
-//     legacyHeaders: false
-// }));
+app.set('trust proxy', 1);
+app.use(rateLimiter({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());

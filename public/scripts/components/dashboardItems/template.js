@@ -648,24 +648,18 @@ export function renderProductCoverImage(){
     return `<img src="${items.data.current.coverImage}">`;
 }
 
-export function togglePopup(){
-    const dialog = document.querySelector('.dashboard-dialog');
-    if(dialog){
-        document.body.removeChild(dialog);
-    }
-    else{
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('dashboard-dialog');
-        dialog.innerHTML = `
-            <h4>Delete item?</h4>
-            <div class="dialog-buttons">
-                <button class="dialog-button js-dialog-no-button">No</button>
-                <button class="dialog-button js-dialog-yes-button">Yes</button>
-            </div>
-        `;
-        document.body.appendChild(dialog);
-        return dialog;
-    }
+export function renderPopup(){
+    const dialog = document.createElement('dialog');
+    dialog.classList.add('dashboard-dialog');
+    dialog.innerHTML = `
+        <h4>Delete item?</h4>
+        <div class="dialog-buttons">
+            <button class="dialog-button js-dialog-no-button">No</button>
+            <button class="dialog-button js-dialog-yes-button">Yes</button>
+        </div>
+    `;
+    document.body.appendChild(dialog);
+    return dialog;
 }
 
 export function renderMoreItems(){
