@@ -30,7 +30,7 @@ export default async function renderPage(){
     await Promise.all([
         loadCategories(),
         loadCart(),
-        queryProducts({isFeatured: true})
+        queryProducts({isFeatured: true, limit: 30})
     ]);
 
     groupSkeleton.remove();

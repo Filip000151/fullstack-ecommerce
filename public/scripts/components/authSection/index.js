@@ -49,7 +49,7 @@ function setLoginEvents(){
 }
 function setRegisterEvents(){
     const registerButton = document.querySelector('.js-register-button');
-    const inputs = document.querySelectorAll('auth-input');
+    const inputs = document.querySelectorAll('.auth-input');
 
     registerButton.addEventListener('click', setRegisterEvent);
     inputs.forEach(input => {

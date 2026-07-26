@@ -1,5 +1,5 @@
 import renderPageSpinner, { renderElementSpinner } from "../../utils/spinner.js";
-import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, togglePopup, renderMoreItems, addMoreUpdateItems, renderMoreItemsLoading, renderItemWindowLoading} from "./template.js";
+import {createElement, renderItemViewWindow, renderCreateNewItemWindow, renderUpdateItemWindow, renderProductCoverImage, renderProductImages, renderPopup, renderMoreItems, addMoreUpdateItems, renderMoreItemsLoading, renderItemWindowLoading} from "./template.js";
 
 let itemController;
 
@@ -118,18 +118,18 @@ function setViewItemWindowEvent(){
         const deleteButton = document.querySelector('.js-delete-button');
         deleteButton.addEventListener('click', () => {
             const {id} = deleteButton.dataset;
-            const modal = togglePopup();
+            const modal = renderPopup();
             modal.showModal();
             document.querySelector('.js-dialog-yes-button').addEventListener('click', async () => {
                 modal.close();
+                modal.remove();
                 const spinner = renderPageSpinner();
                 await itemController.delete(id, {redirect: `/dashboard/${itemController.type}`});
-                togglePopup();
                 spinner.remove();
             });
             document.querySelector('.js-dialog-no-button').addEventListener('click', () => {
                 modal.close();
-                togglePopup();
+                modal.remove();
             });
         });
 

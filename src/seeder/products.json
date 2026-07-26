@@ -1,13 +1,64 @@
 [
     {
+        "name": "Lenovo ThinkPad X1 Carbon",
+        "priceCents": 280000,
+        "coverImage": "images/seeded/coverImage-lenovo_thinkpad.avif",
+        "images": [
+            "images/seeded/lenovo_thinkpad_1.webp", 
+            "images/seeded/lenovo_thinkpad_2.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Apple MacBook Pro M3",
+        "priceCents": 350000,
+        "coverImage": "images/seeded/coverImage-apple_macbook.webp",
+        "images": [
+            "images/seeded/images-apple_macbook_1.jpg", 
+            "images/seeded/images-apple_macbook_2.jpeg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "HP Spectre x360",
+        "priceCents": 220000,
+        "coverImage": "images/seeded/coverImage-hp_spectre.webp",
+        "images": [
+            "images/seeded/hp_spectre_1.jfif", 
+            "images/seeded/hp_spectre_2.jpg",
+            "images/seeded/hp_spectre_3.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Asus ROG Zephyrus G14",
+        "priceCents": 190000,
+        "coverImage": "images/seeded/coverImage-asus_rog.webp",
+        "images": [
+            "images/seeded/asus_rog_1.webp", 
+            "images/seeded/asus_rog_2.jpg",
+            "images/seeded/asus_rog_3.webp",
+            "images/seeded/asus_rog_4.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Acer Swift 5",
+        "priceCents": 140000,
+        "coverImage": "images/seeded/coverImage-acer_swift.jfif",
+        "images": [
+            "images/seeded/acer_swift_1.jpg", 
+            "images/seeded/acer_swift_2.png"
+        ]
+    },
+    {
         "name": "Lenovo Laptop",
         "priceCents": 100000,
         "coverImage": "images/seeded/coverImage-lenovo_laptop.avif",
         "images": [
             "images/seeded/images-lenovo_laptop_1.avif",
             "images/seeded/images-lenovo_laptop_2.webp"
-        ],
-        "isFeatured": true
+        ]
     },
     {
         "name": "Dell XPS 15 Laptop",
@@ -18,13 +69,232 @@
             "images/seeded/images-dell_laptop_2.jpg"
         ]
     },
+
     {
-        "name": "Apple MacBook Pro M3",
-        "priceCents": 350000,
-        "coverImage": "images/seeded/coverImage-apple_macbook.webp",
+        "name": "Sony WH-1000XM5 Headphones",
+        "priceCents": 40000,
+        "coverImage": "images/seeded/coverImage-sony_headphones.webp",
         "images": [
-            "images/seeded/images-apple_macbook_1.jpg", 
-            "images/seeded/images-apple_macbook_2.jpeg"
+            "images/seeded/images-sony_headphones_1.jpg", 
+            "images/seeded/images-sony_headphones_2.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Apple AirPods Pro 2",
+        "priceCents": 30000,
+        "coverImage": "images/seeded/coverImage-apple_airpods.webp",
+        "images": [
+            "images/seeded/images-apple_airpods_1.webp", 
+            "images/seeded/images-apple_airpods_2.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Bose QuietComfort 45",
+        "priceCents": 35000,
+        "coverImage": "images/seeded/coverImage-bose_qc45.jpg",
+        "images": [
+            "images/seeded/bose_qc45_1.jpg", 
+            "images/seeded/bose_qc45_2.webp"
+        ]
+    },
+    {
+        "name": "Samsung Galaxy Buds 3 Pro",
+        "priceCents": 25000,
+        "coverImage": "images/seeded/coverImage-samsung_buds.webp",
+        "images": [
+            "images/seeded/samsung_buds_1.jpg", 
+            "images/seeded/samsung_buds_2.jpg"
+        ]
+    },
+    {
+        "name": "JBL Flip 6 Speaker",
+        "priceCents": 15000,
+        "coverImage": "images/seeded/coverImage-jbl_flip.jpg",
+        "images": [
+            "images/seeded/jbl_flip_1.jfif", 
+            "images/seeded/jbl_flip_2.avif"
+        ]
+    },
+    {
+        "name": "Sennheiser HD 660S",
+        "priceCents": 55000,
+        "coverImage": "images/seeded/coverImage-sennheiser_hd660s.jfif",
+        "images": [
+            "images/seeded/sennheiser_hd660s_1.webp", 
+            "images/seeded/sennheiser_hd660s_2.jpg"
+        ]
+    },
+
+    {
+        "name": "Samsung Galaxy S24 Ultra",
+        "priceCents": 160000,
+        "coverImage": "images/seeded/coverImage-samsung_s24_ultra.jpeg",
+        "images": [
+            "images/seeded/samsung_s24_ultra_1.webp", 
+            "images/seeded/samsung_s24_ultra_2.webp"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "iPhone 15 Pro Max",
+        "priceCents": 200000,
+        "coverImage": "images/seeded/coverImage-iphone_15_pro_max.webp",
+        "images": [
+            "images/seeded/iphone_15_pro_max_1.webp", 
+            "images/seeded/iphone_15_pro_max_2.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Xiaomi 13T Pro",
+        "priceCents": 80000,
+        "coverImage": "images/seeded/coverImage-xiaomi_13t_pro.jpg",
+        "images": [
+            "images/seeded/xiaomi_13t_pro_1.jfif", 
+            "images/seeded/xiaomi_13t_pro_2.jfif"
+        ]
+    },
+    {
+        "name": "iPad Air M2",
+        "priceCents": 120000,
+        "coverImage": "images/seeded/coverImage-ipad_air_m2.webp",
+        "images": [
+            "images/seeded/ipad_air_m2_1.jfif", 
+            "images/seeded/ipad_air_m2_2.jfif"
+        ]
+    },
+    {
+        "name": "Samsung Galaxy Tab S9",
+        "priceCents": 100000,
+        "coverImage": "images/seeded/coverImage-samsung_tab_s9.jpg",
+        "images": [
+            "images/seeded/samsung_tab_s9_1.jpg", 
+            "images/seeded/samsung_tab_s9_2.jpeg"
+        ]
+    },
+
+    {
+        "name": "PS5 DualSense Controller",
+        "priceCents": 7000,
+        "coverImage": "images/seeded/coverImage-ps5_controller.jpg",
+        "images": [
+            "images/seeded/ps5_controller_1.jfif", 
+            "images/seeded/ps5_controller_2.webp"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Xbox Series X",
+        "priceCents": 55000,
+        "coverImage": "images/seeded/coverImage-xbox_series_x.jfif",
+        "images": [
+            "images/seeded/xbox_series_x_1.jfif", 
+            "images/seeded/xbox_series_x_2.jfif"
+        ]
+    },
+    {
+        "name": "Nintendo Switch OLED",
+        "priceCents": 40000,
+        "coverImage": "images/seeded/coverImage-nintendo_switch_oled.jfif",
+        "images": [
+            "images/seeded/nintendo_switch_oled_1.jpg", 
+            "images/seeded/nintendo_switch_oled_2.jfif"
+        ]
+    },
+    {
+        "name": "Razer DeathAdder V3 Pro",
+        "priceCents": 12000,
+        "coverImage": "images/seeded/coverImage-razer_deathadder.jfif",
+        "images": [
+            "images/seeded/razer_deathadder_1.jfif", 
+            "images/seeded/razer_deathadder_2.webp"
+        ]
+    },
+    {
+        "name": "SteelSeries Apex Pro Keyboard",
+        "priceCents": 18000,
+        "coverImage": "images/seeded/coverImage-steelseries_apex.webp",
+        "images": [
+            "images/seeded/steelseries_apex_1.webp", 
+            "images/seeded/steelseries_apex_2.webp"
+        ]
+    },
+    {
+        "name": "Logitech G502 X Mouse",
+        "priceCents": 10000,
+        "coverImage": "images/seeded/coverImage-logitech_g502.jfif",
+        "images": [
+            "images/seeded/logitech_g502_1.webp", 
+            "images/seeded/logitech_g502_2.jfif"
+        ]
+    },
+
+    {
+        "name": "Philips Hue Starter Kit",
+        "priceCents": 12000,
+        "coverImage": "images/seeded/coverImage-philips_hue.jpg",
+        "images": [
+            "images/seeded/philips_hue_1.jpg", 
+            "images/seeded/philips_hue_2.webp"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Amazon Echo Show 10",
+        "priceCents": 25000,
+        "coverImage": "images/seeded/coverImage-amazon_echo_show.webp",
+        "images": [
+            "images/seeded/amazon_echo_show_1.jfif", 
+            "images/seeded/amazon_echo_show_2.jfif"
+        ]
+    },
+    {
+        "name": "Google Nest Hub Max",
+        "priceCents": 22000,
+        "coverImage": "images/seeded/coverImage-google_nest_hub.png",
+        "images": [
+            "images/seeded/google_nest_hub_1.jfif", 
+            "images/seeded/google_nest_hub_2.jfif"
+        ]
+    },
+    {
+        "name": "Ring Video Doorbell 4",
+        "priceCents": 20000,
+        "coverImage": "images/seeded/coverImage-ring_doorbell.jfif",
+        "images": [
+            "images/seeded/ring_doorbell_1.jfif", 
+            "images/seeded/ring_doorbell_2.webp"
+        ]
+    },
+    {
+        "name": "TP-Link Tapo Smart Plug",
+        "priceCents": 2500,
+        "coverImage": "images/seeded/coverImage-tapo_smart_plug.jfif",
+        "images": [
+            "images/seeded/tapo_smart_plug_1.jfif", 
+            "images/seeded/tapo_smart_plug_2.jpg"
+        ]
+    },
+
+    {
+        "name": "Keychron K2 Mechanical Keyboard",
+        "priceCents": 12000,
+        "coverImage": "images/seeded/coverImage-keychron_keyboard.webp",
+        "images": [
+            "images/seeded/images-keychron_keyboard_1.jpg", 
+            "images/seeded/images-keychron_keyboard_2.jpg"
+        ],
+        "isFeatured": true
+    },
+    {
+        "name": "Logitech MX Master 3S Mouse",
+        "priceCents": 15000,
+        "coverImage": "images/seeded/coverImage-logitech_master_mouse.webp",
+        "images": [
+            "images/seeded/images-logitech_master_mouse_1.jfif", 
+            "images/seeded/images-logitech_master_mouse_2.jpg"
         ],
         "isFeatured": true
     },
@@ -39,48 +309,11 @@
         "isFeatured": true
     },
     {
-        "name": "Sony WH-1000XM5 Headphones",
-        "priceCents": 40000,
-        "coverImage": "images/seeded/coverImage-sony_headphones.webp",
-        "images": [
-            "images/seeded/images-sony_headphones_1.jpg", 
-            "images/seeded/images-sony_headphones_2.jpg"
-        ]
-    },
-    {
-        "name": "Apple AirPods Pro 2",
-        "priceCents": 30000,
-        "coverImage": "images/seeded/coverImage-apple_airpods.webp",
-        "images": [
-            "images/seeded/images-apple_airpods_1.webp", 
-            "images/seeded/images-apple_airpods_2.jpg"
-        ]
-    },
-    {
-        "name": "Logitech MX Master 3S Mouse",
-        "priceCents": 15000,
-        "coverImage": "images/seeded/coverImage-logitech_master_mouse.webp",
-        "images": [
-            "images/seeded/images-logitech_master_mouse_1.jfif", 
-            "images/seeded/images-logitech_master_mouse_2.jpg"
-        ]
-    },
-    {
-        "name": "Keychron K2 Mechanical Keyboard",
-        "priceCents": 12000,
-        "coverImage": "images/seeded/coverImage-keychron_keyboard.webp",
-        "images": [
-            "images/seeded/images-keychron_keyboard_1.jpg", 
-            "images/seeded/images-keychron_keyboard_2.jpg"
-        ],
-        "isFeatured": true
-    },
-    {
         "name": "Logitech Mouse",
         "priceCents": 4999,
         "coverImage": "images/seeded/coverImage-logitech_mouse.webp",
         "images": [
-            "images/seeded/images-logitech_mouse_1.jpg",
+            "images/seeded/images-logitech_mouse_1.jpg", 
             "images/seeded/images-logitech_mouse_2.webp"
         ]
     },

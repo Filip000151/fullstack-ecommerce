@@ -1,10 +1,24 @@
 [
     {
-        "name": "Electronics",
-        "isDisplayed": "true"
+        "name": "Computers & Laptops",
+        "isDisplayed": true
     },
     {
-        "name": "Accessories",
-        "isDisplayed": "true"
+        "name": "Audio & Headphones",
+        "isDisplayed": true
+    },
+    {
+        "name": "Mobile Phones & Tablets",
+        "isDisplayed": true
+    },
+    {
+        "name": "Gaming"
+    },
+    {
+        "name": "Smart Home",
+        "isDisplayed": true
+    },
+    {
+        "name": "Accessories"
     }
 ]
