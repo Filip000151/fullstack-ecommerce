@@ -20,6 +20,8 @@ function getNameOfTheDay(date){
     const day = date.getDay();
 
     switch(day){
+        case 0:
+            return 'Sunday';
         case 1:
             return 'Monday';
         case 2:
@@ -32,8 +34,6 @@ function getNameOfTheDay(date){
             return 'Friday';
         case 6:
             return 'Saturday';
-        case 7:
-            return 'Sunday';
         default:
             return 'Unknown';
     }
