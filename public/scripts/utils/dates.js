@@ -4,7 +4,7 @@ export function convertDateToObject(dateString){
     const day = getNameOfTheDay(date);
     const dayNum = date.getDate();
     const month = getNameOfTheMonth(date);
-    const monthNum = date.getMonth();
+    const monthNum = date.getMonth() + 1;
     const year = date.getFullYear();
 
     return {
