@@ -24,4 +24,6 @@ router.route('/update-order-statuses').post(async (req, res) => {
     }
 });
 
+router.route('/ping').get((req, res) => res.status(StatusCodes.OK).send());
+
 module.exports = router;
