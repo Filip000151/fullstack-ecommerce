@@ -8,13 +8,19 @@ const CRON_SECRET = process.env.CRON_SECRET;
 router.route('/update-order-statuses').post(async (req, res) => {
     const authHeader = req.headers['x-cron-secret'];
     if(authHeader !== CRON_SECRET){
-        return res.status(StatusCodes.UNAUTHORIZED);
+        return res.status(StatusCodes.UNAUTHORIZED).json({
+            success: false
+        });
     }
     try {
         const result = await orderService.updateAllOrderStatuses();
-        res.status(StatusCodes.OK);
+        console.log(`[CRON] Updated ${result.updatedCount}/${result.total} orders at ${new Date().toISOString()}`);
+        res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+        console.error(`[CRON] failed: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false
+        });
     }
 });
 
