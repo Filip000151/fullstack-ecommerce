@@ -1,5 +1,5 @@
 [![Deployed on Render](https://img.shields.io/badge/Deployed-Render-blueviolet)](https://filipmilutinovic-ecommerce.onrender.com)
-[![Node.js](https://img.shields.io/badge/Node.js-18.x-green)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-24.x-green)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)](https://www.mongodb.com/cloud/atlas)
 
 # Ecommerce Platform
@@ -72,9 +72,9 @@ Full-stack e-commerce solution with guest checkout, JWT authentication, and admi
 ## Download Locally
 
 ### Prerequisites
-> node.js
-> MongoDB (local or Atlas)
-> npm
++ node.js
++ MongoDB (local or Atlas)
++ npm
 
 ### Installation
 1. **Clone the repository**
