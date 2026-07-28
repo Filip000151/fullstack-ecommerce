@@ -8,37 +8,37 @@ Full-stack e-commerce solution with guest checkout, JWT authentication, and admi
 ## Key Features
 
 ### User Features
-> **Guest Checkout** – Order without registration (track via guestId that is generated on the backend and saved inside user's localStorage)
-> **User Accounts** – Register, login, order history, persistent cart (upon registration, guest orders containing the same email address will link to the created account)
-> **Product Browsing** – Search, filter by category/price, sort, pagination
-> **Shopping Cart** – Add/remove items, update quantities, persistent across sessions (if user is logged in, cart is stored in the database, else localStorage is used)
-> **Order Management** – View order history, track status, cancel pending orders
++ **Guest Checkout** – Order without registration (track via guestId that is generated on the backend and saved inside user's localStorage)
++ **User Accounts** – Register, login, order history, persistent cart (upon registration, guest orders containing the same email address will link to the created account)
++ **Product Browsing** – Search, filter by category/price, sort, pagination
++ **Shopping Cart** – Add/remove items, update quantities, persistent across sessions (if user is logged in, cart is stored in the database, else localStorage is used)
++ **Order Management** – View order history, track status, cancel pending orders
 
 ### Admin Features
-> **Product Management** – Full CRUD with image upload (Multer)
-> **Category Management** – CRUD operations
-> **Order Management** – View all orders
-> **Shipping Options** – Manage shipping methods
-> **Dashboard** – Overview of store data
++ **Product Management** – Full CRUD with image upload (Multer)
++ **Category Management** – CRUD operations
++ **Order Management** – View all orders
++ **Shipping Options** – Manage shipping methods
++ **Dashboard** – Overview of store data
 
 ### Security
-> **JWT Authentication** – Access + Refresh token system
-> **HTTP-only Cookies** – Protected against XSS attacks
-> **Refresh Token Rotation** – New JWT access token on each refresh, detects inactive refresh token reuse
-> **Role-Based Access** – Guest, Client, Admin roles
-> **Rate Limiting** – limited requests based on the environment variable (1000 on deployed live server) per 15 minutes (5 for login)
-> **Helmet.js** – Secure HTTP headers
-> **XSS Protection** – Input sanitization
-> **CSRF Protection** – SameSite cookies
++ **JWT Authentication** – Access + Refresh token system
++ **HTTP-only Cookies** – Protected against XSS attacks
++ **Refresh Token Rotation** – New JWT access token on each refresh, detects inactive refresh token reuse
++ **Role-Based Access** – Guest, Client, Admin roles
++ **Rate Limiting** – limited requests based on the environment variable (1000 on deployed live server) per 15 minutes (5 for login)
++ **Helmet.js** – Secure HTTP headers
++ **XSS Protection** – Input sanitization
++ **CSRF Protection** – SameSite cookies
 
 ### Technical Highlights
-> **SPA Architecture** – Custom frontend router (no frameworks)
-> **Vanilla JavaScript** – Pure ES modules, no libraries
-> **File Upload** – Multer with image validation
-> **Guest Cart** – Stored in localStorage (no server load)
-> **Order Progress Tracking** – Automatic status updates based on delivery date
-> **Toast Notifications** – Custom notification system
-> **Skeleton Loading** – Improved UX during data fetching
++ **SPA Architecture** – Custom frontend router (no frameworks)
++ **Vanilla JavaScript** – Pure ES modules, no libraries
++ **File Upload** – Multer with image validation
++ **Guest Cart** – Stored in localStorage (no server load)
++ **Order Progress Tracking** – Automatic status updates based on delivery date
++ **Toast Notifications** – Custom notification system
++ **Skeleton Loading** – Improved UX during data fetching
 
 ## Tech Stack
 
