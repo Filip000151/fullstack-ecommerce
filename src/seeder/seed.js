@@ -31,7 +31,7 @@ const start = async () => {
         const adminUser = await User.create({
             name: 'admin',
             email: 'admin@gmail.com',
-            password: 'secret',
+            password: process.env.ADMIN_PASSWORD,
             role: 'admin'
         });
 
@@ -39,22 +39,25 @@ const start = async () => {
     
         const categories = await Category.find({});
         
-        let categoryIndex = 0;
-        for(let i = 0; i < jsonProducts.length; i++){
-            if(i === 7 || i === 13 || i === 19 || i === 25 || i === 30){
-                categoryIndex++;
-            }
-            jsonProducts[i].category = categories[categoryIndex]._id;
+        const categoryMap = {};
+        for(const c of categories){
+            categoryMap[c.name] = c._id;
         }
 
-        const products = jsonProducts.map(product => {
-            return {
-                ...product,
-                createdBy: adminUser._id
-            };
-        });
+        const allProducts = [];
+        for(const [categoryName, products] of Object.entries(jsonProducts)){
+            const categoryId = categoryMap[categoryName];
 
-        await Product.create(products);
+            for(const product of products){
+                allProducts.push({
+                    ...product,
+                    category: categoryId,
+                    createdBy: adminUser
+                });
+            }
+        }
+
+        await Product.create(allProducts);
 
         await Shipping.create(jsonShipping);
 
